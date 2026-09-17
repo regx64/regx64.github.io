@@ -1,0 +1,227 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>regx64</title>
+<meta name="description" content="트랜지스터부터 컴파일러까지, 아래층부터 직접 만들어 보며 컴퓨터를 공부하는 학생의 작업 기록">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans+KR:wght@400;500;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<a class="skip" href="#main">본문으로 건너뛰기</a>
+
+<header class="hero">
+  <div class="hero-text">
+    <p class="handle">regx64</p>
+    <h1>트랜지스터부터 컴파일러까지,<br>아래층부터 만들어 보며 배웁니다.</h1>
+    <p class="lede">컴퓨터공학을 공부하는 학생입니다. 지금은 CPU 마이크로아키텍처와 메모리 계층, <span class="nowrap">x86-64</span> 어셈블리, 컴파일러의 IR과 최적화, 하드웨어 보안을 파고 있고, 회로이론과 미적분을 기초부터 따로 공부하고 있습니다.</p>
+    <p class="accounts">작업 대부분은 주 계정 <a href="https://github.com/twopercenz">@twopercenz</a>에 올라가 있습니다.</p>
+  </div>
+
+  <nav class="stack" aria-label="계층별 목차">
+    <ol>
+      <li style="--c: var(--l-app); --i: 0"><a href="#app"><span>응용</span><small>Percentage 외 3개</small></a></li>
+      <li style="--c: var(--l-lang); --i: 1"><a href="#lang"><span>언어·컴파일러</span><small>Cotton</small></a></li>
+      <li style="--c: var(--l-os); --i: 2"><a href="#os"><span>운영체제</span><small>Hobby OS</small></a></li>
+      <li style="--c: var(--l-sec); --i: 3"><a href="#sec"><span>하드웨어 보안</span><small>KDAA</small></a></li>
+      <li style="--c: var(--l-arch); --i: 4"><a href="#arch"><span>마이크로아키텍처</span><small>시스톨릭 배열</small></a></li>
+      <li style="--c: var(--l-dev); --i: 5"><a href="#dev"><span>회로·소자</span><small>TRNG</small></a></li>
+    </ol>
+    <p class="stack-caption">위로 갈수록 추상화 수준이 높습니다. 층을 누르면 그 층의 작업으로 이동합니다.</p>
+  </nav>
+</header>
+
+<main id="main" class="page">
+
+  <!-- 응용 -->
+  <section class="layer" id="app" style="--c: var(--l-app)" aria-labelledby="h-app">
+    <div class="layer-head">
+      <div class="bar hatch" aria-hidden="true"></div>
+      <h2 id="h-app">응용</h2>
+      <p>사람이 직접 쓰는 서비스와 도구</p>
+    </div>
+    <div class="layer-body">
+      <article class="work">
+        <h3><a href="https://github.com/twopercenz/percentage">Percentage</a></h3>
+        <p>나무위키 형태의 한국어 개방형 위키입니다. 문서는 자체 위키 문법인 PerMark로 씁니다.</p>
+        <dl class="meta"><dt>사용</dt><dd>Next.js, Supabase</dd></dl>
+        <p class="quote">쌓으면, 보입니다.</p>
+      </article>
+      <article class="work">
+        <h3><a href="https://github.com/twopercenz/music.player">music.player</a></h3>
+        <p>개인용 뮤직 플레이어입니다. 오디오 추출 계층으로 MUXIC.js를 쓰는 방안을 검토하고 있습니다.</p>
+      </article>
+      <article class="work">
+        <h3><a href="https://github.com/twopercenz/MUXIC.js">MUXIC.js</a></h3>
+        <p>mp3 다운로더 라이브러리입니다.</p>
+      </article>
+      <article class="work">
+        <h3>KSCA</h3>
+        <dl class="meta"><dt>상태</dt><dd>기획 중</dd></dl>
+        <p>전국 단위 청소년 컴퓨터 사이언스 학회를 위한 웹 서비스입니다. Zenodo 형태의 논문 아카이브와 커뮤니티 게시판으로 구성되고, 논문마다 영구 식별자, APA·BibTeX 인용 형식, 버전 관리를 제공합니다.</p>
+      </article>
+    </div>
+  </section>
+
+  <!-- 언어·컴파일러 -->
+  <section class="layer" id="lang" style="--c: var(--l-lang)" aria-labelledby="h-lang">
+    <div class="layer-head">
+      <div class="bar hatch" aria-hidden="true"></div>
+      <h2 id="h-lang">언어·컴파일러</h2>
+      <p>소스 코드가 기계어가 되기까지</p>
+    </div>
+    <div class="layer-body">
+      <article class="work">
+        <h3><a href="https://github.com/twopercenz/cotton">Cotton</a></h3>
+        <p>Rust, C 계열, Lua, Python, JavaScript의 특징을 섞은 프로그래밍 언어입니다. 구현은 Rust로 하고 있습니다.</p>
+        <ol class="track" aria-label="진행 단계">
+          <li class="done"><span class="sr">완료: </span>언어 명세 v0.2</li>
+          <li class="done"><span class="sr">완료: </span>렉서</li>
+          <li class="next"><span class="sr">다음 목표: </span>파서</li>
+          <li class="next"><span class="sr">다음 목표: </span>IR</li>
+        </ol>
+        <p class="legend">채운 칸은 완료, 점선 칸은 다음 목표입니다.</p>
+        <!-- 렉서 출력 예시를 넣고 싶으면 아래 주석을 해제하고 내용을 바꾸세요.
+        <pre class="code"><code>let x = 42;
+→ [Let] [Ident("x")] [Eq] [Int(42)] [Semi]</code></pre>
+        -->
+      </article>
+    </div>
+  </section>
+
+  <!-- 운영체제 -->
+  <section class="layer" id="os" style="--c: var(--l-os)" aria-labelledby="h-os">
+    <div class="layer-head">
+      <div class="bar hatch" aria-hidden="true"></div>
+      <h2 id="h-os">운영체제</h2>
+      <p>전원이 들어온 뒤 커널이 뜨기까지</p>
+    </div>
+    <div class="layer-body">
+      <article class="work">
+        <h3>Hobby OS</h3>
+        <p>x86-64 어셈블리로 만들고 있는 운영체제입니다. QEMU에서 테스트합니다.</p>
+        <ol class="track" aria-label="진행 단계">
+          <li class="done"><span class="sr">완료: </span>부트섹터</li>
+          <li class="done"><span class="sr">완료: </span>커널 로드</li>
+          <li class="done"><span class="sr">완료: </span>32비트 보호 모드</li>
+          <li class="done"><span class="sr">완료: </span>페이징</li>
+          <li class="done"><span class="sr">완료: </span>64비트 롱 모드</li>
+          <li class="done"><span class="sr">완료: </span>freestanding C 커널</li>
+          <li class="done"><span class="sr">완료: </span>VGA 드라이버</li>
+        </ol>
+        <!-- QEMU 스크린샷을 assets/hobby-os-qemu.png 로 넣고 아래 주석을 해제하세요.
+        <figure>
+          <img src="assets/hobby-os-qemu.png" alt="QEMU에서 VGA 드라이버로 글자를 출력하는 커널 화면">
+          <figcaption>QEMU에서 VGA 드라이버가 동작하는 모습</figcaption>
+        </figure>
+        -->
+      </article>
+    </div>
+  </section>
+
+  <!-- 하드웨어 보안 -->
+  <section class="layer" id="sec" style="--c: var(--l-sec)" aria-labelledby="h-sec">
+    <div class="layer-head">
+      <div class="bar hatch" aria-hidden="true"></div>
+      <h2 id="h-sec">하드웨어 보안</h2>
+      <p>물리 신호로 새어 나가는 정보</p>
+    </div>
+    <div class="layer-body">
+      <article class="work">
+        <h3>KDAA: Korean Dubeolsik Acoustic Attack</h3>
+        <dl class="meta"><dt>상태</dt><dd>진행 중</dd></dl>
+        <p>키보드 타건음으로 입력을 추정하는 음향 사이드채널 공격(ASCA)을 한글 두벌식 자판에 적용하는 연구입니다. 기존 연구는 대부분 영문 QWERTY를 대상으로 합니다.</p>
+        <p>CNN 기반 모델의 성능을 세 가지 공격 시나리오에서 비교합니다.</p>
+        <ul class="plain">
+          <li>근접 마이크</li>
+          <li>원거리 마이크</li>
+          <li>배경소음</li>
+        </ul>
+        <!-- 녹음 환경 사진을 assets/kdaa-setup.jpg 로 넣고 아래 주석을 해제하세요.
+        <figure>
+          <img src="assets/kdaa-setup.jpg" alt="키보드와 마이크를 배치한 녹음 환경">
+          <figcaption>타건음 수집 환경</figcaption>
+        </figure>
+        -->
+      </article>
+    </div>
+  </section>
+
+  <!-- 마이크로아키텍처 -->
+  <section class="layer" id="arch" style="--c: var(--l-arch)" aria-labelledby="h-arch">
+    <div class="layer-head">
+      <div class="bar hatch" aria-hidden="true"></div>
+      <h2 id="h-arch">마이크로아키텍처</h2>
+      <p>연산과 데이터가 오가는 구조</p>
+    </div>
+    <div class="layer-body">
+      <article class="work">
+        <h3 lang="en">Von Neumann Bottleneck and Systolic Array Architecture: An Empirical Efficiency Comparison</h3>
+        <dl class="meta"><dt>연도</dt><dd>2026</dd><dt>형태</dt><dd>4인 팀 연구</dd></dl>
+        <p>아두이노 나노 4대로 2×2 시스톨릭 배열을 구성하고, 폰 노이만식 순차 처리와 시스톨릭 배열의 두 데이터 흐름 방식(OS, WS)을 행렬 곱셈으로 비교했습니다. PE 간 통신은 비트뱅잉으로 구현했습니다.</p>
+        <p>측정한 지표는 다음과 같습니다.</p>
+        <ul class="plain">
+          <li>처리 시간</li>
+          <li>MAC 연산 수</li>
+          <li>메모리 접근 횟수</li>
+          <li>사이클 수</li>
+        </ul>
+        <!-- 배선 사진과 결과 그래프를 assets/ 에 넣고 아래 주석을 해제하세요.
+        <figure>
+          <img src="assets/systolic-board.jpg" alt="아두이노 나노 4대를 연결한 2×2 시스톨릭 배열">
+          <figcaption>2×2 시스톨릭 배열 구성</figcaption>
+        </figure>
+        <figure>
+          <img src="assets/systolic-results.png" alt="폰 노이만 방식과 시스톨릭 배열 OS, WS 방식의 처리 시간 비교 그래프">
+          <figcaption>방식별 처리 시간 비교</figcaption>
+        </figure>
+        -->
+      </article>
+    </div>
+  </section>
+
+  <!-- 회로·소자 -->
+  <section class="layer" id="dev" style="--c: var(--l-dev)" aria-labelledby="h-dev">
+    <div class="layer-head">
+      <div class="bar hatch" aria-hidden="true"></div>
+      <h2 id="h-dev">회로·소자</h2>
+      <p>전압과 잡음에서 출발하는 층</p>
+    </div>
+    <div class="layer-body">
+      <article class="work">
+        <h3>TRNG 엔트로피원 비교</h3>
+        <dl class="meta"><dt>상태</dt><dd>진행 중</dd></dl>
+        <p>서로 다른 엔트로피원으로 진짜 난수생성기를 만들어 비교하고 있습니다.</p>
+        <ul class="plain">
+          <li>애벌랜치 노이즈</li>
+          <li>이산소자 링 오실레이터</li>
+          <li>FPGA 링 오실레이터</li>
+        </ul>
+      </article>
+      <article class="work">
+        <h3>회로이론과 미적분</h3>
+        <p>이 층을 제대로 다루기 위해 회로이론과 미적분을 기초부터 공부하고 있습니다.</p>
+      </article>
+    </div>
+  </section>
+
+  <footer class="foot">
+    <h2>쓰는 도구</h2>
+    <div>
+      <ul class="tools">
+        <li>x86-64 ASM</li><li>C</li><li>Rust</li><li>TypeScript</li><li>Next.js</li><li>Supabase</li>
+        <li>Arduino</li><li>KiCad</li><li>QEMU</li><li>Docker</li><li>Oracle Cloud</li>
+      </ul>
+      <p class="links">
+        <a href="https://github.com/twopercenz">github.com/twopercenz</a> (주 계정)<br>
+        <a href="https://github.com/regx64">github.com/regx64</a>
+      </p>
+    </div>
+  </footer>
+
+</main>
+</body>
+</html>
