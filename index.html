@@ -3,10 +3,13 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>regx64</title>
+<title>regx64 | 만들며 배웁니다.</title>
 <meta name="description" content="트랜지스터부터 컴파일러까지, 컴퓨터를 아래층부터 만들어 보며 공부하는 학생">
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css">
 <link rel="stylesheet" href="style.css">
+<link rel="icon" href="favicon.ico" sizes="48x48">
+<link rel="icon" href="favicon.svg" type="image/svg+xml">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
 </head>
 <body>
 <a class="skip" href="#main">본문으로 건너뛰기</a>
@@ -14,12 +17,12 @@
 <header class="hero">
   <div>
     <h1>regx64</h1>
-    <p>컴퓨터공학을 공부하는 학생입니다. 트랜지스터부터 컴파일러까지, 컴퓨터가 실제로 어떻게 돌아가는지 아래층부터 하나씩 만들어 보며 배우고 있습니다.</p>
+    <p>컴퓨터공학을 공부하는 고등학생입니다. 컴퓨터가 실제로 어떻게 돌아가는지 아래층부터 하나씩 만들어 보며 배우고 있습니다.</p>
     <p>요즘은 CPU 마이크로아키텍처와 메모리 계층, <span class="nowrap">x86-64</span> 어셈블리, 컴파일러, 하드웨어 보안을 보고 있고, 회로이론과 미적분은 기초부터 따로 공부하는 중입니다.</p>
-    <p class="muted">이 계정은 부계정이고, 올린 코드는 대부분 <a href="https://github.com/twopercenz">@twopercenz</a>에 있습니다.</p>
+    <p class="muted">이 계정은 부계정이고, 다음의 프로젝트들은 대부분 <a href="https://github.com/twopercenz">@twopercenz</a>에 있습니다.</p>
   </div>
 
-  <nav class="stack" aria-label="계층별 목차">
+  <nav class="stack" aria-label="목차">
     <ol>
       <li style="--c: var(--l-app); --i: 0"><a href="#app"><span>응용</span></a></li>
       <li style="--c: var(--l-lang); --i: 1"><a href="#lang"><span>언어·컴파일러</span></a></li>
@@ -42,7 +45,7 @@
       </article>
       <article class="work">
         <h3><a href="https://github.com/twopercenz/music.player">music.player</a></h3>
-        <p>제가 쓰려고 만드는 뮤직 플레이어입니다. 오디오 추출은 아래의 MUXIC.js로 할까 생각 중입니다.</p>
+        <p>제가 쓰려고 만드는 뮤직 플레이어입니다. 오디오 추출은 아래의 MUXIC.js로 분할하고 통합할까 생각 중입니다.</p>
       </article>
       <article class="work">
         <h3><a href="https://github.com/twopercenz/MUXIC.js">MUXIC.js</a></h3>
@@ -50,7 +53,7 @@
       </article>
       <article class="work">
         <h3>KSCA <span class="status">기획 중</span></h3>
-        <p>전국 청소년 컴퓨터 사이언스 학회용 웹 서비스입니다. Zenodo 같은 논문 아카이브(영구 식별자, APA·BibTeX 인용, 버전 관리)와 게시판을 붙일 계획입니다.</p>
+        <p>온라인 대한민국 청소년 컴퓨터 사이언스 학회입니다. Zenodo 같은 논문 아카이브(영구 식별자, APA·BibTeX 인용, 버전 관리)와 게시판을 붙일 계획입니다.</p>
       </article>
     </div>
   </section>
@@ -89,7 +92,7 @@
     <div>
       <article class="work">
         <h3>KDAA: Korean Dubeolsik Acoustic Attack <span class="status">진행 중</span></h3>
-        <p>키보드 타건음만 듣고 무엇을 쳤는지 알아내는 음향 사이드채널 공격(ASCA)을 한글 두벌식 자판에 적용해 보는 연구입니다. 지금까지 연구는 거의 영문 QWERTY만 다뤘습니다. 근접 마이크, 원거리 마이크, 배경소음이 섞인 경우로 나눠 CNN 모델 성능을 비교합니다.</p>
+        <p>키보드 타건음만 듣고 무엇을 쳤는지 알아내는 음향 사이드채널 공격(ASCA)을 한글 두벌식 자판에 적용해 보는 연구입니다. 지금까지의 연구는 영문 키보드만 다뤄서 한국어 키보드에는 연구 공백이 있었습니다. 근접 마이크, 원거리 마이크, 배경소음이 섞인 경우로 나눠 CNN 모델 성능을 비교합니다.</p>
         <!-- assets/kdaa-setup.jpg 를 넣고 주석을 푸세요.
         <figure>
           <img src="assets/kdaa-setup.jpg" alt="키보드와 마이크를 배치한 녹음 환경">
