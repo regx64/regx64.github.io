@@ -136,3 +136,95 @@ a { color: inherit; text-underline-offset: 0.22em; }
   }
   .stage { height: 88vw; max-height: 32rem; }
 }
+
+/* ---------- 버튼 ---------- */
+.actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.75rem 1.5rem;
+  margin-top: 1.75rem;
+}
+.actions a:not(.btn) { font-size: 0.9375rem; }
+
+.btn {
+  display: inline-block;
+  padding: 0.6rem 1.25rem;
+  border-radius: 999px;
+  background: var(--ink);
+  color: #FFFFFF;
+  font-size: 0.9375rem;
+  font-weight: 600;
+  text-decoration: none;
+  transition: background-color 0.15s;
+}
+.btn:hover { background: #000000; }
+.tone-dark .btn { background: #F2F2F2; color: #161616; }
+.tone-dark .btn:hover { background: #FFFFFF; }
+
+/* ---------- 상세 페이지 ---------- */
+.detail h1.name { font-size: 1.375rem; }
+
+.doc {
+  position: relative;
+  z-index: 2;
+  padding: 3rem max(1.5rem, calc((100vw - 76rem) / 2)) 4rem;
+}
+
+.doc-sec {
+  display: grid;
+  grid-template-columns: 12rem minmax(0, 40rem);
+  gap: 2rem;
+  padding: 2.5rem 0;
+  border-top: 1px solid rgba(0, 0, 0, 0.1);
+}
+.doc-sec h2 { margin: 0; font-size: 1.125rem; line-height: 1.6; }
+.doc-sec p { margin: 0 0 0.9rem; }
+.doc-sec > div > :last-child { margin-bottom: 0; }
+
+.plain { margin: 0 0 0.9rem; padding-left: 1.2rem; }
+
+.pairs { margin: 0; }
+.pairs dt { font-weight: 600; }
+.pairs dd { margin: 0 0 1rem; color: var(--muted); }
+.pairs dd:last-child { margin-bottom: 0; }
+
+.steps { list-style: none; margin: 0; padding: 0; }
+.steps li {
+  display: flex;
+  align-items: baseline;
+  gap: 0.75rem;
+  padding: 0.45rem 0;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.06);
+}
+.steps li::before {
+  content: "";
+  flex: none;
+  width: 0.65rem;
+  height: 0.65rem;
+  border-radius: 50%;
+  border: 2px solid var(--ink);
+  transform: translateY(0.05rem);
+}
+.steps li.done::before { background: var(--ink); }
+.steps .state { margin-left: auto; font-size: 0.875rem; color: var(--muted); }
+
+figure { margin: 1.25rem 0; }
+figure img { display: block; max-width: 100%; height: auto; border-radius: 0.75rem; }
+figcaption { margin-top: 0.5rem; font-size: 0.875rem; color: var(--muted); }
+
+.pager {
+  display: flex;
+  justify-content: space-between;
+  gap: 1.5rem;
+  padding-top: 2.5rem;
+  border-top: 1px solid rgba(0, 0, 0, 0.1);
+}
+.pager a { display: flex; flex-direction: column; font-weight: 600; text-decoration: none; }
+.pager a:hover { text-decoration: underline; }
+.pager a span { font-size: 0.8125rem; font-weight: 400; color: var(--muted); }
+.pager .next { text-align: right; margin-left: auto; }
+
+@media (max-width: 820px) {
+  .doc-sec { grid-template-columns: 1fr; gap: 0.75rem; }
+}

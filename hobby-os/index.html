@@ -1,0 +1,97 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Hobby OS | regx64</title>
+<meta name="description" content="x86-64 어셈블리로 만드는 운영체제입니다. 커널 로드, 32비트 보호 모드, 페이징, 64비트 롱 모드를 지나 지금은 freestanding C 커널에서 VGA 드라이버가 돌아갑니다. 테스트는 QEMU로 합니다.">
+<link rel="icon" href="../favicon.ico" sizes="48x48">
+<link rel="icon" href="../favicon.svg" type="image/svg+xml">
+<link rel="apple-touch-icon" href="../apple-touch-icon.png">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css">
+<link rel="stylesheet" href="../style.css">
+<script type="importmap">
+{
+  "imports": {
+    "three": "https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js",
+    "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.160.0/examples/jsm/"
+  }
+}
+</script>
+<script type="module" src="../main.js"></script>
+</head>
+<body>
+<a class="skip" href="#main">본문으로 건너뛰기</a>
+
+<header class="nav">
+  <a class="brand" href="../">regx64</a>
+  <a href="../#os">전체 프로젝트</a>
+</header>
+
+<canvas id="gl" aria-hidden="true"></canvas>
+
+<main id="main" class="detail">
+
+  <section class="panel tone-dark">
+    <div class="copy">
+      <h1 class="name">Hobby OS</h1>
+      <p class="headline">부트섹터부터<br>VGA 드라이버까지.</p>
+      <p class="body"><span class='nowrap'>x86-64</span> 어셈블리로 만드는 운영체제입니다. 커널 로드, 32비트 보호 모드, 페이징, 64비트 롱 모드를 지나 지금은 freestanding C 커널에서 VGA 드라이버가 돌아갑니다. 테스트는 QEMU로 합니다.</p>
+    </div>
+    <div class="stage" data-model="os" role="img" aria-label="부팅 메시지가 출력되는 모니터"></div>
+  </section>
+
+  <div class="doc tone-a">
+    <section class="doc-sec">
+      <h2>개요</h2>
+      <div>
+        <p>전원이 들어온 직후 실행되는 부트섹터부터 시작해, 운영체제가 뜨기까지의 과정을 직접 구현하고 있습니다. <span class='nowrap'>x86-64</span> 어셈블리로 시작해 지금은 C로 짠 커널까지 올라왔습니다.</p>
+      </div>
+    </section>
+    <section class="doc-sec">
+      <h2>진행</h2>
+      <div>
+        <ol class="steps">
+          <li class="done"><span>부트섹터</span><span class="state">완료</span></li>
+          <li class="done"><span>커널 로드</span><span class="state">완료</span></li>
+          <li class="done"><span>32비트 보호 모드</span><span class="state">완료</span></li>
+          <li class="done"><span>페이징</span><span class="state">완료</span></li>
+          <li class="done"><span>64비트 롱 모드</span><span class="state">완료</span></li>
+          <li class="done"><span>freestanding C 커널</span><span class="state">완료</span></li>
+          <li class="done"><span>VGA 드라이버</span><span class="state">완료</span></li>
+        </ol>
+      </div>
+    </section>
+    <section class="doc-sec">
+      <h2>도구</h2>
+      <div>
+        <p><span class='nowrap'>x86-64</span> 어셈블리, C, QEMU</p>
+      </div>
+    </section>
+    <!-- 사진, 결과 그래프, 개발 기록을 넣으려면 아래 형식으로 섹션을 추가하세요.
+    <section class="doc-sec">
+      <h2>기록</h2>
+      <div>
+        <figure>
+          <img src="이미지.png" alt="이미지 설명">
+          <figcaption>설명</figcaption>
+        </figure>
+        <p>내용</p>
+      </div>
+    </section>
+    -->
+
+    <nav class="pager" aria-label="다른 프로젝트">
+      <a class="prev" href="../kdaa/"><span>이전 프로젝트</span>KDAA</a>
+      <a class="next" href="../cotton/"><span>다음 프로젝트</span>Cotton</a>
+    </nav>
+  </div>
+
+</main>
+
+<footer class="foot tone-a">
+  <p>x86-64 ASM, C, Rust, TypeScript, Next.js, Supabase, Arduino, KiCad, QEMU, Docker, Oracle Cloud</p>
+  <p><a href="https://github.com/twopercenz">twopercenz</a> / <a href="https://github.com/regx64">regx64</a></p>
+</footer>
+</body>
+</html>

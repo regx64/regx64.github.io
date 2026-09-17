@@ -1,0 +1,86 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>music.player | regx64</title>
+<meta name="description" content="개인용 뮤직 플레이어입니다. 오디오 추출은 MUXIC.js로 할까 생각 중입니다.">
+<link rel="icon" href="../favicon.ico" sizes="48x48">
+<link rel="icon" href="../favicon.svg" type="image/svg+xml">
+<link rel="apple-touch-icon" href="../apple-touch-icon.png">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css">
+<link rel="stylesheet" href="../style.css">
+<script type="importmap">
+{
+  "imports": {
+    "three": "https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js",
+    "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.160.0/examples/jsm/"
+  }
+}
+</script>
+<script type="module" src="../main.js"></script>
+</head>
+<body>
+<a class="skip" href="#main">본문으로 건너뛰기</a>
+
+<header class="nav">
+  <a class="brand" href="../">regx64</a>
+  <a href="../#player">전체 프로젝트</a>
+</header>
+
+<canvas id="gl" aria-hidden="true"></canvas>
+
+<main id="main" class="detail">
+
+  <section class="panel tone-b">
+    <div class="copy">
+      <h1 class="name">music.player</h1>
+      <p class="headline">제가 들으려고<br>만드는 플레이어.</p>
+      <p class="body">개인용 뮤직 플레이어입니다. 오디오 추출은 MUXIC.js로 할까 생각 중입니다.</p>
+      <div class="actions">
+        <a href="https://github.com/twopercenz/music.player">GitHub에서 보기</a>
+      </div>
+    </div>
+    <div class="stage" data-model="player" role="img" aria-label="돌아가는 레코드판과 턴테이블"></div>
+  </section>
+
+  <div class="doc tone-a">
+    <section class="doc-sec">
+      <h2>개요</h2>
+      <div>
+        <p>직접 쓰려고 만드는 뮤직 플레이어입니다.</p>
+      </div>
+    </section>
+    <section class="doc-sec">
+      <h2>오디오 추출</h2>
+      <div>
+        <p>오디오를 가져오는 계층으로 <a href='../muxic/'>MUXIC.js</a>를 쓰는 방안을 검토하고 있습니다.</p>
+      </div>
+    </section>
+    <!-- 사진, 결과 그래프, 개발 기록을 넣으려면 아래 형식으로 섹션을 추가하세요.
+    <section class="doc-sec">
+      <h2>기록</h2>
+      <div>
+        <figure>
+          <img src="이미지.png" alt="이미지 설명">
+          <figcaption>설명</figcaption>
+        </figure>
+        <p>내용</p>
+      </div>
+    </section>
+    -->
+
+    <nav class="pager" aria-label="다른 프로젝트">
+      <a class="prev" href="../percentage/"><span>이전 프로젝트</span>Percentage</a>
+      <a class="next" href="../muxic/"><span>다음 프로젝트</span>MUXIC.js</a>
+    </nav>
+  </div>
+
+</main>
+
+<footer class="foot tone-a">
+  <p>x86-64 ASM, C, Rust, TypeScript, Next.js, Supabase, Arduino, KiCad, QEMU, Docker, Oracle Cloud</p>
+  <p><a href="https://github.com/twopercenz">twopercenz</a> / <a href="https://github.com/regx64">regx64</a></p>
+</footer>
+</body>
+</html>

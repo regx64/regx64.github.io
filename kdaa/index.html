@@ -1,0 +1,90 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>KDAA | regx64</title>
+<meta name="description" content="키보드 소리로 입력을 알아내는 음향 사이드채널 공격(ASCA)을 한글 두벌식 자판에 적용하는 연구입니다. 지금까지 연구는 거의 영문 QWERTY만 다뤘습니다. 근접 마이크, 원거리 마이크, 배경소음이 섞인 경우로 나눠 CNN 모델 성능을 비교합니다.">
+<link rel="icon" href="../favicon.ico" sizes="48x48">
+<link rel="icon" href="../favicon.svg" type="image/svg+xml">
+<link rel="apple-touch-icon" href="../apple-touch-icon.png">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css">
+<link rel="stylesheet" href="../style.css">
+<script type="importmap">
+{
+  "imports": {
+    "three": "https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js",
+    "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.160.0/examples/jsm/"
+  }
+}
+</script>
+<script type="module" src="../main.js"></script>
+</head>
+<body>
+<a class="skip" href="#main">본문으로 건너뛰기</a>
+
+<header class="nav">
+  <a class="brand" href="../">regx64</a>
+  <a href="../#kdaa">전체 프로젝트</a>
+</header>
+
+<canvas id="gl" aria-hidden="true"></canvas>
+
+<main id="main" class="detail">
+
+  <section class="panel tone-b">
+    <div class="copy">
+      <h1 class="name">KDAA</h1>
+      <p class="headline">타건음만 듣고<br>한글을 읽을 수 있을까.</p>
+      <p class="body">키보드 소리로 입력을 알아내는 음향 사이드채널 공격(ASCA)을 한글 두벌식 자판에 적용하는 연구입니다. 지금까지 연구는 거의 영문 QWERTY만 다뤘습니다. 근접 마이크, 원거리 마이크, 배경소음이 섞인 경우로 나눠 CNN 모델 성능을 비교합니다.</p>
+      <p class="meta"><span lang='en'>Korean Dubeolsik Acoustic Attack</span><br>진행 중</p>
+    </div>
+    <div class="stage" data-model="kdaa" role="img" aria-label="눌릴 때마다 소리가 퍼지는 ㅎ 키캡"></div>
+  </section>
+
+  <div class="doc tone-a">
+    <section class="doc-sec">
+      <h2>개요</h2>
+      <div>
+        <p>키마다 눌리는 소리가 조금씩 다르다는 점을 이용해, 녹음된 타건음만으로 무엇을 입력했는지 추정하는 공격을 음향 사이드채널 공격(ASCA)이라고 합니다. 기존 연구는 대부분 영문 QWERTY 자판을 대상으로 했습니다. KDAA는 이 공격을 한글 두벌식 자판에 적용합니다.</p>
+      </div>
+    </section>
+    <section class="doc-sec">
+      <h2>공격 시나리오</h2>
+      <div>
+        <ul class='plain'><li>근접 마이크</li><li>원거리 마이크</li><li>배경소음이 섞인 환경</li></ul><p>시나리오마다 CNN 기반 모델의 성능을 비교합니다.</p>
+      </div>
+    </section>
+    <section class="doc-sec">
+      <h2>상태</h2>
+      <div>
+        <p>진행 중입니다.</p>
+      </div>
+    </section>
+    <!-- 사진, 결과 그래프, 개발 기록을 넣으려면 아래 형식으로 섹션을 추가하세요.
+    <section class="doc-sec">
+      <h2>기록</h2>
+      <div>
+        <figure>
+          <img src="이미지.png" alt="이미지 설명">
+          <figcaption>설명</figcaption>
+        </figure>
+        <p>내용</p>
+      </div>
+    </section>
+    -->
+
+    <nav class="pager" aria-label="다른 프로젝트">
+      <a class="prev" href="../systolic/"><span>이전 프로젝트</span>폰 노이만 병목과 시스톨릭 배열</a>
+      <a class="next" href="../hobby-os/"><span>다음 프로젝트</span>Hobby OS</a>
+    </nav>
+  </div>
+
+</main>
+
+<footer class="foot tone-a">
+  <p>x86-64 ASM, C, Rust, TypeScript, Next.js, Supabase, Arduino, KiCad, QEMU, Docker, Oracle Cloud</p>
+  <p><a href="https://github.com/twopercenz">twopercenz</a> / <a href="https://github.com/regx64">regx64</a></p>
+</footer>
+</body>
+</html>

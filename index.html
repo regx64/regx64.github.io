@@ -48,6 +48,9 @@
       <p class="headline">잡음에서<br>난수를 꺼냅니다.</p>
       <p class="body">애벌랜치 노이즈, 이산소자 링 오실레이터, FPGA 링 오실레이터로 각각 진짜 난수생성기를 만들어 비교하고 있습니다.</p>
       <p class="meta">진행 중</p>
+      <div class="actions">
+        <a class="btn" href="trng/" aria-label="TRNG 엔트로피원 비교 자세히 보기">자세히 보기</a>
+      </div>
     </div>
     <div class="stage" data-model="trng" role="img" aria-label="인버터 다섯 개로 이루어진 링 오실레이터 모형"></div>
   </section>
@@ -57,7 +60,10 @@
       <h2 class="name">폰 노이만 병목과 시스톨릭 배열</h2>
       <p class="headline">아두이노 네 대로<br>만든 행렬 곱셈기.</p>
       <p class="body">아두이노 나노 4대로 2×2 시스톨릭 배열을 만들고, 폰 노이만식 순차 처리와 시스톨릭 배열의 두 데이터 흐름(OS, WS)으로 행렬 곱셈을 돌려 비교했습니다. PE끼리는 비트뱅잉으로 통신하고, 처리 시간, MAC 연산 수, 메모리 접근 횟수, 사이클 수를 쟀습니다.</p>
-      <p class="meta"><span lang="en">Von Neumann Bottleneck and Systolic Array Architecture: An Empirical Efficiency Comparison</span><br>2026년, 4인 팀 연구</p>
+      <p class="meta"><span lang='en'>Von Neumann Bottleneck and Systolic Array Architecture: An Empirical Efficiency Comparison</span><br>2026년, 4인 팀 연구</p>
+      <div class="actions">
+        <a class="btn" href="systolic/" aria-label="폰 노이만 병목과 시스톨릭 배열 자세히 보기">자세히 보기</a>
+      </div>
     </div>
     <div class="stage" data-model="systolic" role="img" aria-label="전선으로 연결된 아두이노 나노 네 대"></div>
   </section>
@@ -67,7 +73,10 @@
       <h2 class="name">KDAA</h2>
       <p class="headline">타건음만 듣고<br>한글을 읽을 수 있을까.</p>
       <p class="body">키보드 소리로 입력을 알아내는 음향 사이드채널 공격(ASCA)을 한글 두벌식 자판에 적용하는 연구입니다. 지금까지 연구는 거의 영문 QWERTY만 다뤘습니다. 근접 마이크, 원거리 마이크, 배경소음이 섞인 경우로 나눠 CNN 모델 성능을 비교합니다.</p>
-      <p class="meta"><span lang="en">Korean Dubeolsik Acoustic Attack</span><br>2026~2027년, 3인 팀 연구</p>
+      <p class="meta"><span lang='en'>Korean Dubeolsik Acoustic Attack</span><br>진행 중</p>
+      <div class="actions">
+        <a class="btn" href="kdaa/" aria-label="KDAA 자세히 보기">자세히 보기</a>
+      </div>
     </div>
     <div class="stage" data-model="kdaa" role="img" aria-label="눌릴 때마다 소리가 퍼지는 ㅎ 키캡"></div>
   </section>
@@ -76,7 +85,10 @@
     <div class="copy">
       <h2 class="name">Hobby OS</h2>
       <p class="headline">부트섹터부터<br>VGA 드라이버까지.</p>
-      <p class="body"><span class="nowrap">x86-64</span> 어셈블리로 만드는 운영체제입니다. 커널 로드, 32비트 보호 모드, 페이징, 64비트 롱 모드를 지나 지금은 freestanding C 커널에서 VGA 드라이버가 돌아갑니다. 테스트는 QEMU로 합니다.</p>
+      <p class="body"><span class='nowrap'>x86-64</span> 어셈블리로 만드는 운영체제입니다. 커널 로드, 32비트 보호 모드, 페이징, 64비트 롱 모드를 지나 지금은 freestanding C 커널에서 VGA 드라이버가 돌아갑니다. 테스트는 QEMU로 합니다.</p>
+      <div class="actions">
+        <a class="btn" href="hobby-os/" aria-label="Hobby OS 자세히 보기">자세히 보기</a>
+      </div>
     </div>
     <div class="stage" data-model="os" role="img" aria-label="부팅 메시지가 출력되는 모니터"></div>
   </section>
@@ -85,8 +97,11 @@
     <div class="copy">
       <h2 class="name">Cotton</h2>
       <p class="headline">마음에 드는 것만<br>골라 만드는 언어.</p>
-      <p class="body">Rust, C 계열, Python, JavaScript에서 좋았던 부분을 섞고 있습니다. 명세는 v0.2까지 썼고, Rust로 짠 렉서가 돌아갑니다. 다음은 파서와 IR입니다.</p>
-      <p class="meta"><a href="https://github.com/twopercenz/cotton">GitHub에서 보기</a></p>
+      <p class="body">Rust, C 계열, Lua, Python, JavaScript에서 좋았던 부분을 섞고 있습니다. 명세는 v0.2까지 썼고, Rust로 짠 렉서가 돌아갑니다. 다음은 파서와 IR입니다.</p>
+      <div class="actions">
+        <a class="btn" href="cotton/" aria-label="Cotton 자세히 보기">자세히 보기</a>
+        <a href="https://github.com/twopercenz/cotton">GitHub에서 보기</a>
+      </div>
     </div>
     <div class="stage" data-model="cotton" role="img" aria-label="목화 솜 모형"></div>
   </section>
@@ -96,7 +111,10 @@
       <h2 class="name">Percentage</h2>
       <p class="headline">쌓으면,<br>보입니다.</p>
       <p class="body">나무위키 같은 한국어 개방형 위키입니다. 문서는 직접 만든 위키 문법 PerMark로 쓰고, Next.js와 Supabase로 만들었습니다.</p>
-      <p class="meta"><a href="https://github.com/twopercenz/percentage">GitHub에서 보기</a></p>
+      <div class="actions">
+        <a class="btn" href="percentage/" aria-label="Percentage 자세히 보기">자세히 보기</a>
+        <a href="https://github.com/twopercenz/percentage">GitHub에서 보기</a>
+      </div>
     </div>
     <div class="stage" data-model="percentage" role="img" aria-label="차곡차곡 쌓이는 문서 더미"></div>
   </section>
@@ -104,9 +122,12 @@
   <section class="panel tone-b" id="player">
     <div class="copy">
       <h2 class="name">music.player</h2>
-      <p class="headline">내가 들으려고<br>만드는 플레이어.</p>
-      <p class="body">개인용 뮤직 플레이어입니다. 오디오 추출은 MUXIC.js로 통합할지 생각 중입니다.</p>
-      <p class="meta"><a href="https://github.com/twopercenz/music.player">GitHub에서 보기</a></p>
+      <p class="headline">제가 들으려고<br>만드는 플레이어.</p>
+      <p class="body">개인용 뮤직 플레이어입니다. 오디오 추출은 MUXIC.js로 할까 생각 중입니다.</p>
+      <div class="actions">
+        <a class="btn" href="music-player/" aria-label="music.player 자세히 보기">자세히 보기</a>
+        <a href="https://github.com/twopercenz/music.player">GitHub에서 보기</a>
+      </div>
     </div>
     <div class="stage" data-model="player" role="img" aria-label="돌아가는 레코드판과 턴테이블"></div>
   </section>
@@ -114,9 +135,12 @@
   <section class="panel tone-a" id="muxic">
     <div class="copy">
       <h2 class="name">MUXIC.js</h2>
-      <p class="headline">음악 mp3를<br>다운로드하는<br>라이브러리.</p>
-      <p class="body">music.player의 오디오 추출 기능으로 쓸지 검토하고 있습니다.</p>
-      <p class="meta"><a href="https://github.com/twopercenz/MUXIC.js">GitHub에서 보기</a></p>
+      <p class="headline">mp3를 받아 오는<br>라이브러리.</p>
+      <p class="body">music.player의 오디오 추출 계층으로 쓸지 검토하고 있습니다.</p>
+      <div class="actions">
+        <a class="btn" href="muxic/" aria-label="MUXIC.js 자세히 보기">자세히 보기</a>
+        <a href="https://github.com/twopercenz/MUXIC.js">GitHub에서 보기</a>
+      </div>
     </div>
     <div class="stage" data-model="muxic" role="img" aria-label="원형으로 늘어선 이퀄라이저 막대"></div>
   </section>
@@ -124,9 +148,12 @@
   <section class="panel tone-b" id="ksca">
     <div class="copy">
       <h2 class="name">KSCA</h2>
-      <p class="headline">학생 논문에도<br>유사 DOI.</p>
+      <p class="headline">학생 논문에도<br>영구 주소를.</p>
       <p class="body">전국 청소년 컴퓨터 사이언스 학회용 웹 서비스입니다. Zenodo 같은 논문 아카이브에 영구 식별자, APA·BibTeX 인용, 버전 관리를 넣고, 게시판을 붙일 계획입니다.</p>
       <p class="meta">기획 중</p>
+      <div class="actions">
+        <a class="btn" href="ksca/" aria-label="KSCA 자세히 보기">자세히 보기</a>
+      </div>
     </div>
     <div class="stage" data-model="ksca" role="img" aria-label="부채꼴로 펼쳐진 논문 원고"></div>
   </section>

@@ -493,7 +493,7 @@ const MODELS = {
       ctx.fillStyle = '#fff';
       ctx.font = `700 50px ${FONT}`;
       ctx.textAlign = 'center';
-      ctx.fillText('MUSIC', c, c - 60);
+      ctx.fillText('music.player', c, c - 60);
       ctx.fillStyle = '#e8e8e8';
       ctx.beginPath(); ctx.arc(c, c, 14, 0, Math.PI * 2); ctx.fill();
     });

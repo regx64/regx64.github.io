@@ -1,0 +1,90 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>TRNG 엔트로피원 비교 | regx64</title>
+<meta name="description" content="애벌랜치 노이즈, 이산소자 링 오실레이터, FPGA 링 오실레이터로 각각 진짜 난수생성기를 만들어 비교하고 있습니다.">
+<link rel="icon" href="../favicon.ico" sizes="48x48">
+<link rel="icon" href="../favicon.svg" type="image/svg+xml">
+<link rel="apple-touch-icon" href="../apple-touch-icon.png">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css">
+<link rel="stylesheet" href="../style.css">
+<script type="importmap">
+{
+  "imports": {
+    "three": "https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js",
+    "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.160.0/examples/jsm/"
+  }
+}
+</script>
+<script type="module" src="../main.js"></script>
+</head>
+<body>
+<a class="skip" href="#main">본문으로 건너뛰기</a>
+
+<header class="nav">
+  <a class="brand" href="../">regx64</a>
+  <a href="../#trng">전체 프로젝트</a>
+</header>
+
+<canvas id="gl" aria-hidden="true"></canvas>
+
+<main id="main" class="detail">
+
+  <section class="panel tone-b">
+    <div class="copy">
+      <h1 class="name">TRNG 엔트로피원 비교</h1>
+      <p class="headline">잡음에서<br>난수를 꺼냅니다.</p>
+      <p class="body">애벌랜치 노이즈, 이산소자 링 오실레이터, FPGA 링 오실레이터로 각각 진짜 난수생성기를 만들어 비교하고 있습니다.</p>
+      <p class="meta">진행 중</p>
+    </div>
+    <div class="stage" data-model="trng" role="img" aria-label="인버터 다섯 개로 이루어진 링 오실레이터 모형"></div>
+  </section>
+
+  <div class="doc tone-a">
+    <section class="doc-sec">
+      <h2>개요</h2>
+      <div>
+        <p>컴퓨터가 흔히 쓰는 의사난수는 정해진 계산으로 만들어지기 때문에 시드를 알면 다시 만들 수 있습니다. 진짜 난수생성기(TRNG)는 물리 현상의 잡음에서 난수를 얻습니다. 이 프로젝트는 서로 다른 세 가지 엔트로피원으로 TRNG를 만들어 비교합니다.</p>
+      </div>
+    </section>
+    <section class="doc-sec">
+      <h2>엔트로피원</h2>
+      <div>
+        <dl class='pairs'><dt>애벌랜치 노이즈</dt><dd>역방향 전압이 걸린 PN 접합에서 애벌랜치 항복이 일어날 때 생기는 잡음</dd><dt>이산소자 링 오실레이터</dt><dd>개별 소자로 만든 인버터를 고리로 연결했을 때 생기는 발진 주기의 흔들림(지터)</dd><dt>FPGA 링 오실레이터</dt><dd>같은 원리를 FPGA 내부 논리로 구현한 것</dd></dl>
+      </div>
+    </section>
+    <section class="doc-sec">
+      <h2>상태</h2>
+      <div>
+        <p>진행 중입니다.</p>
+      </div>
+    </section>
+    <!-- 사진, 결과 그래프, 개발 기록을 넣으려면 아래 형식으로 섹션을 추가하세요.
+    <section class="doc-sec">
+      <h2>기록</h2>
+      <div>
+        <figure>
+          <img src="이미지.png" alt="이미지 설명">
+          <figcaption>설명</figcaption>
+        </figure>
+        <p>내용</p>
+      </div>
+    </section>
+    -->
+
+    <nav class="pager" aria-label="다른 프로젝트">
+      <span></span>
+      <a class="next" href="../systolic/"><span>다음 프로젝트</span>폰 노이만 병목과 시스톨릭 배열</a>
+    </nav>
+  </div>
+
+</main>
+
+<footer class="foot tone-a">
+  <p>x86-64 ASM, C, Rust, TypeScript, Next.js, Supabase, Arduino, KiCad, QEMU, Docker, Oracle Cloud</p>
+  <p><a href="https://github.com/twopercenz">twopercenz</a> / <a href="https://github.com/regx64">regx64</a></p>
+</footer>
+</body>
+</html>
