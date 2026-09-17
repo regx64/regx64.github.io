@@ -4,12 +4,80 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>폰 노이만 병목과 시스톨릭 배열 | regx64</title>
-<meta name="description" content="아두이노 나노 4대로 2×2 시스톨릭 배열을 만들고, 폰 노이만식 순차 처리와 시스톨릭 배열의 두 데이터 흐름(OS, WS)으로 행렬 곱셈을 돌려 비교했습니다. PE끼리는 비트뱅잉으로 통신하고, 처리 시간, MAC 연산 수, 메모리 접근 횟수, 사이클 수를 쟀습니다.">
+<meta name="description" content="아두이노 나노 호환보드 다섯 대로 폰 노이만식 순차 접근과 2×2 시스톨릭 배열을 구현해 행렬곱의 처리 시간과 데이터 이동 횟수를 비교한 연구">
 <link rel="icon" href="../favicon.ico" sizes="48x48">
 <link rel="icon" href="../favicon.svg" type="image/svg+xml">
 <link rel="apple-touch-icon" href="../apple-touch-icon.png">
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css">
 <link rel="stylesheet" href="../style.css">
+<style>
+  /* 이 페이지에만 쓰는 스타일 */
+  .doc-sec h3 { margin: 2rem 0 0.6rem; font-size: 1rem; }
+  .doc-sec h3:first-child { margin-top: 0; }
+
+  .stats {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 1.75rem 2rem;
+    margin: 0;
+  }
+  .stats div { border-top: 2px solid var(--ink); padding-top: 0.75rem; }
+  .stats dt { font-size: 2.25rem; font-weight: 700; letter-spacing: -0.03em; line-height: 1.2; }
+  .stats dd { margin: 0.25rem 0 0; font-size: 0.9375rem; color: var(--muted); }
+
+  .table-wrap { overflow-x: auto; margin: 0 0 0.9rem; }
+  .data {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.875rem;
+    font-variant-numeric: tabular-nums;
+    white-space: nowrap;
+  }
+  .data caption { text-align: left; font-weight: 600; font-size: 0.9375rem; padding-bottom: 0.5rem; }
+  .data th, .data td { padding: 0.45rem 0.6rem; border-bottom: 1px solid rgba(0, 0, 0, 0.1); }
+  .data thead th { border-bottom: 2px solid var(--ink); font-weight: 600; text-align: right; }
+  .data thead th:first-child, .data tbody th { text-align: left; }
+  .data tbody th { font-weight: 500; }
+  .data td { text-align: right; }
+  .data td.strong { font-weight: 700; }
+  .data tbody tr.split th, .data tbody tr.split td { border-top: 2px solid rgba(0, 0, 0, 0.25); }
+  .data.left td { text-align: left; }
+
+  .chart { margin: 1.5rem 0; }
+  .chart svg { display: block; width: 100%; height: auto; }
+
+  .formula {
+    margin: 1rem 0;
+    padding: 0.9rem 1.1rem;
+    background: #FFFFFF;
+    border-radius: 0.75rem;
+    font-size: 1.0625rem;
+    text-align: center;
+  }
+
+  .code {
+    margin: 1rem 0;
+    padding: 1rem 1.1rem;
+    overflow-x: auto;
+    background: #1B1B1B;
+    color: #E6E6E6;
+    border-radius: 0.75rem;
+    font-family: ui-monospace, Consolas, "D2Coding", monospace;
+    font-size: 0.8125rem;
+    line-height: 1.6;
+  }
+
+  .numbered { margin: 0 0 0.9rem; padding-left: 1.4rem; }
+  .numbered li { margin-bottom: 0.6rem; }
+  .numbered li:last-child { margin-bottom: 0; }
+
+  .refs { margin: 0; padding-left: 1.4rem; font-size: 0.9375rem; }
+  .refs li { margin-bottom: 0.4rem; }
+
+  @media (max-width: 820px) {
+    .stats dt { font-size: 1.75rem; }
+  }
+</style>
 <script type="importmap">
 {
   "imports": {
@@ -36,49 +104,390 @@
     <div class="copy">
       <h1 class="name">폰 노이만 병목과 시스톨릭 배열</h1>
       <p class="headline">아두이노 네 대로<br>만든 행렬 곱셈기.</p>
-      <p class="body">아두이노 나노 4대로 2×2 시스톨릭 배열을 만들고, 폰 노이만식 순차 처리와 시스톨릭 배열의 두 데이터 흐름(OS, WS)으로 행렬 곱셈을 돌려 비교했습니다. PE끼리는 비트뱅잉으로 통신하고, 처리 시간, MAC 연산 수, 메모리 접근 횟수, 사이클 수를 쟀습니다.</p>
-      <p class="meta"><span lang='en'>Von Neumann Bottleneck and Systolic Array Architecture: An Empirical Efficiency Comparison</span><br>2026년, 4인 팀 연구</p>
+      <p class="body">아두이노 나노 호환보드로 2×2 시스톨릭 배열을 만들고, 폰 노이만식 순차 접근과 같은 행렬곱을 돌려 처리 시간과 데이터 이동 횟수를 비교했습니다. 데이터 재사용으로 이동 횟수는 25% 줄었지만, 보드 간 통신 비용 때문에 처리 시간은 300배 넘게 느렸습니다.</p>
+      <p class="meta"><span lang="en">Comparison of the von Neumann Bottleneck and the Efficiency of the Systolic Array Architecture</span><br>2026 과학탐구 프로젝트, 4인 팀</p>
+      <div class="actions">
+        <a class="btn" href="https://github.com/Gradica/Arduino-repo">실험 코드 보기</a>
+      </div>
     </div>
     <div class="stage" data-model="systolic" role="img" aria-label="전선으로 연결된 아두이노 나노 네 대"></div>
   </section>
 
   <div class="doc tone-a">
+
     <section class="doc-sec">
-      <h2>개요</h2>
+      <h2>결과 요약</h2>
       <div>
-        <p>폰 노이만 구조에서는 연산 장치와 메모리 사이를 데이터가 계속 오가야 해서 병목이 생깁니다. 시스톨릭 배열은 단순한 처리 소자(PE)를 격자로 놓고 데이터를 옆 소자로 흘려보내며 계산합니다. 두 방식을 같은 행렬 곱셈으로 돌려 실제 효율을 비교했습니다.</p>
+        <dl class="stats">
+          <div><dt><span data-count="25">25</span>% 적음</dt><dd>행렬 원소의 논리적 이동 횟수. 격자 6K회, 단일 보드 8K회</dd></div>
+          <div><dt><span data-count="295">295</span>~<span data-count="326">326</span>배</dt><dd>격자가 단일 보드보다 느렸던 정도</dd></div>
+          <div><dt>약 <span data-count="417">417</span>배</dt><dd>이동 한 번에 드는 비용 차이. 3.23 µs 대 1,346.9 µs</dd></div>
+          <div><dt><span data-count="1.0" data-dec="1">1.0</span>%</dt><dd>격자의 처리 시간 중 실제 계산에 쓰인 비율</dd></div>
+        </dl>
       </div>
     </section>
+
     <section class="doc-sec">
-      <h2>구성</h2>
+      <h2>연구 동기</h2>
       <div>
-        <ul class='plain'><li>아두이노 나노 4대로 만든 2×2 시스톨릭 배열</li><li>PE 사이 통신은 비트뱅잉으로 직접 구현</li><li>비교 대상: 폰 노이만식 순차 처리, 시스톨릭 배열의 OS 방식과 WS 방식</li></ul>
+        <p>AI 관련주가 오를 때 에너지 관련주도 같이 오르는 걸 보고, AI와 전력이 무슨 관계인지 찾아봤습니다. LLM에 질문 하나를 보내는 데 드는 전력이 일반 검색 한 번보다 훨씬 크다는 연구가 있었고, AI 서비스가 늘수록 데이터센터 전력 수요도 빠르게 늘고 있었습니다.</p>
+        <p>딥러닝은 입력과 가중치 행렬의 곱을 반복하며 학습하고 추론합니다. 모델이 커질수록 행렬도 커지고 연산 횟수도 빠르게 늘어납니다. 여기에 대부분의 컴퓨터가 쓰는 폰 노이만 구조는 같은 데이터를 메모리에서 반복해서 읽어 와야 한다는 구조적 비효율을 갖고 있습니다.</p>
+        <p>시스톨릭 배열은 데이터를 매번 메모리에서 가져오는 대신 처리 소자끼리 직접 주고받으며 재사용하는 구조입니다. 두 방식을 아두이노로 직접 구현해서, 시스톨릭 배열의 이점이 실제로 어떤 조건에서 성립하는지 확인하려고 했습니다.</p>
       </div>
     </section>
+
     <section class="doc-sec">
-      <h2>측정 항목</h2>
+      <h2>이론적 배경</h2>
       <div>
-        <ul class='plain'><li>처리 시간</li><li>MAC(곱셈 후 누적) 연산 수</li><li>메모리 접근 횟수</li><li>사이클 수</li></ul>
+        <h3>행렬곱과 MAC 연산</h3>
+        <p>M×K 행렬 A와 K×P 행렬 B를 곱하면 M×P 행렬 C가 나옵니다. 공통 차원 K를 내부 차원이라고 부릅니다. C의 원소 하나는 A의 한 행과 B의 한 열을 원소끼리 곱해 더한 값이고, 이 과정은 곱한 값을 부분합에 계속 더하는 MAC(Multiply-Accumulate) 연산의 반복입니다.</p>
+        <p class="formula">부분합 ← 부분합 + A × B</p>
+        <p>원소 하나를 구하려면 곱셈 K번과 덧셈 K−1번, 합쳐 2K−1번의 연산이 필요합니다. 전체로는 약 2×M×K×P번이고, 정사각행렬이면 n³에 비례해서 각 차원이 2배가 되면 연산량은 8배가 됩니다.</p>
+
+        <h3>폰 노이만 병목</h3>
+        <p>폰 노이만 구조는 프로그램과 데이터를 같은 주기억장치에 두고, CPU가 필요한 명령어와 데이터를 메모리에서 차례로 읽어 와 처리합니다. 병목이 생기는 이유는 두 가지입니다.</p>
+        <ul class="plain">
+          <li><strong>단일 버스:</strong> CPU와 메모리가 물리적으로 떨어져 있고 하나의 시스템 버스를 공유합니다. 그래서 명령어와 데이터가 동시에 오갈 수 없습니다.</li>
+          <li><strong>메모리 장벽(Memory Wall):</strong> CPU 연산 속도는 빠르게 좋아졌지만 메모리 접근 지연은 훨씬 느리게 개선됐습니다. 그래서 CPU가 데이터를 기다리며 노는 시간이 늘어납니다.</li>
+        </ul>
+        <p>행렬곱에서는 연산마다 원소를 메모리에서 읽어야 하므로 처리 비용도 연산 횟수처럼 K³ 규모로 늘어납니다.</p>
+
+        <h3>시스톨릭 배열</h3>
+        <p>1978년 카네기멜런 대학의 H. T. Kung과 Charles Leiserson이 제안한 구조입니다. 이름은 심장이 규칙적으로 수축해 혈액을 내보내는 동작(systole)에서 왔습니다. PE(Processing Element)라는 단순한 처리 소자를 격자로 늘어놓고, 각 PE가 클럭에 맞춰 동시에 MAC 연산을 한 뒤 결과를 이웃 PE로 넘깁니다. 각 PE는 부분합이나 입력값을 담아 둘 로컬 메모리를 갖습니다.</p>
+        <p>핵심은 데이터 재사용입니다. 폰 노이만 구조에서는 결과 원소 K²개를 계산하는 동안 같은 행과 열을 K번씩 다시 읽습니다. 시스톨릭 배열에서는 한 번 격자에 들어온 원소가 여러 PE를 지나며 계속 연산에 쓰입니다.</p>
+        <p>데이터 흐름 방식은 여러 가지가 있는데, AI 연산에서 많이 쓰이는 것은 출력 고정형(OS, Output Stationary)과 가중치 고정형(WS, Weight Stationary)입니다. OS에서는 각 PE가 맡은 출력의 부분합을 붙잡고 있고, 입력값이 PE를 지나갑니다. 이 연구는 OS 방식을 구현했습니다.</p>
+
+        <h3>이론적 클럭 수와 한계</h3>
+        <p>Raja(2024)는 시스톨릭 배열이 행렬곱을 끝내는 데 필요한 총 클럭 사이클 수를 다음과 같이 제시했습니다. S<sub>R</sub>은 격자의 행 수, S<sub>C</sub>는 열 수, T는 내부 차원입니다.</p>
+        <p class="formula">N<sub>C</sub> = 2·S<sub>R</sub> + S<sub>C</sub> + T − 2</p>
+        <p>식에서 T를 뺀 나머지 항은 데이터가 격자를 채우고 빠져나가는 동안 실제 연산이 없는 파이프라인 지연입니다. 행렬이 격자보다 작을수록 이 지연의 비중이 커집니다. 또 행렬이 격자보다 크면 행렬을 격자 크기로 나눠 차례로 밀어 넣는 타일링이 필요합니다. 이 실험의 2×2 격자도 더 큰 행렬을 처리하려고 파이프라인 타일링을 코드에 넣었습니다. 결국 시스톨릭 배열의 우위는 조건에 따라 달라집니다.</p>
       </div>
     </section>
+
     <section class="doc-sec">
-      <h2>정보</h2>
+      <h2>실험 설계</h2>
       <div>
-        <p lang='en'>Von Neumann Bottleneck and Systolic Array Architecture: An Empirical Efficiency Comparison</p><p>2026년, 4인 팀 연구</p>
+        <p>같은 행렬곱을 두 가지 구조로 처리하고 처리 시간과 데이터 이동 횟수를 비교했습니다. 두 구조가 처리하는 행렬과 연산량은 완전히 같습니다.</p>
+        <div class="table-wrap">
+          <table class="data left">
+            <caption>변인 설계</caption>
+            <thead><tr><th scope="col">구분</th><th scope="col" style="text-align:left">변인</th><th scope="col" style="text-align:left">조건</th></tr></thead>
+            <tbody>
+              <tr><th scope="row">독립변인 1</th><td>처리 구조</td><td>단일 보드(순차), 2×2 격자(병렬)</td></tr>
+              <tr><th scope="row">독립변인 2</th><td>행렬 내부 차원 K</td><td>2, 4, 6, 8</td></tr>
+              <tr><th scope="row">종속변인 1</th><td>처리 시간</td><td>micros()로 잰 연산 완료 시간 (µs)</td></tr>
+              <tr><th scope="row">종속변인 2</th><td>데이터 이동 횟수</td><td>행렬 원소의 논리적 이동 횟수</td></tr>
+              <tr><th scope="row">통제변인</th><td>보드와 동작 조건</td><td>보드 기종, 클럭, 보드 간 통신 속도, 행렬 원소값</td></tr>
+            </tbody>
+          </table>
+        </div>
+        <p>격자의 크기가 2×2로 고정돼 있어서 출력 행렬도 2×2로 두고 내부 차원 K만 바꿨습니다. A는 2×K, B는 K×2 행렬입니다.</p>
+        <div class="table-wrap">
+          <table class="data left">
+            <caption>조건별 입력 행렬과 정답</caption>
+            <thead><tr><th scope="col">K</th><th scope="col" style="text-align:left">A (2×K)</th><th scope="col" style="text-align:left">B (K×2)</th><th scope="col" style="text-align:left">정답 C</th></tr></thead>
+            <tbody>
+              <tr><th scope="row">2</th><td>{1,2}, {5,6}</td><td>{1,2}, {5,6}</td><td>{11,14}, {35,46}</td></tr>
+              <tr><th scope="row">4</th><td>{1..4}, {5..8}</td><td>{1,2} ~ {7,8}</td><td>{50,60}, {114,140}</td></tr>
+              <tr><th scope="row">6</th><td>{1..6}, {7..12}</td><td>{1,2} ~ {11,12}</td><td>{161,182}, {377,434}</td></tr>
+              <tr><th scope="row">8</th><td>{1..8}, {9..16}</td><td>{1,2} ~ {15,16}</td><td>{372,408}, {884,984}</td></tr>
+            </tbody>
+          </table>
+        </div>
       </div>
     </section>
-    <!-- 사진, 결과 그래프, 개발 기록을 넣으려면 아래 형식으로 섹션을 추가하세요.
+
     <section class="doc-sec">
-      <h2>기록</h2>
+      <h2>하드웨어</h2>
       <div>
-        <figure>
-          <img src="이미지.png" alt="이미지 설명">
-          <figcaption>설명</figcaption>
+        <p>Arduino Nano 호환보드(SZH-EK025, ATmega328P) 다섯 대를 썼습니다. 네 대는 2×2 격자의 PE, 한 대는 대조군입니다. 전원은 전원 공급형 USB 허브로 한꺼번에 넣고, 다섯 보드의 GND를 브레드보드 공통 레일에 묶어 신호 기준을 맞췄습니다. 결과와 처리 시간은 PE(1,1)에 연결한 16×2 I2C LCD로 확인합니다.</p>
+        <div class="table-wrap">
+          <table class="data left">
+            <caption>보드별 역할</caption>
+            <thead><tr><th scope="col">보드</th><th scope="col" style="text-align:left">역할</th><th scope="col" style="text-align:left">가진 행렬 데이터</th></tr></thead>
+            <tbody>
+              <tr><th scope="row">PE(0,0)</th><td>마스터. 격자 전체에 데이터 주입, 타이밍 신호 발생, C[0][0] 누산</td><td>A, B 전체</td></tr>
+              <tr><th scope="row">PE(0,1)</th><td>A[0][k]·B[k][1] 수신 후 C[0][1] 누산, B[k][1]을 아래로 전달</td><td>없음</td></tr>
+              <tr><th scope="row">PE(1,0)</th><td>B[k][0]·A[1][k] 수신 후 C[1][0] 누산, A[1][k]를 오른쪽으로 전달</td><td>없음</td></tr>
+              <tr><th scope="row">PE(1,1)</th><td>두 방향에서 수신 후 C[1][1] 누산, 시간 측정, LCD 출력</td><td>없음</td></tr>
+              <tr><th scope="row">단일 보드</th><td>대조군. 순차 배열 접근으로 행렬곱 전체 수행</td><td>A, B 전체</td></tr>
+            </tbody>
+          </table>
+        </div>
+        <p>각 연결은 클럭선과 데이터선 두 가닥을 한 쌍으로 씁니다. D2·D4는 가로 링크, D3·D5는 세로 링크입니다. D6는 PE(0,0)과 PE(1,1)을 직접 잇는 시간 측정용 신호선입니다.</p>
+        <div class="table-wrap">
+          <table class="data left">
+            <caption>보드 간 연결</caption>
+            <thead><tr><th scope="col">송신</th><th scope="col" style="text-align:left">수신</th><th scope="col" style="text-align:left">신호</th></tr></thead>
+            <tbody>
+              <tr><th scope="row">PE(0,0) D2, D4</th><td>PE(0,1) D2, D4</td><td>CLOCK A, DATA A</td></tr>
+              <tr><th scope="row">PE(0,0) D3, D5</th><td>PE(1,0) D3, D5</td><td>CLOCK B, DATA B</td></tr>
+              <tr><th scope="row">PE(0,1) D3, D5</th><td>PE(1,1) D3, D5</td><td>CLOCK B, DATA B</td></tr>
+              <tr><th scope="row">PE(1,0) D2, D4</th><td>PE(1,1) D2, D4</td><td>CLOCK A, DATA A</td></tr>
+              <tr><th scope="row">PE(0,0) D6</th><td>PE(1,1) D6</td><td>TIMING</td></tr>
+              <tr><th scope="row">전 보드 GND</th><td>공통 레일</td><td>기준점 공유</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+    <section class="doc-sec">
+      <h2>대조군</h2>
+      <div>
+        <p>ATmega328P는 명령어 메모리와 데이터 메모리가 물리적으로 나뉜 수정 하버드 구조라서, 칩 수준에서 폰 노이만 병목을 그대로 재현할 수는 없습니다. 그래서 전역 변수 <code>BUS</code>를 두고, 행렬 원소에 대한 모든 접근이 <code>busRead()</code>를 거치게 했습니다. 하나의 통로를 공유하는 폰 노이만 구조의 동작을 소프트웨어로 흉내 내면서, 접근 횟수도 정확히 셀 수 있습니다.</p>
+<pre class="code"><code>volatile int BUS = 0;          // 공유 버스
+
+inline int busRead(int value) {
+  BUS = value;                 // 모든 접근은 이 통로를 거침
+  accessCount++;
+  return BUS;
+}</code></pre>
+      </div>
+    </section>
+
+    <section class="doc-sec">
+      <h2>실험군</h2>
+      <div>
+        <p>출력 고정형(OS) 데이터 흐름을 구현했습니다. 각 PE는 맡은 출력 원소의 부분합을 끝까지 들고 있고, A의 원소는 가로로, B의 원소는 세로로 격자를 지나갑니다.</p>
+        <p>시간 단계 k마다 PE(0,0)은 자기 MAC 연산을 한 뒤 A[0][k]와 B[k][1]을 오른쪽으로 보내고, 스큐 시간만큼 기다린 다음 B[k][0]과 A[1][k]를 아래로 보냅니다. 스큐는 4,000 µs로 정했습니다. PE(0,1)이 데이터를 받아 PE(1,1)로 넘기기에 충분한 시간이라서, PE(1,1)은 폴링 없이 정해진 순서대로 두 방향의 신호를 받을 수 있습니다.</p>
+        <p>행렬 크기를 바꿀 때는 PE(0,0)의 코드만 바꿨습니다. 나머지 세 PE는 종료 신호가 올 때까지 반복하는 구조라서 K와 상관없이 동작합니다.</p>
+      </div>
+    </section>
+
+    <section class="doc-sec">
+      <h2>측정 방법</h2>
+      <div>
+        <h3>처리 시간</h3>
+        <p>두 구조 모두 첫 MAC 연산이 시작될 때부터 마지막 MAC 연산이 끝날 때까지를 쟀습니다.</p>
+        <ul class="plain">
+          <li><strong>대조군:</strong> 3중 반복문 진입 직전과 종료 직후에 <code>micros()</code>로 시각을 기록합니다.</li>
+          <li><strong>실험군:</strong> PE(0,0)이 첫 MAC 직전에 D6를 HIGH로 올리고, PE(1,1)이 그 신호를 감지한 순간을 시작 시각으로 기록합니다. 종료 시각은 PE(1,1)이 MAC을 끝낼 때마다 갱신해서 마지막 MAC이 끝난 시점이 남게 했습니다. 종료 신호가 격자 전체로 퍼지는 시간은 측정에서 빠집니다.</li>
+        </ul>
+
+        <h3>데이터 이동 횟수</h3>
+        <p>두 구조에서 이동의 물리적 실체가 달라서, 행렬 원소 하나가 한 지점에서 다른 지점으로 옮겨지는 논리적 이동을 공통 기준으로 삼았습니다.</p>
+        <ul class="plain">
+          <li><strong>대조군:</strong> 반복마다 A와 B의 원소를 BUS로 한 번씩 읽으므로 2×2×K×2 = 8K회입니다.</li>
+          <li><strong>실험군:</strong> 시간 단계마다 PE(0,0)에서 오른쪽으로 2개(A[0][k], B[k][1]), 아래로 2개(B[k][0], A[1][k]), PE(0,1)에서 PE(1,1)로 1개(B[k][1]), PE(1,0)에서 PE(1,1)로 1개(A[1][k])가 이동합니다. 단계당 6개라서 6K회입니다.</li>
+        </ul>
+
+        <h3>절차</h3>
+        <p>조건마다 PE(0,0)의 리셋 버튼으로 실험을 시작하고, LCD와 시리얼 모니터로 결과 행렬과 처리 시간을 기록했습니다. 모든 조건을 5회 이상 반복해 평균과 표준편차를 냈습니다.</p>
+      </div>
+    </section>
+
+    <section class="doc-sec">
+      <h2>결과: 처리 시간</h2>
+      <div>
+        <div class="table-wrap">
+          <table class="data">
+            <caption>조건별 처리 시간 (µs)</caption>
+            <thead>
+              <tr><th scope="col">조건</th><th scope="col">1회</th><th scope="col">2회</th><th scope="col">3회</th><th scope="col">4회</th><th scope="col">5회</th><th scope="col">평균</th><th scope="col">표준편차</th></tr>
+            </thead>
+            <tbody>
+              <tr><th scope="row">단일 K=2</th><td>52</td><td>52</td><td>52</td><td>52</td><td>52</td><td class="strong">52.0</td><td>0.00</td></tr>
+              <tr><th scope="row">단일 K=4</th><td>112</td><td>112</td><td>112</td><td>112</td><td>112</td><td class="strong">112.0</td><td>0.00</td></tr>
+              <tr><th scope="row">단일 K=6</th><td>160</td><td>160</td><td>160</td><td>160</td><td>160</td><td class="strong">160.0</td><td>0.00</td></tr>
+              <tr><th scope="row">단일 K=8</th><td>208</td><td>208</td><td>208</td><td>208</td><td>208</td><td class="strong">208.0</td><td>0.00</td></tr>
+              <tr class="split"><th scope="row">격자 K=2</th><td>16,986</td><td>16,972</td><td>16,968</td><td>16,972</td><td>16,964</td><td class="strong">16,972.4</td><td>8.29</td></tr>
+              <tr><th scope="row">격자 K=4</th><td>33,072</td><td>33,068</td><td>33,072</td><td>33,068</td><td>33,072</td><td class="strong">33,070.4</td><td>2.19</td></tr>
+              <tr><th scope="row">격자 K=6</th><td>49,212</td><td>49,216</td><td>49,216</td><td>49,220</td><td>49,220</td><td class="strong">49,216.8</td><td>3.35</td></tr>
+              <tr><th scope="row">격자 K=8</th><td>65,468</td><td>65,464</td><td>65,460</td><td>65,460</td><td>65,468</td><td class="strong">65,464.0</td><td>4.00</td></tr>
+            </tbody>
+          </table>
+        </div>
+        <figure class="chart">
+          <svg viewBox="0 0 640 380" role="img" aria-label="K에 따른 처리 시간. 단일 보드 52, 112, 160, 208 마이크로초, 2×2 격자 16,972, 33,070, 49,217, 65,464 마이크로초" xmlns="http://www.w3.org/2000/svg" font-family="Pretendard, -apple-system, sans-serif">
+          <line x1="70" x2="616" y1="324.0" y2="324.0" stroke="#D4D4D4" stroke-width="1"/>
+          <text x="60.0" y="328.0" font-size="12" fill="#6E6E6E" text-anchor="end" font-weight="400">10<tspan dy='-6' font-size='9'>1</tspan></text>
+          <line x1="70" x2="616" y1="250.5" y2="250.5" stroke="#D4D4D4" stroke-width="1"/>
+          <text x="60.0" y="254.5" font-size="12" fill="#6E6E6E" text-anchor="end" font-weight="400">10<tspan dy='-6' font-size='9'>2</tspan></text>
+          <line x1="70" x2="616" y1="177.0" y2="177.0" stroke="#D4D4D4" stroke-width="1"/>
+          <text x="60.0" y="181.0" font-size="12" fill="#6E6E6E" text-anchor="end" font-weight="400">10<tspan dy='-6' font-size='9'>3</tspan></text>
+          <line x1="70" x2="616" y1="103.5" y2="103.5" stroke="#D4D4D4" stroke-width="1"/>
+          <text x="60.0" y="107.5" font-size="12" fill="#6E6E6E" text-anchor="end" font-weight="400">10<tspan dy='-6' font-size='9'>4</tspan></text>
+          <line x1="70" x2="616" y1="30.0" y2="30.0" stroke="#D4D4D4" stroke-width="1"/>
+          <text x="60.0" y="34.0" font-size="12" fill="#6E6E6E" text-anchor="end" font-weight="400">10<tspan dy='-6' font-size='9'>5</tspan></text>
+          <text x="138.2" y="346.0" font-size="12" fill="#6E6E6E" text-anchor="middle" font-weight="400">K = 2</text>
+          <text x="274.8" y="346.0" font-size="12" fill="#6E6E6E" text-anchor="middle" font-weight="400">K = 4</text>
+          <text x="411.2" y="346.0" font-size="12" fill="#6E6E6E" text-anchor="middle" font-weight="400">K = 6</text>
+          <text x="547.8" y="346.0" font-size="12" fill="#6E6E6E" text-anchor="middle" font-weight="400">K = 8</text>
+          <text x="343.0" y="370.0" font-size="12" fill="#6E6E6E" text-anchor="middle" font-weight="400">행렬 내부 차원 K (출력 행렬 2×2 고정)</text>
+          <text transform="translate(18 177.0) rotate(-90)" font-size="12" fill="#6E6E6E" text-anchor="middle">처리 시간 (µs, 로그 눈금)</text>
+          <defs><clipPath id="c1clip"><rect data-reveal="570" x="70" y="0" width="570" height="380"/></clipPath></defs><g clip-path="url(#c1clip)">
+          <polyline points="138.2,86.6 274.8,65.3 411.2,52.6 547.8,43.5" fill="none" stroke="#2F5FC4" stroke-width="2.5" stroke-dasharray=""/>
+          <circle cx="138.2" cy="86.6" r="5" fill="#2F5FC4"/>
+          <text x="138.2" y="74.6" font-size="12" fill="#1D1D1D" text-anchor="middle" font-weight="600">16,972</text>
+          <circle cx="274.8" cy="65.3" r="5" fill="#2F5FC4"/>
+          <text x="274.8" y="53.3" font-size="12" fill="#1D1D1D" text-anchor="middle" font-weight="600">33,070</text>
+          <circle cx="411.2" cy="52.6" r="5" fill="#2F5FC4"/>
+          <text x="411.2" y="40.6" font-size="12" fill="#1D1D1D" text-anchor="middle" font-weight="600">49,217</text>
+          <circle cx="547.8" cy="43.5" r="5" fill="#2F5FC4"/>
+          <text x="547.8" y="31.5" font-size="12" fill="#1D1D1D" text-anchor="middle" font-weight="600">65,464</text>
+          <polyline points="138.2,271.4 274.8,246.9 411.2,235.5 547.8,227.1" fill="none" stroke="#9A9A9A" stroke-width="2.5" stroke-dasharray="6 4"/>
+          <circle cx="138.2" cy="271.4" r="5" fill="#9A9A9A"/>
+          <text x="138.2" y="291.4" font-size="12" fill="#1D1D1D" text-anchor="middle" font-weight="600">52</text>
+          <circle cx="274.8" cy="246.9" r="5" fill="#9A9A9A"/>
+          <text x="274.8" y="266.9" font-size="12" fill="#1D1D1D" text-anchor="middle" font-weight="600">112</text>
+          <circle cx="411.2" cy="235.5" r="5" fill="#9A9A9A"/>
+          <text x="411.2" y="255.5" font-size="12" fill="#1D1D1D" text-anchor="middle" font-weight="600">160</text>
+          <circle cx="547.8" cy="227.1" r="5" fill="#9A9A9A"/>
+          <text x="547.8" y="247.1" font-size="12" fill="#1D1D1D" text-anchor="middle" font-weight="600">208</text>
+          </g>
+          <line x1="86" x2="114" y1="137.0" y2="137.0" stroke="#2F5FC4" stroke-width="2.5"/><text x="122.0" y="141.0" font-size="12" fill="#1D1D1D" text-anchor="start" font-weight="400">2×2 격자 (시스톨릭 배열)</text>
+          <line x1="86" x2="114" y1="168.6" y2="168.6" stroke="#9A9A9A" stroke-width="2.5" stroke-dasharray="6 4"/><text x="122.0" y="172.6" font-size="12" fill="#1D1D1D" text-anchor="start" font-weight="400">단일 보드 (폰 노이만 모사)</text>
+          </svg>
+          <figcaption>실측 처리 시간. 격자가 모든 조건에서 295~326배 느렸습니다.</figcaption>
         </figure>
-        <p>내용</p>
+        <p>최소제곱 직선으로 근사하면 다음과 같습니다.</p>
+        <ul class="plain">
+          <li>단일 보드: y = 25.8K + 4.0 (R² = 0.9968)</li>
+          <li>2×2 격자: y = 8,081.1K + 775.6 (R² = 0.99999)</li>
+        </ul>
+        <p>기울기 비는 8,081.1 ÷ 25.8 = 313.2이고 절편도 격자 쪽이 큽니다. 그래서 두 직선은 K가 아무리 커져도 만나지 않습니다. 이 실험 환경에서는 시스톨릭 배열이 단일 보드를 앞지르는 지점이 없습니다.</p>
+        <p>이론값과도 비교했습니다. 2×2 격자에 Raja(2024)의 식을 넣으면 N<sub>C</sub> = K + 4이므로 K = 2, 4, 6, 8에서 각각 6, 8, 10, 12사이클입니다. 실측 시간을 16 MHz 클럭 수로 바꾸면 271,558~1,047,424사이클로, 네다섯 자릿수 이상 큽니다. 이론은 PE 간 전달을 1클럭으로 보는데, 이 구현에서는 전달이 마이크로초 단위의 외부 GPIO 통신이기 때문입니다.</p>
       </div>
     </section>
-    -->
+
+    <section class="doc-sec">
+      <h2>결과: 이동 횟수</h2>
+      <div>
+        <figure class="chart">
+          <svg viewBox="0 0 640 340" role="img" aria-label="논리적 이동 횟수. 단일 보드 16, 32, 48, 64회, 2×2 격자 12, 24, 36, 48회" xmlns="http://www.w3.org/2000/svg" font-family="Pretendard, -apple-system, sans-serif">
+          <line x1="56" x2="616" y1="284.0" y2="284.0" stroke="#D4D4D4"/>
+          <text x="46.0" y="288.0" font-size="12" fill="#6E6E6E" text-anchor="end" font-weight="400">0</text>
+          <line x1="56" x2="616" y1="223.0" y2="223.0" stroke="#D4D4D4"/>
+          <text x="46.0" y="227.0" font-size="12" fill="#6E6E6E" text-anchor="end" font-weight="400">20</text>
+          <line x1="56" x2="616" y1="162.0" y2="162.0" stroke="#D4D4D4"/>
+          <text x="46.0" y="166.0" font-size="12" fill="#6E6E6E" text-anchor="end" font-weight="400">40</text>
+          <line x1="56" x2="616" y1="101.0" y2="101.0" stroke="#D4D4D4"/>
+          <text x="46.0" y="105.0" font-size="12" fill="#6E6E6E" text-anchor="end" font-weight="400">60</text>
+          <line x1="56" x2="616" y1="40.0" y2="40.0" stroke="#D4D4D4"/>
+          <text x="46.0" y="44.0" font-size="12" fill="#6E6E6E" text-anchor="end" font-weight="400">80</text>
+          <rect class="bar" data-d="0" data-base="284.0" x="89.0" y="235.2" width="34" height="48.8" fill="#9A9A9A" rx="3"/>
+          <text class="lbl" data-d="700" x="106.0" y="228.2" font-size="12" fill="#1D1D1D" text-anchor="middle" font-weight="600">16</text>
+          <rect class="bar" data-d="60" data-base="284.0" x="129.0" y="247.4" width="34" height="36.6" fill="#2F5FC4" rx="3"/>
+          <text class="lbl" data-d="760" x="146.0" y="240.4" font-size="12" fill="#1D1D1D" text-anchor="middle" font-weight="600">12</text>
+          <text x="126.0" y="306.0" font-size="12" fill="#6E6E6E" text-anchor="middle" font-weight="400">K = 2</text>
+          <rect class="bar" data-d="120" data-base="284.0" x="229.0" y="186.4" width="34" height="97.6" fill="#9A9A9A" rx="3"/>
+          <text class="lbl" data-d="820" x="246.0" y="179.4" font-size="12" fill="#1D1D1D" text-anchor="middle" font-weight="600">32</text>
+          <rect class="bar" data-d="180" data-base="284.0" x="269.0" y="210.8" width="34" height="73.2" fill="#2F5FC4" rx="3"/>
+          <text class="lbl" data-d="880" x="286.0" y="203.8" font-size="12" fill="#1D1D1D" text-anchor="middle" font-weight="600">24</text>
+          <text x="266.0" y="306.0" font-size="12" fill="#6E6E6E" text-anchor="middle" font-weight="400">K = 4</text>
+          <rect class="bar" data-d="240" data-base="284.0" x="369.0" y="137.6" width="34" height="146.4" fill="#9A9A9A" rx="3"/>
+          <text class="lbl" data-d="940" x="386.0" y="130.6" font-size="12" fill="#1D1D1D" text-anchor="middle" font-weight="600">48</text>
+          <rect class="bar" data-d="300" data-base="284.0" x="409.0" y="174.2" width="34" height="109.8" fill="#2F5FC4" rx="3"/>
+          <text class="lbl" data-d="1000" x="426.0" y="167.2" font-size="12" fill="#1D1D1D" text-anchor="middle" font-weight="600">36</text>
+          <text x="406.0" y="306.0" font-size="12" fill="#6E6E6E" text-anchor="middle" font-weight="400">K = 6</text>
+          <rect class="bar" data-d="360" data-base="284.0" x="509.0" y="88.8" width="34" height="195.2" fill="#9A9A9A" rx="3"/>
+          <text class="lbl" data-d="1060" x="526.0" y="81.8" font-size="12" fill="#1D1D1D" text-anchor="middle" font-weight="600">64</text>
+          <rect class="bar" data-d="420" data-base="284.0" x="549.0" y="137.6" width="34" height="146.4" fill="#2F5FC4" rx="3"/>
+          <text class="lbl" data-d="1120" x="566.0" y="130.6" font-size="12" fill="#1D1D1D" text-anchor="middle" font-weight="600">48</text>
+          <text x="546.0" y="306.0" font-size="12" fill="#6E6E6E" text-anchor="middle" font-weight="400">K = 8</text>
+          <text x="336.0" y="330.0" font-size="12" fill="#6E6E6E" text-anchor="middle" font-weight="400">행렬 내부 차원 K</text>
+          <text transform="translate(16 162.0) rotate(-90)" font-size="12" fill="#6E6E6E" text-anchor="middle">논리적 이동 횟수 (회)</text>
+          <rect x="66" y="10" width="12" height="12" rx="2" fill="#9A9A9A"/><text x="84.0" y="20.0" font-size="12" fill="#1D1D1D" text-anchor="start" font-weight="400">단일 보드 8K회</text>
+          <rect x="206" y="10" width="12" height="12" rx="2" fill="#2F5FC4"/><text x="224.0" y="20.0" font-size="12" fill="#1D1D1D" text-anchor="start" font-weight="400">2×2 격자 6K회 (모든 구간 25% 적음)</text>
+          </svg>
+          <figcaption>행렬 원소의 논리적 이동 횟수</figcaption>
+        </figure>
+        <p>처리 시간과 반대로, 이동 횟수는 격자가 모든 구간에서 25% 적었습니다. 단일 보드는 원소 하나를 계산할 때마다 필요한 값을 새로 읽어 8K회가 필요합니다. 격자에서는 한 번 들어온 원소가 여러 PE를 지나며 계속 쓰여서 6K회면 충분합니다.</p>
+        <p>예를 들어 PE(0,0)이 아래로 보낸 A[1][k]는 PE(1,0)에서 한 번 쓰이고, 다시 PE(1,1)로 넘어가 한 번 더 쓰입니다. 시스톨릭 배열의 데이터 재사용이 실제로 일어났다는 뜻입니다.</p>
+      </div>
+    </section>
+
+    <section class="doc-sec">
+      <h2>해석</h2>
+      <div>
+        <p>이동은 25% 적은데 시간은 300배 넘게 걸린 이유는 이동 한 번의 비용에 있습니다. 회귀식의 기울기를 K당 이동 횟수로 나눠 비교했습니다.</p>
+        <ul class="plain">
+          <li>단일 보드: 25.8 ÷ 8 = 약 3.23 µs</li>
+          <li>2×2 격자: 8,081.1 ÷ 6 = 약 1,346.9 µs</li>
+        </ul>
+        <figure class="chart">
+          <svg viewBox="0 0 640 170" role="img" aria-label="이동 1회당 비용. 단일 보드 3.23 마이크로초, 2×2 격자 1,346.9 마이크로초, 약 417배" xmlns="http://www.w3.org/2000/svg" font-family="Pretendard, -apple-system, sans-serif">
+          <line x1="150.0" x2="150.0" y1="20" y2="126" stroke="#D4D4D4"/>
+          <text x="150.0" y="144.0" font-size="12" fill="#6E6E6E" text-anchor="middle" font-weight="400">10<tspan dy='-6' font-size='9'>0</tspan></text>
+          <line x1="255.0" x2="255.0" y1="20" y2="126" stroke="#D4D4D4"/>
+          <text x="255.0" y="144.0" font-size="12" fill="#6E6E6E" text-anchor="middle" font-weight="400">10<tspan dy='-6' font-size='9'>1</tspan></text>
+          <line x1="360.0" x2="360.0" y1="20" y2="126" stroke="#D4D4D4"/>
+          <text x="360.0" y="144.0" font-size="12" fill="#6E6E6E" text-anchor="middle" font-weight="400">10<tspan dy='-6' font-size='9'>2</tspan></text>
+          <line x1="465.0" x2="465.0" y1="20" y2="126" stroke="#D4D4D4"/>
+          <text x="465.0" y="144.0" font-size="12" fill="#6E6E6E" text-anchor="middle" font-weight="400">10<tspan dy='-6' font-size='9'>3</tspan></text>
+          <line x1="570.0" x2="570.0" y1="20" y2="126" stroke="#D4D4D4"/>
+          <text x="570.0" y="144.0" font-size="12" fill="#6E6E6E" text-anchor="middle" font-weight="400">10<tspan dy='-6' font-size='9'>4</tspan></text>
+          <text x="360.0" y="164.0" font-size="12" fill="#6E6E6E" text-anchor="middle" font-weight="400">이동 1회당 비용 (µs, 로그 눈금)</text>
+          <text x="136.0" y="42.0" font-size="13" fill="#1D1D1D" text-anchor="end" font-weight="600">단일 보드</text>
+          <text x="136.0" y="58.0" font-size="11" fill="#6E6E6E" text-anchor="end" font-weight="400">칩 내부 변수 접근</text>
+          <rect class="hbar" data-d="0" x="150" y="28" width="53.5" height="30" rx="3" fill="#9A9A9A"/>
+          <text class="lbl" data-d="800" x="211.5" y="48.0" font-size="13" fill="#1D1D1D" text-anchor="start" font-weight="600">3.23 µs</text>
+          <text x="136.0" y="92.0" font-size="13" fill="#1D1D1D" text-anchor="end" font-weight="600">2×2 격자</text>
+          <text x="136.0" y="108.0" font-size="11" fill="#6E6E6E" text-anchor="end" font-weight="400">보드 간 GPIO 통신</text>
+          <rect class="hbar" data-d="250" x="150" y="78" width="328.6" height="30" rx="3" fill="#2F5FC4"/>
+          <text class="lbl" data-d="1050" x="486.6" y="98.0" font-size="13" fill="#1D1D1D" text-anchor="start" font-weight="600">1,346.9 µs</text>
+          </svg>
+          <figcaption>이동 1회당 비용. 약 417배 차이입니다.</figcaption>
+        </figure>
+        <p>격자는 이동 횟수를 25% 줄였지만 이동 한 번에 약 417배를 치러서, 전체로는 약 313배 손해입니다.</p>
+        <figure class="chart">
+          <svg viewBox="0 0 640 150" role="img" aria-label="K 1 증가당 소요 시간 8,081.1 마이크로초 중 통신 4,000 마이크로초 49.5%, 스큐 대기 4,000 마이크로초 49.5%, 연산 등 81 마이크로초 1.0%" xmlns="http://www.w3.org/2000/svg" font-family="Pretendard, -apple-system, sans-serif">
+          <text x="24.0" y="20.0" font-size="13" fill="#1D1D1D" text-anchor="start" font-weight="600">K가 1 늘 때 늘어나는 8,081.1 µs의 구성</text>
+          <rect class="hbar" data-d="0" data-dur="700" x="24.0" y="34" width="293.0" height="44" fill="#2F5FC4"/>
+          <text class="lbl" data-d="500" x="170.5" y="54.0" font-size="13" fill="#fff" text-anchor="middle" font-weight="600">통신</text>
+          <text class="lbl" data-d="500" x="170.5" y="70.0" font-size="11" fill="#fff" text-anchor="middle" font-weight="400">4,000 µs, 49.5%</text>
+          <rect class="hbar" data-d="700" data-dur="700" x="317.0" y="34" width="293.0" height="44" fill="#BFD0F2"/>
+          <text class="lbl" data-d="1200" x="463.5" y="54.0" font-size="13" fill="#1D1D1D" text-anchor="middle" font-weight="600">스큐 대기</text>
+          <text class="lbl" data-d="1200" x="463.5" y="70.0" font-size="11" fill="#1D1D1D" text-anchor="middle" font-weight="400">4,000 µs, 49.5%</text>
+          <rect class="hbar" data-d="1400" data-dur="250" x="610.1" y="34" width="5.9" height="44" fill="#1D1D1D"/>
+          <line class="lbl" data-d="1700" x1="614.5" x2="614.5" y1="82" y2="96" stroke="#1D1D1D"/>
+          <text class="lbl" data-d="1700" x="616.0" y="112.0" font-size="12" fill="#1D1D1D" text-anchor="end" font-weight="600">연산 등 81 µs, 1.0%</text>
+          <text x="24.0" y="112.0" font-size="11" fill="#6E6E6E" text-anchor="start" font-weight="400">0</text>
+          </svg>
+          <figcaption>격자에서 K가 1 늘 때 늘어나는 시간의 구성</figcaption>
+        </figure>
+        <p>게다가 스큐 대기는 연산이 전혀 없는 순수한 대기 시간인데 전체의 49.5%를 차지합니다. 통신과 대기를 빼면 실제 계산에 쓰인 시간은 1.0%뿐입니다.</p>
+        <p>시스톨릭 배열의 성능은 PE 사이의 물리적 거리에 달려 있습니다. 실제 가속기처럼 많은 PE를 한 칩 안에 넣으면 PE 사이 전달은 칩 내부 배선의 매우 짧은 지연으로 끝납니다. 이 실험은 그 전달을 보드 사이의 핀 통신으로 바꾼 셈이고, 그래서 이런 결과가 나왔습니다. PE를 왜 한 칩 안에 모아야 하는지를 거꾸로 보여 주는 결과입니다.</p>
+      </div>
+    </section>
+
+    <section class="doc-sec">
+      <h2>한계</h2>
+      <div>
+        <ol class="numbered">
+          <li>ATmega328P는 수정 하버드 구조라서, 대조군은 칩 수준의 폰 노이만 병목이 아니라 공유 통로를 거치는 순차 접근을 소프트웨어로 흉내 낸 것입니다. 대조군의 이동당 비용 3.23 µs에는 반복문 제어 시간도 들어 있어서 실제 메모리 지연과 바로 비교할 수 없습니다.</li>
+          <li>두 구조에서 이동의 실체가 다릅니다. 대조군은 칩 내부 변수 접근이고 실험군은 외부 통신입니다. 그래서 이동 횟수 비교는 데이터 재사용이라는 구조적 특성을 확인하는 데만 쓰고, 성능 지표로 읽으면 안 됩니다.</li>
+          <li>실제 시스톨릭 배열처럼 데이터를 한 클럭씩 어긋나게 연속으로 넣기 어려워서, 송신 사이에 고정 대기 시간을 넣어 수신 순서를 보장하는 단순한 방식으로 스큐를 구현했습니다.</li>
+          <li>격자가 2×2라서 출력 행렬도 2×2로 고정되고, 내부 차원 K만 바꿀 수 있었습니다.</li>
+        </ol>
+      </div>
+    </section>
+
+    <section class="doc-sec">
+      <h2>결론</h2>
+      <div>
+        <ol class="numbered">
+          <li><strong>데이터 재사용은 실제로 일어났습니다.</strong> 격자의 이동 횟수는 6K회로 단일 보드의 8K회보다 모든 구간에서 25% 적었습니다. 한 번 들어온 원소가 여러 PE에서 쓰여 같은 값을 다시 읽을 필요가 없다는 예측이 맞았습니다.</li>
+          <li><strong>그래도 처리 시간은 300배 넘게 느렸습니다.</strong> 이동 한 번의 비용이 약 417배 비싸서, 이동 횟수 25% 감소로는 메울 수 없었습니다.</li>
+          <li><strong>시스톨릭 배열의 성능은 집적도에 달려 있습니다.</strong> 시스톨릭 배열 자체가 비효율적이라는 뜻이 아닙니다. PE 사이 전달 비용이 메모리 접근 비용보다 충분히 낮을 때만 이점이 생기고, 이 조건이 무너지면 이론적 우위도 사라집니다.</li>
+        </ol>
+      </div>
+    </section>
+
+    <section class="doc-sec">
+      <h2>자료</h2>
+      <div>
+        <p>실험 코드: <a href="https://github.com/Gradica/Arduino-repo">github.com/Gradica/Arduino-repo</a></p>
+        <ol class="refs">
+          <li>T. Raja, <span lang="en">“Systolic Array Data Flows for Efficient Matrix Multiplication in Deep Neural Networks,”</span> 2024. <a href="https://arxiv.org/abs/2410.22595">arXiv:2410.22595</a></li>
+          <li>A. de Vries, <span lang="en">“The Growing Energy Footprint of Artificial Intelligence,” Joule</span>, vol. 7, no. 10, pp. 2191–2194, 2023.</li>
+          <li>Google Cloud, <a href="https://cloud.google.com/tpu/docs/system-architecture-tpu-vm">TPU 아키텍처</a></li>
+          <li>위키백과, <a href="https://ko.wikipedia.org/wiki/%ED%8F%B0_%EB%85%B8%EC%9D%B4%EB%A7%8C_%EA%B5%AC%EC%A1%B0">폰 노이만 구조</a></li>
+          <li>위키백과, <a href="https://ko.wikipedia.org/wiki/%ED%95%98%EB%B2%84%EB%93%9C_%EA%B5%AC%EC%A1%B0">하버드 아키텍처</a></li>
+        </ol>
+      </div>
+    </section>
 
     <nav class="pager" aria-label="다른 프로젝트">
       <a class="prev" href="../trng/"><span>이전 프로젝트</span>TRNG 엔트로피원 비교</a>
@@ -92,5 +501,86 @@
   <p>x86-64 ASM, C, Rust, TypeScript, Next.js, Supabase, Arduino, KiCad, QEMU, Docker, Oracle Cloud</p>
   <p><a href="https://github.com/twopercenz">twopercenz</a> / <a href="https://github.com/regx64">regx64</a></p>
 </footer>
+<script>
+/* 도표와 요약 숫자 애니메이션: 화면에 들어올 때 한 번 재생 */
+(() => {
+  if (matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+  if (!('IntersectionObserver' in window)) return;
+
+  const ease = (t) => 1 - Math.pow(1 - t, 3);
+
+  function tween(dur, delay, fn) {
+    const start = performance.now() + delay;
+    function step(now) {
+      const p = Math.min(1, Math.max(0, (now - start) / dur));
+      fn(ease(p));
+      if (p < 1) requestAnimationFrame(step);
+    }
+    requestAnimationFrame(step);
+  }
+
+  function prepareChart(svg) {
+    svg.querySelectorAll('[data-reveal]').forEach((r) => r.setAttribute('width', 0));
+    svg.querySelectorAll('.bar').forEach((r) => {
+      r.dataset.h = r.getAttribute('height');
+      r.setAttribute('y', r.dataset.base);
+      r.setAttribute('height', 0);
+    });
+    svg.querySelectorAll('.hbar').forEach((r) => {
+      r.dataset.w = r.getAttribute('width');
+      r.setAttribute('width', 0);
+    });
+    svg.querySelectorAll('.lbl').forEach((e) => { e.style.opacity = 0; });
+  }
+
+  function playChart(svg) {
+    svg.querySelectorAll('[data-reveal]').forEach((r) => {
+      const w = +r.dataset.reveal;
+      tween(1600, 0, (k) => r.setAttribute('width', w * k));
+    });
+    svg.querySelectorAll('.bar').forEach((r) => {
+      const h = +r.dataset.h, base = +r.dataset.base;
+      tween(800, +r.dataset.d, (k) => {
+        r.setAttribute('height', h * k);
+        r.setAttribute('y', base - h * k);
+      });
+    });
+    svg.querySelectorAll('.hbar').forEach((r) => {
+      const w = +r.dataset.w;
+      tween(+(r.dataset.dur || 900), +r.dataset.d, (k) => r.setAttribute('width', w * k));
+    });
+    svg.querySelectorAll('.lbl').forEach((e) => {
+      setTimeout(() => {
+        e.style.transition = 'opacity 0.4s';
+        e.style.opacity = 1;
+      }, +e.dataset.d);
+    });
+  }
+
+  function prepareCount(el) {
+    el.dataset.dec = el.dataset.dec || 0;
+    el.textContent = (0).toFixed(+el.dataset.dec);
+  }
+
+  function playCount(el) {
+    const to = +el.dataset.count, dec = +el.dataset.dec;
+    tween(1200, 0, (k) => { el.textContent = (to * k).toFixed(dec); });
+  }
+
+  const once = (targets, prepare, play, threshold) => {
+    const io = new IntersectionObserver((entries) => {
+      entries.forEach((en) => {
+        if (!en.isIntersecting) return;
+        io.unobserve(en.target);
+        play(en.target);
+      });
+    }, { threshold });
+    targets.forEach((t) => { prepare(t); io.observe(t); });
+  };
+
+  once(document.querySelectorAll('.chart svg'), prepareChart, playChart, 0.4);
+  once(document.querySelectorAll('[data-count]'), prepareCount, playCount, 0.6);
+})();
+</script>
 </body>
 </html>
