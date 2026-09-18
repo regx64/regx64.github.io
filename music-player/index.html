@@ -4,12 +4,99 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>music.player | regx64</title>
-<meta name="description" content="개인용 뮤직 플레이어입니다. 오디오 추출은 MUXIC.js로 할까 생각 중입니다.">
+<meta name="description" content="기능은 단순하게, UI는 화려하게. 곡을 검색하면 YouTube에서 음원을 찾아 재생하고, 싱크 가사와 비주얼라이저를 띄우는 개인용 뮤직 플레이어입니다. 여러 번 인프라를 옮긴 끝에 지금은 Oracle Cloud 무료 VM 두 대에서 돌아갑니다.">
 <link rel="icon" href="../favicon.ico" sizes="48x48">
 <link rel="icon" href="../favicon.svg" type="image/svg+xml">
 <link rel="apple-touch-icon" href="../apple-touch-icon.png">
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css">
 <link rel="stylesheet" href="../style.css">
+<style>
+  /* 이 페이지에만 쓰는 스타일 */
+  .doc-sec h3 { margin: 2rem 0 0.6rem; font-size: 1rem; }
+  .doc-sec h3:first-child { margin-top: 0; }
+
+  .stats {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 1.75rem 2rem;
+    margin: 0;
+  }
+  .stats div { border-top: 2px solid var(--ink); padding-top: 0.75rem; }
+  .stats dt { font-size: 2.25rem; font-weight: 700; letter-spacing: -0.03em; line-height: 1.2; }
+  .stats dd { margin: 0.25rem 0 0; font-size: 0.9375rem; color: var(--muted); }
+
+  .table-wrap { overflow-x: auto; margin: 0 0 0.9rem; }
+  .data {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.875rem;
+    font-variant-numeric: tabular-nums;
+    white-space: nowrap;
+  }
+  .data caption { text-align: left; font-weight: 600; font-size: 0.9375rem; padding-bottom: 0.5rem; }
+  .data th, .data td { padding: 0.45rem 0.6rem; border-bottom: 1px solid rgba(0, 0, 0, 0.1); }
+  .data thead th { border-bottom: 2px solid var(--ink); font-weight: 600; text-align: right; }
+  .data thead th:first-child, .data tbody th { text-align: left; }
+  .data tbody th { font-weight: 500; }
+  .data td { text-align: right; }
+  .data td.strong { font-weight: 700; }
+  .data tbody tr.split th, .data tbody tr.split td { border-top: 2px solid rgba(0, 0, 0, 0.25); }
+  .data.left td { text-align: left; }
+
+  .chart { margin: 1.5rem 0; }
+  .chart svg { display: block; width: 100%; height: auto; }
+
+  .formula {
+    margin: 1rem 0;
+    padding: 0.9rem 1.1rem;
+    background: #FFFFFF;
+    border-radius: 0.75rem;
+    font-size: 1.0625rem;
+    text-align: center;
+  }
+
+  .code {
+    margin: 1rem 0;
+    padding: 1rem 1.1rem;
+    overflow-x: auto;
+    background: #1B1B1B;
+    color: #E6E6E6;
+    border-radius: 0.75rem;
+    font-family: ui-monospace, Consolas, "D2Coding", monospace;
+    font-size: 0.8125rem;
+    line-height: 1.6;
+  }
+
+  .numbered { margin: 0 0 0.9rem; padding-left: 1.4rem; }
+  .numbered li { margin-bottom: 0.6rem; }
+  .numbered li:last-child { margin-bottom: 0; }
+
+  .refs { margin: 0; padding-left: 1.4rem; font-size: 0.9375rem; }
+  .refs li { margin-bottom: 0.4rem; }
+
+  @media (max-width: 820px) {
+    .stats dt { font-size: 1.75rem; }
+  }
+
+  .flow { stroke-dasharray: 6 5; animation: flow 1.2s linear infinite; }
+  @keyframes flow { to { stroke-dashoffset: -22; } }
+  @media (prefers-reduced-motion: reduce) { .flow { animation: none; } }
+
+  .steps li.part::before { background: linear-gradient(90deg, var(--ink) 50%, transparent 50%); }
+  .steps li.plan::before { border-style: dashed; }
+
+  .timeline { list-style: none; margin: 0; padding: 0; }
+  .timeline li {
+    display: grid;
+    grid-template-columns: 6.5rem minmax(0, 1fr);
+    gap: 1rem;
+    padding: 0.6rem 0;
+    border-bottom: 1px solid rgba(0, 0, 0, 0.08);
+  }
+  .timeline time { color: var(--muted); font-size: 0.875rem; font-variant-numeric: tabular-nums; padding-top: 0.1rem; }
+
+  .note { font-size: 0.875rem; color: var(--muted); }
+</style>
 <script type="importmap">
 {
   "imports": {
@@ -36,39 +123,179 @@
     <div class="copy">
       <h1 class="name">music.player</h1>
       <p class="headline">제가 들으려고<br>만드는 플레이어.</p>
-      <p class="body">개인용 뮤직 플레이어입니다. 오디오 추출은 MUXIC.js로 할까 생각 중입니다.</p>
+      <p class="body">기능은 단순하게, UI는 화려하게. 곡을 검색하면 YouTube에서 음원을 찾아 재생하고, 싱크 가사와 비주얼라이저를 띄우는 개인용 뮤직 플레이어입니다. 여러 번 인프라를 옮긴 끝에 지금은 Oracle Cloud 무료 VM 두 대에서 돌아갑니다.</p>
+      <p class="meta">Next.js 14, TypeScript, Supabase, Docker, Oracle Cloud</p>
       <div class="actions">
-        <a href="https://github.com/twopercenz/music.player">GitHub에서 보기</a>
+        <a class="btn" href="https://github.com/twopercenz/music.player">GitHub에서 보기</a>
       </div>
     </div>
     <div class="stage" data-model="player" role="img" aria-label="돌아가는 레코드판과 턴테이블"></div>
   </section>
 
   <div class="doc tone-a">
+
     <section class="doc-sec">
-      <h2>개요</h2>
+      <h2>요약</h2>
       <div>
-        <p>직접 쓰려고 만드는 뮤직 플레이어입니다.</p>
+        <dl class="stats">
+          <div><dt>49개</dt><dd>8월 28일부터 18일 동안 쌓인 커밋</dd></div>
+          <div><dt>2대</dt><dd>web과 Companion을 나눠 올린 VM</dd></div>
+          <div><dt>$0</dt><dd>상시 실행 비용</dd></div>
+          <div><dt>4번</dt><dd>첫 배포 뒤 배포 구조를 바꾼 횟수</dd></div>
+        </dl>
       </div>
     </section>
+
     <section class="doc-sec">
-      <h2>오디오 추출</h2>
+      <h2>동작 방식</h2>
       <div>
-        <p>오디오를 가져오는 계층으로 <a href='../muxic/'>MUXIC.js</a>를 쓰는 방안을 검토하고 있습니다.</p>
-      </div>
-    </section>
-    <!-- 사진, 결과 그래프, 개발 기록을 넣으려면 아래 형식으로 섹션을 추가하세요.
-    <section class="doc-sec">
-      <h2>기록</h2>
-      <div>
-        <figure>
-          <img src="이미지.png" alt="이미지 설명">
-          <figcaption>설명</figcaption>
+        <figure class="chart">
+          <svg viewBox="0 0 700 352" role="img" aria-label="곡을 찾아 재생하기까지. 검색, 곡 선택, YouTube 매칭, 브라우저 확장 또는 Invidious Companion으로 오디오를 얻어 재생. 가사와 라이브러리, 비밀번호 게이트가 곁에 있음" xmlns="http://www.w3.org/2000/svg" font-family="Pretendard, -apple-system, sans-serif">
+          <defs><marker id="mp1-ah" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#1D1D1D"/></marker><marker id="mp1-ahm" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#9A9A9A"/></marker></defs>
+          <text class="lbl" data-d="0" x="0.0" y="14.0" font-size="12" fill="#7A5BC7" text-anchor="start" font-weight="600">검색과 재생</text>
+          <g class="lbl" data-d="0"><rect x="0" y="24" width="200" height="70" rx="10" fill="#FFFFFF" stroke="#9A9A9A" stroke-width="1.5"/><text x="100.0" y="56.5" font-size="13" fill="#1D1D1D" text-anchor="middle" font-weight="600">검색</text><text x="100.0" y="76.5" font-size="11" fill="#6E6E6E" text-anchor="middle" font-weight="400">iTunes Search API</text></g>
+          <g class="lbl" data-d="150"><line class="flow" x1="202" y1="59" x2="247" y2="59" stroke="#1D1D1D" stroke-width="1.5" marker-end="url(#mp1-ah)"/></g>
+          <g class="lbl" data-d="300"><rect x="250" y="24" width="200" height="70" rx="10" fill="#FFFFFF" stroke="#9A9A9A" stroke-width="1.5"/><text x="350.0" y="56.5" font-size="13" fill="#1D1D1D" text-anchor="middle" font-weight="600">곡 선택</text><text x="350.0" y="76.5" font-size="11" fill="#6E6E6E" text-anchor="middle" font-weight="400">제목 · 아티스트 · 앨범 아트</text></g>
+          <g class="lbl" data-d="450"><line class="flow" x1="452" y1="59" x2="497" y2="59" stroke="#1D1D1D" stroke-width="1.5" marker-end="url(#mp1-ah)"/></g>
+          <g class="lbl" data-d="600"><rect x="500" y="24" width="200" height="70" rx="10" fill="#FFFFFF" stroke="#9A9A9A" stroke-width="1.5"/><text x="600.0" y="49.5" font-size="13" fill="#1D1D1D" text-anchor="middle" font-weight="600">/api/resolve</text><text x="600.0" y="69.5" font-size="11" fill="#6E6E6E" text-anchor="middle" font-weight="400">YouTube Data API로 영상 매칭</text><text x="600.0" y="83.5" font-size="11" fill="#6E6E6E" text-anchor="middle" font-weight="400">제목 키워드 + 재생시간</text></g>
+          <g class="lbl" data-d="750"><line class="flow" x1="600" y1="96" x2="600" y2="147" stroke="#1D1D1D" stroke-width="1.5" marker-end="url(#mp1-ah)"/></g>
+          <g class="lbl" data-d="900"><rect x="500" y="150" width="200" height="74" rx="10" fill="#ECE6F7" stroke="#7A5BC7" stroke-width="1.5"/><text x="600.0" y="177.5" font-size="13" fill="#1D1D1D" text-anchor="middle" font-weight="600">① 브라우저 확장</text><text x="600.0" y="197.5" font-size="11" fill="#6E6E6E" text-anchor="middle" font-weight="400">사용자 브라우저가 직접</text><text x="600.0" y="211.5" font-size="11" fill="#6E6E6E" text-anchor="middle" font-weight="400">재생 URL을 읽음 (우선)</text></g>
+          <g class="lbl" data-d="1050"><line x1="498" y1="187" x2="453" y2="187" stroke="#1D1D1D" stroke-width="1.5" marker-end="url(#mp1-ah)"/><text x="475.5" y="178.0" font-size="11" fill="#6E6E6E" text-anchor="middle" font-weight="400">없거나 실패</text></g>
+          <g class="lbl" data-d="1200"><rect x="250" y="150" width="200" height="74" rx="10" fill="#FFFFFF" stroke="#9A9A9A" stroke-width="1.5"/><text x="350.0" y="177.5" font-size="13" fill="#1D1D1D" text-anchor="middle" font-weight="600">② /api/extract</text><text x="350.0" y="197.5" font-size="11" fill="#6E6E6E" text-anchor="middle" font-weight="400">Invidious Companion</text><text x="350.0" y="211.5" font-size="11" fill="#6E6E6E" text-anchor="middle" font-weight="400">(폴백)</text></g>
+          <g class="lbl" data-d="1350"><line class="flow" x1="248" y1="187" x2="203" y2="187" stroke="#1D1D1D" stroke-width="1.5" marker-end="url(#mp1-ah)"/></g>
+          <g class="lbl" data-d="1350"><path class="flow" d="M 600 225 V 244 H 100 V 227" fill="none" stroke="#1D1D1D" stroke-width="1.5" marker-end="url(#mp1-ah)"/></g>
+          <g class="lbl" data-d="1500"><rect x="0" y="150" width="200" height="74" rx="10" fill="#7A5BC7" stroke="#7A5BC7" stroke-width="1.5"/><text x="100.0" y="177.5" font-size="13" fill="#FFFFFF" text-anchor="middle" font-weight="600">재생</text><text x="100.0" y="197.5" font-size="11" fill="#E6DDF7" text-anchor="middle" font-weight="400">Range 요청으로 바로 탐색</text><text x="100.0" y="211.5" font-size="11" fill="#E6DDF7" text-anchor="middle" font-weight="400">IndexedDB에 캐시</text></g>
+          <text class="lbl" data-d="1700" x="0.0" y="274.0" font-size="12" fill="#7A5BC7" text-anchor="start" font-weight="600">곁에 붙은 것</text>
+          <g class="lbl" data-d="1700"><rect x="0" y="284" width="200" height="60" rx="10" fill="#FFFFFF" stroke="#9A9A9A" stroke-width="1.5" stroke-dasharray="5 4"/><text x="100.0" y="311.5" font-size="13" fill="#1D1D1D" text-anchor="middle" font-weight="600">가사</text><text x="100.0" y="331.5" font-size="11" fill="#6E6E6E" text-anchor="middle" font-weight="400">lrclib.net 싱크 가사</text></g>
+          <g class="lbl" data-d="1850"><rect x="250" y="284" width="200" height="60" rx="10" fill="#FFFFFF" stroke="#9A9A9A" stroke-width="1.5" stroke-dasharray="5 4"/><text x="350.0" y="311.5" font-size="13" fill="#1D1D1D" text-anchor="middle" font-weight="600">라이브러리 동기화</text><text x="350.0" y="331.5" font-size="11" fill="#6E6E6E" text-anchor="middle" font-weight="400">Supabase에 메타데이터만</text></g>
+          <g class="lbl" data-d="2000"><rect x="500" y="284" width="200" height="60" rx="10" fill="#FFFFFF" stroke="#9A9A9A" stroke-width="1.5" stroke-dasharray="5 4"/><text x="600.0" y="311.5" font-size="13" fill="#1D1D1D" text-anchor="middle" font-weight="600">접근 제어</text><text x="600.0" y="331.5" font-size="11" fill="#6E6E6E" text-anchor="middle" font-weight="400">미들웨어 비밀번호 하나</text></g>
+          </svg>
+          <figcaption>검색부터 재생까지의 흐름</figcaption>
         </figure>
-        <p>내용</p>
+        <p>검색과 재생은 소스가 다릅니다. 검색은 인증 없이 쓸 수 있는 iTunes Search API로 해서 깔끔한 제목, 아티스트, 정사각 앨범 아트를 얻습니다. 곡을 고르면 YouTube Data API로 실제 재생할 영상을 찾는데, 제목 키워드와 재생 시간이 얼마나 가까운지로 점수를 매깁니다.</p>
+        <p>오디오는 두 경로로 얻습니다. 브라우저 확장이 설치돼 있으면 사용자 브라우저가 직접 YouTube 페이지를 열어 재생 주소를 읽어 오고, 없거나 실패하면 서버의 <code>/api/extract</code>가 Invidious Companion을 통해 가져옵니다. 둘 다 Range 요청을 지원해서 캐시가 없어도 처음부터 원하는 위치로 넘길 수 있고, 받은 오디오는 IndexedDB에 저장해 다음부터 다시 받지 않습니다.</p>
+        <p>처음에는 Spotify로 검색했는데, 2026년 3월부터 Spotify 개발자 모드에 Premium 구독이 필요해지면서 iTunes Search API로 바꿨습니다.</p>
       </div>
     </section>
-    -->
+
+    <section class="doc-sec">
+      <h2>곁에 붙은 기능</h2>
+      <div>
+        <ul class="plain">
+          <li><strong>가사:</strong> lrclib.net의 싱크 가사를 씁니다. 제목과 아티스트를 iTunes 메타데이터 그대로 넘겨서 잘 찾고, 싱크 가사가 없으면 비주얼라이저만 보여 줍니다.</li>
+          <li><strong>로컬 업로드:</strong> 내 파일을 직접 추가할 수 있고, IndexedDB에만 저장됩니다.</li>
+          <li><strong>라이브러리 동기화:</strong> 검색해서 저장한 곡의 제목, 아티스트, 영상 ID만 Supabase에 올려 여러 기기에서 공유합니다. 로컬 파일은 그 기기에만 있으니 동기화하지 않습니다.</li>
+          <li><strong>접근 제어:</strong> 계정 없이, 미들웨어에 건 비밀번호 하나로 전체를 막습니다.</li>
+        </ul>
+      </div>
+    </section>
+
+    <section class="doc-sec">
+      <h2>코드 리뷰 후 고친 것</h2>
+      <div>
+        <p>아키텍처, 보안, 최적화 관점으로 코드를 리뷰하고, 고칠 목록을 <code>FIXES.md</code>로 정리한 뒤 항목 단위로 커밋했습니다.</p><div class="table-wrap">
+          <table class="data left">
+            <caption>주요 수정</caption>
+            <thead><tr><th scope="col">분야</th><th scope="col" style="text-align:left">내용</th></tr></thead>
+            <tbody>
+              <tr><th scope="row">보안</th><td>로그인 시도 횟수 제한, 비밀번호와 세션 서명의 상수 시간 비교, 비밀번호를 바꾸면 기존 세션 무효화, 로그아웃</td></tr>
+              <tr><th scope="row">입력 검증</th><td>라이브러리 추가·삭제 요청을 타입 단언 대신 실제로 검증, 공개 경로는 정확히 일치할 때만 통과</td></tr>
+              <tr><th scope="row">성능</th><td>재생 시간을 별도 context로 분리, 일시정지나 백그라운드에서 비주얼라이저 루프 정지, iTunes·lrclib 응답 캐시</td></tr>
+              <tr><th scope="row">안정성</th><td>추출 프로세스를 모든 종료 경로에서 정리, 동시 추출 2개로 제한, object URL 누수 수정, 손상된 localStorage 값에도 화면이 죽지 않게</td></tr>
+              <tr><th scope="row">정리</th><td>안 쓰는 코드와 의존성 제거, 개발 의존성 분리, standalone 빌드와 보안 헤더</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+    <section class="doc-sec">
+      <h2>인프라를 옮긴 과정</h2>
+      <div>
+        <p>처음에는 서버에서 <code>yt-dlp</code>와 <code>ffmpeg</code>로 직접 오디오를 뽑았습니다. 그런데 클라우드 서버 IP에서는 YouTube가 요청을 점점 강하게 막았고, 그래서 추출을 Invidious Companion이라는 별도 서비스로 옮겼습니다. 이 서비스도 결국 서버 IP로 요청을 보내기 때문에, Render, Azure Codespace, Oracle Cloud에서 똑같이 막혔습니다. 토큰 문제가 아니라 데이터센터 IP 자체의 평판 문제였고, 그래서 서버가 끼지 않는 브라우저 확장을 기본 경로로 바꿨습니다.</p>
+        <ol class="timeline">
+          <li><time>2026. 8. 28.</time><div>첫 커밋. Vercel에 단독 배포</div></li>
+          <li><time>2026. 8. 29.</time><div>코드 리뷰 반영. 추출 동시 실행 제한, 인증 강화, 캐시</div></li>
+          <li><time>2026. 9. 7.</time><div>서버 추출을 Invidious Companion으로 교체, Docker Compose로 두 서비스 구성</div></li>
+          <li><time>2026. 9. 8.</time><div>Koyeb 단일 컨테이너 시도 → Vercel + Render → 집 기기의 Companion을 Tailscale Funnel로 노출. 브라우저 확장을 기본 경로로 추가</div></li>
+          <li><time>2026. 9. 15.</time><div>web과 Companion을 모두 Oracle Cloud Always Free로 이전, GitHub Actions 자동 배포</div></li>
+        </ol><figure class="chart">
+          <svg viewBox="0 0 640 280" role="img" aria-label="날짜별 커밋 수. 8월 28일 7개, 8월 29일 15개, 9월 7일 12개, 9월 8일 7개, 9월 15일 8개" xmlns="http://www.w3.org/2000/svg" font-family="Pretendard, -apple-system, sans-serif">
+          <defs><marker id="mp2-ah" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#1D1D1D"/></marker><marker id="mp2-ahm" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#9A9A9A"/></marker></defs>
+          <line x1="56" x2="620" y1="232.0" y2="232.0" stroke="#D4D4D4"/>
+          <text x="46.0" y="236.0" font-size="12" fill="#6E6E6E" text-anchor="end" font-weight="400">0</text>
+          <line x1="56" x2="620" y1="180.0" y2="180.0" stroke="#D4D4D4"/>
+          <text x="46.0" y="184.0" font-size="12" fill="#6E6E6E" text-anchor="end" font-weight="400">4</text>
+          <line x1="56" x2="620" y1="128.0" y2="128.0" stroke="#D4D4D4"/>
+          <text x="46.0" y="132.0" font-size="12" fill="#6E6E6E" text-anchor="end" font-weight="400">8</text>
+          <line x1="56" x2="620" y1="76.0" y2="76.0" stroke="#D4D4D4"/>
+          <text x="46.0" y="80.0" font-size="12" fill="#6E6E6E" text-anchor="end" font-weight="400">12</text>
+          <line x1="56" x2="620" y1="24.0" y2="24.0" stroke="#D4D4D4"/>
+          <text x="46.0" y="28.0" font-size="12" fill="#6E6E6E" text-anchor="end" font-weight="400">16</text>
+          <rect class="bar" data-d="0" data-base="232.0" x="88.4" y="141.0" width="48.0" height="91.0" fill="#7A5BC7" rx="3"/>
+          <text class="lbl" data-d="700" x="112.4" y="134.0" font-size="12" fill="#1D1D1D" text-anchor="middle" font-weight="600">7</text>
+          <text x="112.4" y="252.0" font-size="12" fill="#6E6E6E" text-anchor="middle" font-weight="400">8. 28.</text>
+          <rect class="bar" data-d="120" data-base="232.0" x="201.2" y="37.0" width="48.0" height="195.0" fill="#7A5BC7" rx="3"/>
+          <text class="lbl" data-d="820" x="225.2" y="30.0" font-size="12" fill="#1D1D1D" text-anchor="middle" font-weight="600">15</text>
+          <text x="225.2" y="252.0" font-size="12" fill="#6E6E6E" text-anchor="middle" font-weight="400">8. 29.</text>
+          <rect class="bar" data-d="240" data-base="232.0" x="314.0" y="76.0" width="48.0" height="156.0" fill="#7A5BC7" rx="3"/>
+          <text class="lbl" data-d="940" x="338.0" y="69.0" font-size="12" fill="#1D1D1D" text-anchor="middle" font-weight="600">12</text>
+          <text x="338.0" y="252.0" font-size="12" fill="#6E6E6E" text-anchor="middle" font-weight="400">9. 7.</text>
+          <rect class="bar" data-d="360" data-base="232.0" x="426.8" y="141.0" width="48.0" height="91.0" fill="#7A5BC7" rx="3"/>
+          <text class="lbl" data-d="1060" x="450.8" y="134.0" font-size="12" fill="#1D1D1D" text-anchor="middle" font-weight="600">7</text>
+          <text x="450.8" y="252.0" font-size="12" fill="#6E6E6E" text-anchor="middle" font-weight="400">9. 8.</text>
+          <rect class="bar" data-d="480" data-base="232.0" x="539.6" y="128.0" width="48.0" height="104.0" fill="#7A5BC7" rx="3"/>
+          <text class="lbl" data-d="1180" x="563.6" y="121.0" font-size="12" fill="#1D1D1D" text-anchor="middle" font-weight="600">8</text>
+          <text x="563.6" y="252.0" font-size="12" fill="#6E6E6E" text-anchor="middle" font-weight="400">9. 15.</text>
+          <text transform="translate(16 128.0) rotate(-90)" font-size="12" fill="#6E6E6E" text-anchor="middle">커밋 수</text>
+          </svg>
+          <figcaption>날짜별 커밋 수</figcaption>
+        </figure>
+      </div>
+    </section>
+
+    <section class="doc-sec">
+      <h2>지금의 배포</h2>
+      <div>
+        <figure class="chart">
+          <svg viewBox="0 0 700 250" role="img" aria-label="배포 구조. 사용자는 Caddy를 거쳐 web VM의 Next.js에 접속하고, web VM만 companion VM의 8282 포트에 접근. GitHub Actions가 이미지를 GHCR에 올리고 SSH로 web VM에 배포" xmlns="http://www.w3.org/2000/svg" font-family="Pretendard, -apple-system, sans-serif">
+          <defs><marker id="mp3-ah" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#1D1D1D"/></marker><marker id="mp3-ahm" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#9A9A9A"/></marker></defs>
+          <text class="lbl" data-d="0" x="0.0" y="14.0" font-size="12" fill="#7A5BC7" text-anchor="start" font-weight="600">Oracle Cloud Always Free, 같은 VCN</text>
+          <g class="lbl" data-d="0"><rect x="0" y="40" width="120" height="64" rx="10" fill="#FFFFFF" stroke="#9A9A9A" stroke-width="1.5"/><text x="60.0" y="69.5" font-size="13" fill="#1D1D1D" text-anchor="middle" font-weight="600">사용자</text><text x="60.0" y="89.5" font-size="11" fill="#6E6E6E" text-anchor="middle" font-weight="400">브라우저</text></g>
+          <g class="lbl" data-d="150"><line class="flow" x1="122" y1="72" x2="187" y2="72" stroke="#1D1D1D" stroke-width="1.5" marker-end="url(#mp3-ah)"/><text x="154.5" y="66.0" font-size="11" fill="#6E6E6E" text-anchor="middle" font-weight="400">443</text></g>
+          <g class="lbl" data-d="250"><rect x="190" y="26" width="250" height="92" rx="12" fill="none" stroke="#7A5BC7" stroke-width="1.5" stroke-dasharray="5 4"/></g>
+          <text class="lbl" data-d="250" x="200.0" y="44.0" font-size="11" fill="#7A5BC7" text-anchor="start" font-weight="600">web-vm · E2.1.Micro (amd64)</text>
+          <g class="lbl" data-d="300"><rect x="200" y="54" width="100" height="54" rx="10" fill="#FFFFFF" stroke="#9A9A9A" stroke-width="1.5"/><text x="250.0" y="78.5" font-size="13" fill="#1D1D1D" text-anchor="middle" font-weight="600">Caddy</text><text x="250.0" y="98.5" font-size="11" fill="#6E6E6E" text-anchor="middle" font-weight="400">자동 HTTPS</text></g>
+          <g class="lbl" data-d="400"><line x1="302" y1="81" x2="327" y2="81" stroke="#1D1D1D" stroke-width="1.5" marker-end="url(#mp3-ah)"/></g>
+          <g class="lbl" data-d="450"><rect x="330" y="54" width="100" height="54" rx="10" fill="#ECE6F7" stroke="#7A5BC7" stroke-width="1.5"/><text x="380.0" y="78.5" font-size="13" fill="#1D1D1D" text-anchor="middle" font-weight="600">web</text><text x="380.0" y="98.5" font-size="11" fill="#6E6E6E" text-anchor="middle" font-weight="400">Next.js :3000</text></g>
+          <g class="lbl" data-d="600"><line class="flow" x1="442" y1="72" x2="507" y2="72" stroke="#1D1D1D" stroke-width="1.5" marker-end="url(#mp3-ah)"/><text x="474.5" y="66.0" font-size="11" fill="#6E6E6E" text-anchor="middle" font-weight="400">8282</text></g>
+          <g class="lbl" data-d="650"><rect x="510" y="26" width="190" height="92" rx="12" fill="none" stroke="#7A5BC7" stroke-width="1.5" stroke-dasharray="5 4"/></g>
+          <text class="lbl" data-d="650" x="520.0" y="44.0" font-size="11" fill="#7A5BC7" text-anchor="start" font-weight="600">companion-vm · E2.1.Micro</text>
+          <g class="lbl" data-d="700"><rect x="520" y="54" width="170" height="54" rx="10" fill="#FFFFFF" stroke="#9A9A9A" stroke-width="1.5"/><text x="605.0" y="78.0" font-size="12" fill="#1D1D1D" text-anchor="middle" font-weight="600">invidious_companion</text><text x="605.0" y="98.0" font-size="11" fill="#6E6E6E" text-anchor="middle" font-weight="400">web-vm IP에서만 허용</text></g>
+          <text class="lbl" data-d="900" x="0.0" y="170.0" font-size="12" fill="#7A5BC7" text-anchor="start" font-weight="600">배포 자동화</text>
+          <g class="lbl" data-d="900"><rect x="0" y="180" width="160" height="56" rx="10" fill="#FFFFFF" stroke="#9A9A9A" stroke-width="1.5"/><text x="80.0" y="205.5" font-size="13" fill="#1D1D1D" text-anchor="middle" font-weight="600">main에 push</text><text x="80.0" y="225.5" font-size="11" fill="#6E6E6E" text-anchor="middle" font-weight="400">GitHub Actions</text></g>
+          <g class="lbl" data-d="1050"><line x1="162" y1="208" x2="217" y2="208" stroke="#1D1D1D" stroke-width="1.5" marker-end="url(#mp3-ah)"/></g>
+          <g class="lbl" data-d="1100"><rect x="220" y="180" width="160" height="56" rx="10" fill="#FFFFFF" stroke="#9A9A9A" stroke-width="1.5"/><text x="300.0" y="205.5" font-size="13" fill="#1D1D1D" text-anchor="middle" font-weight="600">linux/amd64 빌드</text><text x="300.0" y="225.5" font-size="11" fill="#6E6E6E" text-anchor="middle" font-weight="400">GHCR에 이미지 푸시</text></g>
+          <g class="lbl" data-d="1250"><path d="M 382 208 H 380 H 440 V 120" fill="none" stroke="#1D1D1D" stroke-width="1.5" marker-end="url(#mp3-ah)"/></g>
+          <text class="lbl" data-d="1300" x="448.0" y="160.0" font-size="11" fill="#6E6E6E" text-anchor="start" font-weight="400">SSH로 접속해 새 이미지로 교체</text>
+          </svg>
+          <figcaption>Oracle Cloud 배포 구조</figcaption>
+        </figure>
+        <h3>왜 VM이 두 대인가</h3>
+        <p>web 이미지는 amd64와 arm64를 모두 지원하지만, Companion 이미지는 amd64 전용입니다. Oracle 무료 티어에서 가장 좋은 Ampere A1은 arm64라서 Companion을 올리려면 느린 에뮬레이션이 필요합니다. 그래서 무료로 두 대까지 주는 amd64 마이크로 인스턴스(<code>VM.Standard.E2.1.Micro</code>)에 서비스를 하나씩 올렸습니다.</p>
+        <h3>네트워크와 HTTPS</h3>
+        <p>web VM의 공인 IP를 예약 IP로 고정하고, Caddy를 앞에 두어 Let's Encrypt 인증서를 자동으로 받고 갱신합니다. 22, 80, 443번 포트만 공개하고, Companion의 8282번은 web VM의 IP에서만 열었습니다. OCI 보안 목록과 VM 안의 iptables가 따로 막고 있어서 둘 다 확인해야 한다는 것도 이때 알았습니다.</p>
+        <h3>자동 배포</h3>
+        <p><code>main</code>에 push하면 GitHub Actions가 web 이미지를 <code>linux/amd64</code>로 빌드해 GHCR에 올리고, web VM에 SSH로 접속해 새 이미지로 컨테이너를 교체합니다.</p>
+      </div>
+    </section>
+
+    <section class="doc-sec">
+      <h2>관련 프로젝트</h2>
+      <div>
+        <p>오디오 추출 부분을 따로 떼어 라이브러리로 만드는 작업이 <a href="../muxic/">MUXIC.js</a>입니다.</p>
+      </div>
+    </section>
 
     <nav class="pager" aria-label="다른 프로젝트">
       <a class="prev" href="../percentage/"><span>이전 프로젝트</span>Percentage</a>
@@ -82,5 +309,86 @@
   <p>x86-64 ASM, C, Rust, TypeScript, Next.js, Supabase, Arduino, KiCad, QEMU, Docker, Oracle Cloud</p>
   <p><a href="https://github.com/twopercenz">twopercenz</a> / <a href="https://github.com/regx64">regx64</a></p>
 </footer>
+<script>
+/* 도표와 요약 숫자 애니메이션: 화면에 들어올 때 한 번 재생 */
+(() => {
+  if (matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+  if (!('IntersectionObserver' in window)) return;
+
+  const ease = (t) => 1 - Math.pow(1 - t, 3);
+
+  function tween(dur, delay, fn) {
+    const start = performance.now() + delay;
+    function step(now) {
+      const p = Math.min(1, Math.max(0, (now - start) / dur));
+      fn(ease(p));
+      if (p < 1) requestAnimationFrame(step);
+    }
+    requestAnimationFrame(step);
+  }
+
+  function prepareChart(svg) {
+    svg.querySelectorAll('[data-reveal]').forEach((r) => r.setAttribute('width', 0));
+    svg.querySelectorAll('.bar').forEach((r) => {
+      r.dataset.h = r.getAttribute('height');
+      r.setAttribute('y', r.dataset.base);
+      r.setAttribute('height', 0);
+    });
+    svg.querySelectorAll('.hbar').forEach((r) => {
+      r.dataset.w = r.getAttribute('width');
+      r.setAttribute('width', 0);
+    });
+    svg.querySelectorAll('.lbl').forEach((e) => { e.style.opacity = 0; });
+  }
+
+  function playChart(svg) {
+    svg.querySelectorAll('[data-reveal]').forEach((r) => {
+      const w = +r.dataset.reveal;
+      tween(1600, 0, (k) => r.setAttribute('width', w * k));
+    });
+    svg.querySelectorAll('.bar').forEach((r) => {
+      const h = +r.dataset.h, base = +r.dataset.base;
+      tween(800, +r.dataset.d, (k) => {
+        r.setAttribute('height', h * k);
+        r.setAttribute('y', base - h * k);
+      });
+    });
+    svg.querySelectorAll('.hbar').forEach((r) => {
+      const w = +r.dataset.w;
+      tween(+(r.dataset.dur || 900), +r.dataset.d, (k) => r.setAttribute('width', w * k));
+    });
+    svg.querySelectorAll('.lbl').forEach((e) => {
+      setTimeout(() => {
+        e.style.transition = 'opacity 0.4s';
+        e.style.opacity = 1;
+      }, +e.dataset.d);
+    });
+  }
+
+  function prepareCount(el) {
+    el.dataset.dec = el.dataset.dec || 0;
+    el.textContent = (0).toFixed(+el.dataset.dec);
+  }
+
+  function playCount(el) {
+    const to = +el.dataset.count, dec = +el.dataset.dec;
+    tween(1200, 0, (k) => { el.textContent = (to * k).toFixed(dec); });
+  }
+
+  const once = (targets, prepare, play, threshold) => {
+    const io = new IntersectionObserver((entries) => {
+      entries.forEach((en) => {
+        if (!en.isIntersecting) return;
+        io.unobserve(en.target);
+        play(en.target);
+      });
+    }, { threshold });
+    targets.forEach((t) => { prepare(t); io.observe(t); });
+  };
+
+  once(document.querySelectorAll('.chart svg'), prepareChart, playChart, 0.4);
+  once(document.querySelectorAll('[data-count]'), prepareCount, playCount, 0.6);
+})();
+</script>
 </body>
 </html>

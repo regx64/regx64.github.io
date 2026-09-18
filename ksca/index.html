@@ -4,12 +4,99 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>KSCA | regx64</title>
-<meta name="description" content="전국 청소년 컴퓨터 사이언스 학회용 웹 서비스입니다. Zenodo 같은 논문 아카이브에 영구 식별자, APA·BibTeX 인용, 버전 관리를 넣고, 게시판을 붙일 계획입니다.">
+<meta name="description" content="전국 단위 청소년 컴퓨터 사이언스 학회의 웹 서비스입니다. Zenodo처럼 영구 식별자와 인용 포맷, 버전 관리를 갖춘 논문·프로젝트 아카이브와, 신고 기반으로 관리되는 커뮤니티 게시판으로 이뤄집니다. 기획과 기능 명세 단계입니다.">
 <link rel="icon" href="../favicon.ico" sizes="48x48">
 <link rel="icon" href="../favicon.svg" type="image/svg+xml">
 <link rel="apple-touch-icon" href="../apple-touch-icon.png">
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css">
 <link rel="stylesheet" href="../style.css">
+<style>
+  /* 이 페이지에만 쓰는 스타일 */
+  .doc-sec h3 { margin: 2rem 0 0.6rem; font-size: 1rem; }
+  .doc-sec h3:first-child { margin-top: 0; }
+
+  .stats {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 1.75rem 2rem;
+    margin: 0;
+  }
+  .stats div { border-top: 2px solid var(--ink); padding-top: 0.75rem; }
+  .stats dt { font-size: 2.25rem; font-weight: 700; letter-spacing: -0.03em; line-height: 1.2; }
+  .stats dd { margin: 0.25rem 0 0; font-size: 0.9375rem; color: var(--muted); }
+
+  .table-wrap { overflow-x: auto; margin: 0 0 0.9rem; }
+  .data {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.875rem;
+    font-variant-numeric: tabular-nums;
+    white-space: nowrap;
+  }
+  .data caption { text-align: left; font-weight: 600; font-size: 0.9375rem; padding-bottom: 0.5rem; }
+  .data th, .data td { padding: 0.45rem 0.6rem; border-bottom: 1px solid rgba(0, 0, 0, 0.1); }
+  .data thead th { border-bottom: 2px solid var(--ink); font-weight: 600; text-align: right; }
+  .data thead th:first-child, .data tbody th { text-align: left; }
+  .data tbody th { font-weight: 500; }
+  .data td { text-align: right; }
+  .data td.strong { font-weight: 700; }
+  .data tbody tr.split th, .data tbody tr.split td { border-top: 2px solid rgba(0, 0, 0, 0.25); }
+  .data.left td { text-align: left; }
+
+  .chart { margin: 1.5rem 0; }
+  .chart svg { display: block; width: 100%; height: auto; }
+
+  .formula {
+    margin: 1rem 0;
+    padding: 0.9rem 1.1rem;
+    background: #FFFFFF;
+    border-radius: 0.75rem;
+    font-size: 1.0625rem;
+    text-align: center;
+  }
+
+  .code {
+    margin: 1rem 0;
+    padding: 1rem 1.1rem;
+    overflow-x: auto;
+    background: #1B1B1B;
+    color: #E6E6E6;
+    border-radius: 0.75rem;
+    font-family: ui-monospace, Consolas, "D2Coding", monospace;
+    font-size: 0.8125rem;
+    line-height: 1.6;
+  }
+
+  .numbered { margin: 0 0 0.9rem; padding-left: 1.4rem; }
+  .numbered li { margin-bottom: 0.6rem; }
+  .numbered li:last-child { margin-bottom: 0; }
+
+  .refs { margin: 0; padding-left: 1.4rem; font-size: 0.9375rem; }
+  .refs li { margin-bottom: 0.4rem; }
+
+  @media (max-width: 820px) {
+    .stats dt { font-size: 1.75rem; }
+  }
+
+  .flow { stroke-dasharray: 6 5; animation: flow 1.2s linear infinite; }
+  @keyframes flow { to { stroke-dashoffset: -22; } }
+  @media (prefers-reduced-motion: reduce) { .flow { animation: none; } }
+
+  .steps li.part::before { background: linear-gradient(90deg, var(--ink) 50%, transparent 50%); }
+  .steps li.plan::before { border-style: dashed; }
+
+  .timeline { list-style: none; margin: 0; padding: 0; }
+  .timeline li {
+    display: grid;
+    grid-template-columns: 6.5rem minmax(0, 1fr);
+    gap: 1rem;
+    padding: 0.6rem 0;
+    border-bottom: 1px solid rgba(0, 0, 0, 0.08);
+  }
+  .timeline time { color: var(--muted); font-size: 0.875rem; font-variant-numeric: tabular-nums; padding-top: 0.1rem; }
+
+  .note { font-size: 0.875rem; color: var(--muted); }
+</style>
 <script type="importmap">
 {
   "imports": {
@@ -32,53 +119,125 @@
 
 <main id="main" class="detail">
 
-  <section class="panel tone-b">
+  <section class="panel tone-a">
     <div class="copy">
       <h1 class="name">KSCA</h1>
-      <p class="headline">학생 논문에도<br>영구 주소를.</p>
-      <p class="body">전국 청소년 컴퓨터 사이언스 학회용 웹 서비스입니다. Zenodo 같은 논문 아카이브에 영구 식별자, APA·BibTeX 인용, 버전 관리를 넣고, 게시판을 붙일 계획입니다.</p>
-      <p class="meta">기획 중</p>
+      <p class="headline">청소년이 쓴 것을<br>남길 곳.</p>
+      <p class="body">전국 단위 청소년 컴퓨터 사이언스 학회의 웹 서비스입니다. Zenodo처럼 영구 식별자와 인용 포맷, 버전 관리를 갖춘 논문·프로젝트 아카이브와, 신고 기반으로 관리되는 커뮤니티 게시판으로 이뤄집니다. 기획과 기능 명세 단계입니다.</p>
+      <p class="meta">Korea Student CS Association / Next.js + Supabase, 기획 단계</p>
     </div>
-    <div class="stage" data-model="ksca" role="img" aria-label="부채꼴로 펼쳐진 논문 원고"></div>
+    <div class="stage" data-model="ksca" role="img" aria-label="차곡차곡 정리된 논문 서가"></div>
   </section>
 
   <div class="doc tone-a">
+
     <section class="doc-sec">
-      <h2>개요</h2>
+      <h2>요약</h2>
       <div>
-        <p>전국 단위 청소년 컴퓨터 사이언스 학회를 위한 웹 서비스입니다. 학생이 쓴 논문을 올리고, 찾고, 인용할 수 있는 곳을 만드는 것이 목표입니다.</p>
+        <dl class="stats">
+          <div><dt>KSCA-{YYYY}-{NNNNNN}</dt><dd>논문마다 붙는 영구 식별자 형식</dd></div>
+          <div><dt>3건</dt><dd>신고가 쌓이면 자동 비공개되는 기준</dd></div>
+          <div><dt>2가지</dt><dd>자동 생성하는 인용 포맷. APA와 BibTeX</dd></div>
+          <div><dt>Zenodo</dt><dd>참고한 아카이브 모델</dd></div>
+        </dl>
       </div>
     </section>
+
+    <section class="doc-sec">
+      <h2>무엇을 만드나</h2>
+      <div>
+        <p>대한민국 청소년이 쓴 논문과 프로젝트를 올리고, 인용하고, 이야기 나눌 수 있는 전국 단위 웹 서비스입니다. 학교 인증 없이 이메일과 비밀번호로 가입하고, 학교명은 자유롭게 입력합니다. 크게 두 축입니다.</p><ul class="plain">
+          <li><strong>논문·프로젝트 아카이브:</strong> 운영진의 사전 승인 없이 올리고, 신고로 사후 관리합니다.</li>
+          <li><strong>커뮤니티 게시판:</strong> 자유, 질문, 스터디·프로젝트 모집, 공지 카테고리와 댓글.</li>
+        </ul>
+      </div>
+    </section>
+
     <section class="doc-sec">
       <h2>논문 아카이브</h2>
       <div>
-        <p>Zenodo와 비슷한 형태로 만듭니다.</p><ul class='plain'><li>논문마다 영구 식별자</li><li>APA, BibTeX 인용 형식</li><li>버전 관리</li></ul>
+        <figure class="chart">
+          <svg viewBox="0 0 700 250" role="img" aria-label="KSCA 논문 아카이브 흐름. 업로드하면 영구 식별자를 발급하고, 같은 논문의 새 버전은 식별자를 유지한 채 버전 번호만 올린다. 상세 페이지에서 APA/BibTeX 인용과 신고 제공" xmlns="http://www.w3.org/2000/svg" font-family="Pretendard, -apple-system, sans-serif">
+          <defs><marker id="ks1-ah" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#1D1D1D"/></marker><marker id="ks1-ahm" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#9A9A9A"/></marker></defs>
+          <text class="lbl" data-d="0" x="0.0" y="14.0" font-size="12" fill="#2F5FC4" text-anchor="start" font-weight="600">논문 아카이브</text>
+          <g class="lbl" data-d="0"><rect x="0" y="28" width="150" height="64" rx="10" fill="#FFFFFF" stroke="#9A9A9A" stroke-width="1.5"/><text x="75.0" y="51.5" font-size="13" fill="#1D1D1D" text-anchor="middle" font-weight="600">업로드</text><text x="75.0" y="70.5" font-size="10" fill="#6E6E6E" text-anchor="middle" font-weight="400">PDF · 초록 · 태그</text><text x="75.0" y="83.5" font-size="10" fill="#6E6E6E" text-anchor="middle" font-weight="400">운영진 승인 없음</text></g>
+          <g class="lbl" data-d="150"><line class="flow" x1="152" y1="60" x2="187" y2="60" stroke="#1D1D1D" stroke-width="1.5" marker-end="url(#ks1-ah)"/></g>
+          <g class="lbl" data-d="300"><rect x="190" y="28" width="180" height="64" rx="10" fill="#DCE4F5" stroke="#2F5FC4" stroke-width="1.5"/><text x="280.0" y="51.5" font-size="13" fill="#1D1D1D" text-anchor="middle" font-weight="600">concept_id 발급</text><text x="280.0" y="70.5" font-size="10" fill="#6E6E6E" text-anchor="middle" font-weight="400">KSCA-{YYYY}-{NNNNNN}</text><text x="280.0" y="83.5" font-size="10" fill="#6E6E6E" text-anchor="middle" font-weight="400">원자적 카운터</text></g>
+          <g class="lbl" data-d="450"><line class="flow" x1="372" y1="60" x2="407" y2="60" stroke="#1D1D1D" stroke-width="1.5" marker-end="url(#ks1-ah)"/></g>
+          <g class="lbl" data-d="600"><rect x="410" y="28" width="140" height="64" rx="10" fill="#FFFFFF" stroke="#9A9A9A" stroke-width="1.5"/><text x="480.0" y="58.0" font-size="13" fill="#1D1D1D" text-anchor="middle" font-weight="600">상세 페이지</text><text x="480.0" y="77.0" font-size="10" fill="#6E6E6E" text-anchor="middle" font-weight="400">초록 · PDF · 조회수</text></g>
+          <g class="lbl" data-d="750"><path d="M 480 92 V 116" fill="none" stroke="#1D1D1D" stroke-width="1.5" marker-end="url(#ks1-ah)"/></g>
+          <g class="lbl" data-d="900"><rect x="0" y="120" width="165" height="60" rx="10" fill="#FFFFFF" stroke="#9A9A9A" stroke-width="1.5"/><text x="82.5" y="141.0" font-size="12" fill="#1D1D1D" text-anchor="middle" font-weight="600">새 버전</text><text x="82.5" y="160.0" font-size="10" fill="#6E6E6E" text-anchor="middle" font-weight="400">concept_id 유지</text><text x="82.5" y="173.0" font-size="10" fill="#6E6E6E" text-anchor="middle" font-weight="400">version_no 증가</text></g>
+          <g class="lbl" data-d="1050"><rect x="180" y="120" width="165" height="60" rx="10" fill="#FFFFFF" stroke="#9A9A9A" stroke-width="1.5"/><text x="262.5" y="147.5" font-size="12" fill="#1D1D1D" text-anchor="middle" font-weight="600">인용</text><text x="262.5" y="166.5" font-size="10" fill="#6E6E6E" text-anchor="middle" font-weight="400">APA · BibTeX</text></g>
+          <g class="lbl" data-d="1200"><rect x="360" y="120" width="165" height="60" rx="10" fill="#FFFFFF" stroke="#9A9A9A" stroke-width="1.5"/><text x="442.5" y="147.5" font-size="12" fill="#1D1D1D" text-anchor="middle" font-weight="600">초록 댓글</text><text x="442.5" y="166.5" font-size="10" fill="#6E6E6E" text-anchor="middle" font-weight="400">버전 배지 표시</text></g>
+          <g class="lbl" data-d="1350"><rect x="540" y="120" width="165" height="60" rx="10" fill="#FFFFFF" stroke="#9A9A9A" stroke-width="1.5" stroke-dasharray="5 4"/><text x="622.5" y="147.5" font-size="12" fill="#1D1D1D" text-anchor="middle" font-weight="600">신고</text><text x="622.5" y="166.5" font-size="10" fill="#6E6E6E" text-anchor="middle" font-weight="400">3건 → 자동 비공개</text></g>
+          <text class="lbl" data-d="1600" x="0.0" y="206.0" font-size="12" fill="#6E6E6E" text-anchor="start" font-weight="400">신고 3건이 쌓이면 자동으로 status = hidden, 이후 운영진이 삭제 또는 복구 결정</text>
+          </svg>
+          <figcaption>업로드부터 인용, 신고까지</figcaption>
+        </figure>
+        <h3>Zenodo에서 가져온 것</h3>
+        <p>논문 하나(concept)에 영구 식별자 하나를 붙입니다. 형식은 <code>KSCA-{YYYY}-{NNNNNN}</code>으로, 연도별 6자리 일련번호를 학회 전체 통합 카운터로 발급합니다. 같은 논문의 새 버전을 올려도 식별자는 그대로 두고 버전 번호만 올립니다.</p>
+        <p>상세 페이지에서는 APA와 BibTeX 인용을 자동으로 만들어 복사할 수 있게 합니다.</p>
+        <pre class="code"><code>식별자   KSCA-2026-000042
+
+@misc{ksca_2026_000042,
+  author = {...},
+  title  = {...},
+  year   = {2026},
+  note   = {KSCA-2026-000042},
+}</code></pre>
       </div>
     </section>
+
     <section class="doc-sec">
-      <h2>커뮤니티</h2>
+      <h2>신고 기반 관리</h2>
       <div>
-        <p>게시판을 함께 둡니다.</p>
+        <figure class="chart">
+          <svg viewBox="0 0 700 120" role="img" aria-label="신고 임계값. 신고가 1건, 2건일 때는 공개 유지, 3건째에 자동 비공개되고 운영진 검토 큐로 이동" xmlns="http://www.w3.org/2000/svg" font-family="Pretendard, -apple-system, sans-serif">
+          <defs><marker id="ks2-ah" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#1D1D1D"/></marker><marker id="ks2-ahm" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#9A9A9A"/></marker></defs>
+          <g class="lbl" data-d="0"><rect x="0" y="30" width="150" height="56" rx="10" fill="#E6E6E6" stroke="#9A9A9A" stroke-width="1.5"/><text x="75.0" y="55.5" font-size="13" fill="#1D1D1D" text-anchor="middle" font-weight="600">신고 1건</text><text x="75.0" y="75.5" font-size="11" fill="#6E6E6E" text-anchor="middle" font-weight="400">공개</text></g>
+          <g class="lbl" data-d="120"><line x1="152" y1="58" x2="172" y2="58" stroke="#1D1D1D" stroke-width="1.5" marker-end="url(#ks2-ah)"/></g>
+          <g class="lbl" data-d="220"><rect x="175" y="30" width="150" height="56" rx="10" fill="#E6E6E6" stroke="#9A9A9A" stroke-width="1.5"/><text x="250.0" y="55.5" font-size="13" fill="#1D1D1D" text-anchor="middle" font-weight="600">신고 2건</text><text x="250.0" y="75.5" font-size="11" fill="#6E6E6E" text-anchor="middle" font-weight="400">공개</text></g>
+          <g class="lbl" data-d="340"><line x1="327" y1="58" x2="347" y2="58" stroke="#1D1D1D" stroke-width="1.5" marker-end="url(#ks2-ah)"/></g>
+          <g class="lbl" data-d="440"><rect x="350" y="30" width="150" height="56" rx="10" fill="#2F5FC4" stroke="#2F5FC4" stroke-width="1.5"/><text x="425.0" y="55.5" font-size="13" fill="#FFFFFF" text-anchor="middle" font-weight="600">신고 3건</text><text x="425.0" y="75.5" font-size="11" fill="#D6DFF5" text-anchor="middle" font-weight="400">자동 비공개</text></g>
+          <g class="lbl" data-d="560"><line class="flow" x1="502" y1="58" x2="522" y2="58" stroke="#1D1D1D" stroke-width="1.5" marker-end="url(#ks2-ah)"/></g>
+          <g class="lbl" data-d="660"><rect x="525" y="30" width="150" height="56" rx="10" fill="#1D1D1D" stroke="#2F5FC4" stroke-width="1.5"/><text x="600.0" y="55.5" font-size="13" fill="#FFFFFF" text-anchor="middle" font-weight="600">운영진 검토</text><text x="600.0" y="75.5" font-size="11" fill="#D6DFF5" text-anchor="middle" font-weight="400">삭제 / 복구</text></g>
+          </svg>
+          <figcaption>신고가 쌓였을 때의 처리</figcaption>
+        </figure>
+        <p>사전 승인이 없는 대신, 같은 대상에 신고가 3건 쌓이면 자동으로 비공개 상태가 되고 운영진 검토 큐로 넘어갑니다. 운영진이 최종적으로 삭제를 확정하거나 복구합니다. 게시판 글도 같은 방식으로 관리합니다.</p>
+        <p>이 로직은 신고가 들어올 때마다 실행되는 Postgres 트리거로 구현할 계획입니다. 식별자 발급은 카운터를 원자적으로 올리는 함수로 처리해, 동시에 여러 명이 올려도 번호가 겹치지 않게 합니다.</p>
+        <pre class="code"><code>create or replace function generate_concept_id() ...
+  -- paper_counters를 원자적으로 증가 (INSERT ... ON CONFLICT DO UPDATE)
+  -- SECURITY DEFINER로 RLS를 우회해 카운터만 갱신</code></pre>
       </div>
     </section>
+
+    <section class="doc-sec">
+      <h2>데이터</h2>
+      <div>
+        <p>기술 스택은 <a href='../percentage/'>Percentage</a>와 같은 Next.js와 Supabase, 배포는 Vercel입니다. 파일은 비공개 버킷에 두고 짧게 만료되는 서명 URL로만 내려받게 합니다.</p><div class="table-wrap">
+          <table class="data left">
+            <caption>테이블</caption>
+            <thead><tr><th scope="col">테이블</th><th scope="col" style="text-align:left">내용</th></tr></thead>
+            <tbody>
+              <tr><th scope="row">profiles</th><td>사용자 프로필, 권한(role)</td></tr>
+              <tr><th scope="row">papers</th><td>논문. concept_id, version_no, 파일 경로</td></tr>
+              <tr><th scope="row">paper_comments</th><td>초록 페이지의 댓글, 작성 시점 버전</td></tr>
+              <tr><th scope="row">posts, comments</th><td>게시판 글과 댓글</td></tr>
+              <tr><th scope="row">reports</th><td>신고</td></tr>
+              <tr><th scope="row">paper_counters</th><td>식별자 발급용 카운터</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
     <section class="doc-sec">
       <h2>상태</h2>
       <div>
-        <p>기획 중입니다.</p>
+        <p>기능, DB 스키마, 접근 제어(RLS) 정책까지 정리한 기능 명세 v1.0을 마쳤습니다. 다음은 프로젝트 초기 세팅과 업로드 흐름 구현입니다.</p>
       </div>
     </section>
-    <!-- 사진, 결과 그래프, 개발 기록을 넣으려면 아래 형식으로 섹션을 추가하세요.
-    <section class="doc-sec">
-      <h2>기록</h2>
-      <div>
-        <figure>
-          <img src="이미지.png" alt="이미지 설명">
-          <figcaption>설명</figcaption>
-        </figure>
-        <p>내용</p>
-      </div>
-    </section>
-    -->
 
     <nav class="pager" aria-label="다른 프로젝트">
       <a class="prev" href="../muxic/"><span>이전 프로젝트</span>MUXIC.js</a>
@@ -92,5 +251,86 @@
   <p>x86-64 ASM, C, Rust, TypeScript, Next.js, Supabase, Arduino, KiCad, QEMU, Docker, Oracle Cloud</p>
   <p><a href="https://github.com/twopercenz">twopercenz</a> / <a href="https://github.com/regx64">regx64</a></p>
 </footer>
+<script>
+/* 도표와 요약 숫자 애니메이션: 화면에 들어올 때 한 번 재생 */
+(() => {
+  if (matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+  if (!('IntersectionObserver' in window)) return;
+
+  const ease = (t) => 1 - Math.pow(1 - t, 3);
+
+  function tween(dur, delay, fn) {
+    const start = performance.now() + delay;
+    function step(now) {
+      const p = Math.min(1, Math.max(0, (now - start) / dur));
+      fn(ease(p));
+      if (p < 1) requestAnimationFrame(step);
+    }
+    requestAnimationFrame(step);
+  }
+
+  function prepareChart(svg) {
+    svg.querySelectorAll('[data-reveal]').forEach((r) => r.setAttribute('width', 0));
+    svg.querySelectorAll('.bar').forEach((r) => {
+      r.dataset.h = r.getAttribute('height');
+      r.setAttribute('y', r.dataset.base);
+      r.setAttribute('height', 0);
+    });
+    svg.querySelectorAll('.hbar').forEach((r) => {
+      r.dataset.w = r.getAttribute('width');
+      r.setAttribute('width', 0);
+    });
+    svg.querySelectorAll('.lbl').forEach((e) => { e.style.opacity = 0; });
+  }
+
+  function playChart(svg) {
+    svg.querySelectorAll('[data-reveal]').forEach((r) => {
+      const w = +r.dataset.reveal;
+      tween(1600, 0, (k) => r.setAttribute('width', w * k));
+    });
+    svg.querySelectorAll('.bar').forEach((r) => {
+      const h = +r.dataset.h, base = +r.dataset.base;
+      tween(800, +r.dataset.d, (k) => {
+        r.setAttribute('height', h * k);
+        r.setAttribute('y', base - h * k);
+      });
+    });
+    svg.querySelectorAll('.hbar').forEach((r) => {
+      const w = +r.dataset.w;
+      tween(+(r.dataset.dur || 900), +r.dataset.d, (k) => r.setAttribute('width', w * k));
+    });
+    svg.querySelectorAll('.lbl').forEach((e) => {
+      setTimeout(() => {
+        e.style.transition = 'opacity 0.4s';
+        e.style.opacity = 1;
+      }, +e.dataset.d);
+    });
+  }
+
+  function prepareCount(el) {
+    el.dataset.dec = el.dataset.dec || 0;
+    el.textContent = (0).toFixed(+el.dataset.dec);
+  }
+
+  function playCount(el) {
+    const to = +el.dataset.count, dec = +el.dataset.dec;
+    tween(1200, 0, (k) => { el.textContent = (to * k).toFixed(dec); });
+  }
+
+  const once = (targets, prepare, play, threshold) => {
+    const io = new IntersectionObserver((entries) => {
+      entries.forEach((en) => {
+        if (!en.isIntersecting) return;
+        io.unobserve(en.target);
+        play(en.target);
+      });
+    }, { threshold });
+    targets.forEach((t) => { prepare(t); io.observe(t); });
+  };
+
+  once(document.querySelectorAll('.chart svg'), prepareChart, playChart, 0.4);
+  once(document.querySelectorAll('[data-count]'), prepareCount, playCount, 0.6);
+})();
+</script>
 </body>
 </html>

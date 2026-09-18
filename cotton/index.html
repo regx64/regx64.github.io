@@ -4,12 +4,99 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Cotton | regx64</title>
-<meta name="description" content="Rust, C 계열, Lua, Python, JavaScript에서 좋았던 부분을 섞고 있습니다. 명세는 v0.2까지 썼고, Rust로 짠 렉서가 돌아갑니다. 다음은 파서와 IR입니다.">
+<meta name="description" content="Rust의 안전성과 Python, JavaScript의 편한 문법을 섞은 식(expression) 중심 언어입니다. 언어 명세 v0.2를 쓰고, 명세 전체를 실행해 볼 수 있는 레퍼런스 인터프리터를 C++17로 만들었습니다.">
 <link rel="icon" href="../favicon.ico" sizes="48x48">
 <link rel="icon" href="../favicon.svg" type="image/svg+xml">
 <link rel="apple-touch-icon" href="../apple-touch-icon.png">
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css">
 <link rel="stylesheet" href="../style.css">
+<style>
+  /* 이 페이지에만 쓰는 스타일 */
+  .doc-sec h3 { margin: 2rem 0 0.6rem; font-size: 1rem; }
+  .doc-sec h3:first-child { margin-top: 0; }
+
+  .stats {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 1.75rem 2rem;
+    margin: 0;
+  }
+  .stats div { border-top: 2px solid var(--ink); padding-top: 0.75rem; }
+  .stats dt { font-size: 2.25rem; font-weight: 700; letter-spacing: -0.03em; line-height: 1.2; }
+  .stats dd { margin: 0.25rem 0 0; font-size: 0.9375rem; color: var(--muted); }
+
+  .table-wrap { overflow-x: auto; margin: 0 0 0.9rem; }
+  .data {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.875rem;
+    font-variant-numeric: tabular-nums;
+    white-space: nowrap;
+  }
+  .data caption { text-align: left; font-weight: 600; font-size: 0.9375rem; padding-bottom: 0.5rem; }
+  .data th, .data td { padding: 0.45rem 0.6rem; border-bottom: 1px solid rgba(0, 0, 0, 0.1); }
+  .data thead th { border-bottom: 2px solid var(--ink); font-weight: 600; text-align: right; }
+  .data thead th:first-child, .data tbody th { text-align: left; }
+  .data tbody th { font-weight: 500; }
+  .data td { text-align: right; }
+  .data td.strong { font-weight: 700; }
+  .data tbody tr.split th, .data tbody tr.split td { border-top: 2px solid rgba(0, 0, 0, 0.25); }
+  .data.left td { text-align: left; }
+
+  .chart { margin: 1.5rem 0; }
+  .chart svg { display: block; width: 100%; height: auto; }
+
+  .formula {
+    margin: 1rem 0;
+    padding: 0.9rem 1.1rem;
+    background: #FFFFFF;
+    border-radius: 0.75rem;
+    font-size: 1.0625rem;
+    text-align: center;
+  }
+
+  .code {
+    margin: 1rem 0;
+    padding: 1rem 1.1rem;
+    overflow-x: auto;
+    background: #1B1B1B;
+    color: #E6E6E6;
+    border-radius: 0.75rem;
+    font-family: ui-monospace, Consolas, "D2Coding", monospace;
+    font-size: 0.8125rem;
+    line-height: 1.6;
+  }
+
+  .numbered { margin: 0 0 0.9rem; padding-left: 1.4rem; }
+  .numbered li { margin-bottom: 0.6rem; }
+  .numbered li:last-child { margin-bottom: 0; }
+
+  .refs { margin: 0; padding-left: 1.4rem; font-size: 0.9375rem; }
+  .refs li { margin-bottom: 0.4rem; }
+
+  @media (max-width: 820px) {
+    .stats dt { font-size: 1.75rem; }
+  }
+
+  .flow { stroke-dasharray: 6 5; animation: flow 1.2s linear infinite; }
+  @keyframes flow { to { stroke-dashoffset: -22; } }
+  @media (prefers-reduced-motion: reduce) { .flow { animation: none; } }
+
+  .steps li.part::before { background: linear-gradient(90deg, var(--ink) 50%, transparent 50%); }
+  .steps li.plan::before { border-style: dashed; }
+
+  .timeline { list-style: none; margin: 0; padding: 0; }
+  .timeline li {
+    display: grid;
+    grid-template-columns: 6.5rem minmax(0, 1fr);
+    gap: 1rem;
+    padding: 0.6rem 0;
+    border-bottom: 1px solid rgba(0, 0, 0, 0.08);
+  }
+  .timeline time { color: var(--muted); font-size: 0.875rem; font-variant-numeric: tabular-nums; padding-top: 0.1rem; }
+
+  .note { font-size: 0.875rem; color: var(--muted); }
+</style>
 <script type="importmap">
 {
   "imports": {
@@ -36,50 +123,237 @@
     <div class="copy">
       <h1 class="name">Cotton</h1>
       <p class="headline">마음에 드는 것만<br>골라 만드는 언어.</p>
-      <p class="body">Rust, C 계열, Lua, Python, JavaScript에서 좋았던 부분을 섞고 있습니다. 명세는 v0.2까지 썼고, Rust로 짠 렉서가 돌아갑니다. 다음은 파서와 IR입니다.</p>
+      <p class="body">Rust의 안전성과 Python, JavaScript의 편한 문법을 섞은 식(expression) 중심 언어입니다. 언어 명세 v0.2를 쓰고, 명세 전체를 실행해 볼 수 있는 레퍼런스 인터프리터를 C++17로 만들었습니다.</p>
+      <p class="meta">C++17, 외부 의존성 없음, MIT</p>
       <div class="actions">
-        <a href="https://github.com/twopercenz/cotton">GitHub에서 보기</a>
+        <a class="btn" href="https://github.com/twopercenz/cotton">GitHub에서 보기</a>
       </div>
     </div>
     <div class="stage" data-model="cotton" role="img" aria-label="목화 솜 모형"></div>
   </section>
 
   <div class="doc tone-a">
+
     <section class="doc-sec">
-      <h2>개요</h2>
+      <h2>요약</h2>
       <div>
-        <p>여러 언어를 쓰면서 좋았던 부분을 모아 새 프로그래밍 언어를 만들고 있습니다. 구현은 Rust로 합니다.</p>
+        <dl class="stats">
+          <div><dt>4,134줄</dt><dd>C++17로 쓴 렉서, 파서, 인터프리터</dd></div>
+          <div><dt>0개</dt><dd>외부 라이브러리. g++만 있으면 빌드됨</dd></div>
+          <div><dt>5개</dt><dd>저장소에 들어 있는 예제 프로그램</dd></div>
+          <div><dt>v0.2</dt><dd>언어 명세 버전</dd></div>
+        </dl>
       </div>
     </section>
+
     <section class="doc-sec">
-      <h2>참고한 언어</h2>
+      <h2>설계 방향</h2>
       <div>
-        <p>Rust, C 계열, Lua, Python, JavaScript</p>
+        <p>핵심 생각은 <strong>어려운 일은 컴파일러가 떠안고, 사람은 짧고 읽기 쉬운 코드를 쓴다</strong>입니다. 소유권 추적, 타입 추론, 범위 검사, 최적화는 컴파일러가 맡습니다. 그러면서도 실행 중에 숨겨진 일은 두지 않습니다. GC 멈춤도, 몰래 풀리는 예외도, 요청하지 않은 동적 디스패치도 없습니다.</p>
+        <p>세미콜론, 조건식을 감싸는 필수 괄호, null, 데코레이터가 없습니다. 기본은 불변이고 수정자는 <code>mut</code> 하나, 공개 여부는 <code>pub</code> 하나뿐입니다.</p>
       </div>
     </section>
+
     <section class="doc-sec">
-      <h2>진행</h2>
+      <h2>어디서 가져왔나</h2>
+      <div>
+        <div class="table-wrap">
+          <table class="data left">
+            <caption>영향을 받은 언어와 가져온 것</caption>
+            <thead><tr><th scope="col">언어</th><th scope="col" style="text-align:left">가져온 것</th></tr></thead>
+            <tbody>
+              <tr><th scope="row">Rust</th><td>소유권과 빌림, enum과 패턴 매칭, trait, Result/Option, 식 블록, 비용 없는 제네릭</td></tr>
+              <tr><th scope="row">JavaScript</th><td>템플릿 문자열, 구조 분해, spread/rest, async/await, <code>|x| x*x</code> 형태의 클로저</td></tr>
+              <tr><th scope="row">Python</th><td>컴프리헨션, <code>for x in y</code>, <code>in</code>·<code>not</code>·<code>and</code>·<code>or</code> 키워드, 간단한 import</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+    <section class="doc-sec">
+      <h2>문법 맛보기</h2>
+      <div>
+        <h3>패턴 매칭</h3><pre class="code"><code>match value {
+    0 =&gt; print(&quot;zero&quot;),
+    1 | 2 =&gt; print(&quot;one or two&quot;),
+    3..=9 =&gt; print(&quot;small&quot;),
+    n if n &lt; 0 =&gt; print(&quot;negative&quot;),
+    _ =&gt; print(&quot;other&quot;),
+}</code></pre><h3>에러 처리: 예외도 null도 없음</h3><pre class="code"><code>fn divide(a: f64, b: f64) -&gt; Result&lt;f64, str&gt; {
+    if b == 0 { return Err(&quot;division by zero&quot;) }
+    Ok(a / b)
+}
+
+let value = divide(10, 2)?          // 에러면 바로 위로 전달
+let safe = divide(10, 0) ?? 0.0     // 에러면 기본값
+let len = name?.len()               // 옵셔널 체이닝</code></pre><p><code>?</code>는 에러를 호출한 쪽으로 넘기고, <code>??</code>는 기본값을 주고, <code>?.</code>는 값이 없으면 멈춥니다.</p>
+      </div>
+    </section>
+
+    <section class="doc-sec">
+      <h2>실제로 돌려 보기</h2>
+      <div>
+        <p>저장소의 <code>examples/comprehension.cot</code>를 레퍼런스 인터프리터로 실행한 결과입니다.</p><pre class="code"><code>fn main() {
+    let nums = [1, 2, 3, 4, 5]
+    let squares = [n * n for n in nums]
+    print(`Squares: ${squares}`)
+
+    let evens = [n for n in nums if n % 2 == 0]
+    print(`Evens: ${evens}`)
+
+    let pairs = [(i, j) for i in 0..3 for j in 0..3 if i != j]
+    print(`Pairs where i != j: ${pairs}`)
+
+    let lookup = {x: x * x for x in nums}
+    print(`Lookup squares dict: ${lookup}`)
+
+    let [first, ...rest] = nums
+    print(`First: ${first}, Rest: ${rest}`)
+
+    let (a, b, c) = (1, 2, 3)
+    print(`Destructured: ${a}, ${b}, ${c}`)
+
+    let spaced = [1, 2, ...[3, 4], 5]
+    print(`Spread: ${spaced}`)
+}</code></pre><pre class="code"><code>$ ./cotton examples/comprehension.cot
+Squares: [1, 4, 9, 16, 25]
+Evens: [2, 4]
+Pairs where i != j: [(0, 1), (0, 2), (1, 0), (1, 2), (2, 0), (2, 1)]
+Lookup squares dict: {1: 1, 2: 4, 3: 9, 4: 16, 5: 25}
+First: 1, Rest: [2, 3, 4, 5]
+Destructured: 1, 2, 3
+Spread: [1, 2, 3, 4, 5]</code></pre>
+      </div>
+    </section>
+
+    <section class="doc-sec">
+      <h2>구조</h2>
+      <div>
+        <figure class="chart">
+          <svg viewBox="0 0 700 250" role="img" aria-label="Cotton 처리 과정. 소스, 렉서, 파서, AST, 트리 워킹 인터프리터, 출력. 바이트코드 컴파일러와 LLVM 백엔드는 계획" xmlns="http://www.w3.org/2000/svg" font-family="Pretendard, -apple-system, sans-serif">
+          <defs><marker id="co1-ah" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#1D1D1D"/></marker><marker id="co1-ahm" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#9A9A9A"/></marker></defs>
+          <g class="lbl" data-d="0"><rect x="0" y="30" width="100" height="76" rx="10" fill="#FFFFFF" stroke="#9A9A9A" stroke-width="1.5"/><text x="50.0" y="65.5" font-size="13" fill="#1D1D1D" text-anchor="middle" font-weight="600">소스</text><text x="50.0" y="85.5" font-size="11" fill="#6E6E6E" text-anchor="middle" font-weight="400">.cot 파일</text></g>
+          <g class="lbl" data-d="120"><line class="flow" x1="102" y1="68" x2="117" y2="68" stroke="#1D1D1D" stroke-width="1.5" marker-end="url(#co1-ah)"/></g>
+          <g class="lbl" data-d="220"><rect x="120" y="30" width="100" height="76" rx="10" fill="#F6EBD2" stroke="#A87808" stroke-width="1.5"/><text x="170.0" y="58.5" font-size="13" fill="#1D1D1D" text-anchor="middle" font-weight="600">Lexer</text><text x="170.0" y="78.5" font-size="11" fill="#6E6E6E" text-anchor="middle" font-weight="400">lexer.cpp</text><text x="170.0" y="92.5" font-size="11" fill="#6E6E6E" text-anchor="middle" font-weight="400">348줄</text></g>
+          <g class="lbl" data-d="340"><line class="flow" x1="222" y1="68" x2="237" y2="68" stroke="#1D1D1D" stroke-width="1.5" marker-end="url(#co1-ah)"/></g>
+          <g class="lbl" data-d="440"><rect x="240" y="30" width="100" height="76" rx="10" fill="#F6EBD2" stroke="#A87808" stroke-width="1.5"/><text x="290.0" y="58.5" font-size="13" fill="#1D1D1D" text-anchor="middle" font-weight="600">Parser</text><text x="290.0" y="78.5" font-size="11" fill="#6E6E6E" text-anchor="middle" font-weight="400">재귀 하강 + Pratt</text><text x="290.0" y="92.5" font-size="11" fill="#6E6E6E" text-anchor="middle" font-weight="400">1,601줄</text></g>
+          <g class="lbl" data-d="560"><line class="flow" x1="342" y1="68" x2="357" y2="68" stroke="#1D1D1D" stroke-width="1.5" marker-end="url(#co1-ah)"/></g>
+          <g class="lbl" data-d="660"><rect x="360" y="30" width="100" height="76" rx="10" fill="#F6EBD2" stroke="#A87808" stroke-width="1.5"/><text x="410.0" y="58.5" font-size="13" fill="#1D1D1D" text-anchor="middle" font-weight="600">AST</text><text x="410.0" y="78.5" font-size="11" fill="#6E6E6E" text-anchor="middle" font-weight="400">ast.h</text><text x="410.0" y="92.5" font-size="11" fill="#6E6E6E" text-anchor="middle" font-weight="400">214줄</text></g>
+          <g class="lbl" data-d="780"><line class="flow" x1="462" y1="68" x2="477" y2="68" stroke="#1D1D1D" stroke-width="1.5" marker-end="url(#co1-ah)"/></g>
+          <g class="lbl" data-d="880"><rect x="480" y="30" width="100" height="76" rx="10" fill="#F6EBD2" stroke="#A87808" stroke-width="1.5"/><text x="530.0" y="58.5" font-size="13" fill="#1D1D1D" text-anchor="middle" font-weight="600">Interpreter</text><text x="530.0" y="78.5" font-size="11" fill="#6E6E6E" text-anchor="middle" font-weight="400">트리 워킹</text><text x="530.0" y="92.5" font-size="11" fill="#6E6E6E" text-anchor="middle" font-weight="400">1,261줄</text></g>
+          <g class="lbl" data-d="1000"><line class="flow" x1="582" y1="68" x2="597" y2="68" stroke="#1D1D1D" stroke-width="1.5" marker-end="url(#co1-ah)"/></g>
+          <g class="lbl" data-d="1100"><rect x="600" y="30" width="100" height="76" rx="10" fill="#FFFFFF" stroke="#9A9A9A" stroke-width="1.5"/><text x="650.0" y="65.5" font-size="13" fill="#1D1D1D" text-anchor="middle" font-weight="600">출력</text><text x="650.0" y="85.5" font-size="11" fill="#6E6E6E" text-anchor="middle" font-weight="400">print</text></g>
+          <text class="lbl" data-d="0" x="0.0" y="18.0" font-size="12" fill="#A87808" text-anchor="start" font-weight="600">지금 구현된 흐름</text>
+          <text class="lbl" data-d="1500" x="360.0" y="150.0" font-size="12" fill="#6E6E6E" text-anchor="start" font-weight="600">앞으로</text>
+          <g class="lbl" data-d="1500"><path d="M 410.0 107 V 160" fill="none" stroke="#9A9A9A" stroke-width="1.5" stroke-dasharray="5 4" marker-end="url(#co1-ahm)"/></g>
+          <g class="lbl" data-d="1600"><rect x="360" y="162" width="100" height="70" rx="10" fill="#FFFFFF" stroke="#9A9A9A" stroke-width="1.5" stroke-dasharray="5 4"/><text x="410.0" y="194.5" font-size="13" fill="#1D1D1D" text-anchor="middle" font-weight="600">바이트코드</text><text x="410.0" y="214.5" font-size="11" fill="#6E6E6E" text-anchor="middle" font-weight="400">컴파일러</text></g>
+          <g class="lbl" data-d="1700"><line x1="462" y1="197" x2="477" y2="197" stroke="#9A9A9A" stroke-width="1.5" stroke-dasharray="5 4" marker-end="url(#co1-ahm)"/></g>
+          <g class="lbl" data-d="1800"><rect x="480" y="162" width="100" height="70" rx="10" fill="#FFFFFF" stroke="#9A9A9A" stroke-width="1.5" stroke-dasharray="5 4"/><text x="530.0" y="194.5" font-size="13" fill="#1D1D1D" text-anchor="middle" font-weight="600">LLVM</text><text x="530.0" y="214.5" font-size="11" fill="#6E6E6E" text-anchor="middle" font-weight="400">백엔드</text></g>
+          </svg>
+          <figcaption>소스 코드가 실행되기까지의 흐름</figcaption>
+        </figure>
+        <p>렉서가 토큰을 만들고, 파서가 재귀 하강과 Pratt 파싱을 섞어 AST를 만들고, 인터프리터가 AST를 직접 따라가며 실행합니다. 지금은 인터프리터지만 문법 전체를 먼저 돌려 보기 위한 레퍼런스 구현이고, 이후 바이트코드 컴파일러와 LLVM 백엔드로 넘어갈 계획입니다.</p>
+        <figure class="chart">
+          <svg viewBox="0 0 640 420" role="img" aria-label="파일별 코드 줄 수. 전체 4,134줄" xmlns="http://www.w3.org/2000/svg" font-family="Pretendard, -apple-system, sans-serif">
+          <defs><marker id="co2-ah" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#1D1D1D"/></marker><marker id="co2-ahm" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#9A9A9A"/></marker></defs>
+          <text x="0.0" y="18.0" font-size="13" fill="#1D1D1D" text-anchor="start" font-weight="600">src/ 파일별 줄 수 (합계 4,134줄)</text>
+          <text x="138.0" y="54.0" font-size="12" fill="#1D1D1D" text-anchor="end" font-weight="500" font-family="ui-monospace, Consolas, monospace">parser.cpp</text>
+          <rect class="hbar" data-d="0" x="150" y="40" width="400.0" height="20" rx="3" fill="#A87808"/>
+          <text class="lbl" data-d="600" x="558.0" y="55.0" font-size="12" fill="#1D1D1D" text-anchor="start" font-weight="600">1,601줄</text>
+          <text x="138.0" y="88.0" font-size="12" fill="#1D1D1D" text-anchor="end" font-weight="500" font-family="ui-monospace, Consolas, monospace">interpreter.cpp</text>
+          <rect class="hbar" data-d="120" x="150" y="74" width="315.1" height="20" rx="3" fill="#A87808"/>
+          <text class="lbl" data-d="720" x="473.1" y="89.0" font-size="12" fill="#1D1D1D" text-anchor="start" font-weight="600">1,261줄</text>
+          <text x="138.0" y="122.0" font-size="12" fill="#1D1D1D" text-anchor="end" font-weight="500" font-family="ui-monospace, Consolas, monospace">lexer.cpp</text>
+          <rect class="hbar" data-d="240" x="150" y="108" width="86.9" height="20" rx="3" fill="#A87808"/>
+          <text class="lbl" data-d="840" x="244.9" y="123.0" font-size="12" fill="#1D1D1D" text-anchor="start" font-weight="600">348줄</text>
+          <text x="138.0" y="156.0" font-size="12" fill="#1D1D1D" text-anchor="end" font-weight="500" font-family="ui-monospace, Consolas, monospace">ast.h</text>
+          <rect class="hbar" data-d="360" x="150" y="142" width="53.5" height="20" rx="3" fill="#A87808"/>
+          <text class="lbl" data-d="960" x="211.5" y="157.0" font-size="12" fill="#1D1D1D" text-anchor="start" font-weight="600">214줄</text>
+          <text x="138.0" y="190.0" font-size="12" fill="#1D1D1D" text-anchor="end" font-weight="500" font-family="ui-monospace, Consolas, monospace">value.h</text>
+          <rect class="hbar" data-d="480" x="150" y="176" width="48.0" height="20" rx="3" fill="#A87808"/>
+          <text class="lbl" data-d="1080" x="206.0" y="191.0" font-size="12" fill="#1D1D1D" text-anchor="start" font-weight="600">192줄</text>
+          <text x="138.0" y="224.0" font-size="12" fill="#1D1D1D" text-anchor="end" font-weight="500" font-family="ui-monospace, Consolas, monospace">main.cpp</text>
+          <rect class="hbar" data-d="600" x="150" y="210" width="36.0" height="20" rx="3" fill="#A87808"/>
+          <text class="lbl" data-d="1200" x="194.0" y="225.0" font-size="12" fill="#1D1D1D" text-anchor="start" font-weight="600">144줄</text>
+          <text x="138.0" y="258.0" font-size="12" fill="#1D1D1D" text-anchor="end" font-weight="500" font-family="ui-monospace, Consolas, monospace">value.cpp</text>
+          <rect class="hbar" data-d="720" x="150" y="244" width="23.0" height="20" rx="3" fill="#A87808"/>
+          <text class="lbl" data-d="1320" x="181.0" y="259.0" font-size="12" fill="#1D1D1D" text-anchor="start" font-weight="600">92줄</text>
+          <text x="138.0" y="292.0" font-size="12" fill="#1D1D1D" text-anchor="end" font-weight="500" font-family="ui-monospace, Consolas, monospace">parser.h</text>
+          <rect class="hbar" data-d="840" x="150" y="278" width="23.0" height="20" rx="3" fill="#A87808"/>
+          <text class="lbl" data-d="1440" x="181.0" y="293.0" font-size="12" fill="#1D1D1D" text-anchor="start" font-weight="600">92줄</text>
+          <text x="138.0" y="326.0" font-size="12" fill="#1D1D1D" text-anchor="end" font-weight="500" font-family="ui-monospace, Consolas, monospace">interpreter.h</text>
+          <rect class="hbar" data-d="960" x="150" y="312" width="22.7" height="20" rx="3" fill="#A87808"/>
+          <text class="lbl" data-d="1560" x="180.7" y="327.0" font-size="12" fill="#1D1D1D" text-anchor="start" font-weight="600">91줄</text>
+          <text x="138.0" y="360.0" font-size="12" fill="#1D1D1D" text-anchor="end" font-weight="500" font-family="ui-monospace, Consolas, monospace">token.h</text>
+          <rect class="hbar" data-d="1080" x="150" y="346" width="14.2" height="20" rx="3" fill="#A87808"/>
+          <text class="lbl" data-d="1680" x="172.2" y="361.0" font-size="12" fill="#1D1D1D" text-anchor="start" font-weight="600">57줄</text>
+          <text x="138.0" y="394.0" font-size="12" fill="#1D1D1D" text-anchor="end" font-weight="500" font-family="ui-monospace, Consolas, monospace">lexer.h</text>
+          <rect class="hbar" data-d="1200" x="150" y="380" width="10.5" height="20" rx="3" fill="#A87808"/>
+          <text class="lbl" data-d="1800" x="168.5" y="395.0" font-size="12" fill="#1D1D1D" text-anchor="start" font-weight="600">42줄</text>
+          </svg>
+          <figcaption>파서와 인터프리터가 전체 코드의 70% 가까이를 차지합니다.</figcaption>
+        </figure>
+      </div>
+    </section>
+
+    <section class="doc-sec">
+      <h2>구현하며 정한 것</h2>
+      <div>
+        <h3>세미콜론 없이 줄 끝 처리</h3>
+        <p>렉서가 소괄호, 대괄호, 중괄호 깊이를 따로 셉니다. 깊이가 0일 때만 줄바꿈을 문장 끝으로 내보내서, 괄호 안에서는 여러 줄로 써도 문장이 끊기지 않습니다.</p>
+        <h3>구조체 리터럴과 블록 구분</h3>
+        <p><code>IDENT {</code> 뒤가 <code>필드: 값</code> 형태이거나 비어 있을 때만 구조체 리터럴로 봅니다. 그렇지 않으면 식별자 다음에 블록이 온 것으로 봅니다. <code>if cond { ... }</code>를 구조체로 잘못 읽는 Rust 계열 문법의 고전적인 모호함을 이렇게 풀었습니다.</p>
+        <h3>소유권</h3>
+        <p>환경에 변수마다 값, 가변 여부, 이동 여부를 저장합니다. 복사 타입(정수, 불, 실수, 참조)이 아닌 값은 함수에 넘기면 이동된 것으로 표시되고, 이동된 값을 쓰면 실행 중 에러가 납니다. 정식 컴파일러에서는 이 검사를 컴파일 시간에 할 계획입니다.</p>
+        <h3>제어 흐름</h3>
+        <p><code>break</code>, <code>continue</code>, <code>return</code>, <code>?</code>의 에러 전달을 내부 신호로 만들어 호출 스택을 깔끔하게 되감습니다.</p>
+        <h3>메서드 호출</h3>
+        <p><code>impl</code> 블록의 메서드를 타입 이름과 메서드 이름으로 등록해 두고, <code>obj.method(args)</code>를 만나면 찾아서 <code>self</code>를 앞에 붙여 호출합니다.</p>
+      </div>
+    </section>
+
+    <section class="doc-sec">
+      <h2>구현 현황</h2>
       <div>
         <ol class="steps">
-          <li class="done"><span>언어 명세 v0.2</span><span class="state">완료</span></li>
-          <li class="done"><span>렉서</span><span class="state">완료</span></li>
-          <li class="next"><span>파서</span><span class="state">다음 목표</span></li>
-          <li class="next"><span>IR</span><span class="state">다음 목표</span></li>
+          <li class="done"><span>let / mut / const, 암묵적 반환</span><span class="state">완료</span></li>
+          <li class="done"><span>함수, <code>|x|</code> 클로저</span><span class="state">완료</span></li>
+          <li class="done"><span>if, for in, while, loop, 레이블 break/continue</span><span class="state">완료</span></li>
+          <li class="done"><span>패턴 매칭 (OR, 범위, 가드, 구조체·enum 패턴)</span><span class="state">완료</span></li>
+          <li class="done"><span>struct, enum, impl, trait</span><span class="state">완료</span></li>
+          <li class="done"><span>Result/Option, <code>?</code>, <code>??</code>, <code>?.</code></span><span class="state">완료</span></li>
+          <li class="done"><span>배열·딕셔너리·튜플, 컴프리헨션, 구조 분해, spread</span><span class="state">완료</span></li>
+          <li class="done"><span>템플릿 문자열, 여러 줄 문자열</span><span class="state">완료</span></li>
+          <li class="done"><span>Box, &amp;, &amp;mut, unsafe</span><span class="state">완료</span></li>
+          <li class="part"><span>제네릭 (파싱까지, 단형화는 예정)</span><span class="state">일부</span></li>
+          <li class="part"><span>spawn, async/await, channel (파싱까지, 동기 실행)</span><span class="state">일부</span></li>
+          <li class="part"><span>import, module, pub (파싱까지)</span><span class="state">일부</span></li>
+          <li class="part"><span>소유권 검사 (실행 중 검사, 컴파일 시간 검사는 예정)</span><span class="state">일부</span></li>
+          <li class="plan"><span>바이트코드 컴파일러, LLVM 백엔드</span><span class="state">계획</span></li>
+          <li class="plan"><span>수명 추론을 포함한 컴파일 시간 빌림 검사</span><span class="state">계획</span></li>
+          <li class="plan"><span>Hindley-Milner 타입 추론</span><span class="state">계획</span></li>
+          <li class="plan"><span>work-stealing 비동기 런타임</span><span class="state">계획</span></li>
         </ol>
       </div>
     </section>
-    <!-- 사진, 결과 그래프, 개발 기록을 넣으려면 아래 형식으로 섹션을 추가하세요.
+
+    <section class="doc-sec">
+      <h2>도구</h2>
+      <div>
+        <p>VS Code 확장(<code>cotton-vscode</code> 0.1.0)도 만들었습니다. <code>.cot</code>, <code>.cotton</code> 파일을 인식하고, 키워드와 타입, 템플릿 문자열 안의 <code>${식}</code>까지 구분해 색을 입히며, 괄호 짝 맞추기와 <code>fn</code>, <code>match</code>, <code>impl</code> 같은 스니펫을 제공합니다.</p>
+      </div>
+    </section>
+
     <section class="doc-sec">
       <h2>기록</h2>
       <div>
-        <figure>
-          <img src="이미지.png" alt="이미지 설명">
-          <figcaption>설명</figcaption>
-        </figure>
-        <p>내용</p>
+        <ol class="timeline">
+          <li><time>2026. 7. 8.</time><div>저장소 생성, 개발 환경 구성, 토큰 정의와 렉서 구현</div></li>
+          <li><time>2026. 7. 10.</time><div>파서, 값 표현 추가, dev 브랜치 병합</div></li>
+        </ol>
       </div>
     </section>
-    -->
 
     <nav class="pager" aria-label="다른 프로젝트">
       <a class="prev" href="../hobby-os/"><span>이전 프로젝트</span>Hobby OS</a>
@@ -93,5 +367,86 @@
   <p>x86-64 ASM, C, Rust, TypeScript, Next.js, Supabase, Arduino, KiCad, QEMU, Docker, Oracle Cloud</p>
   <p><a href="https://github.com/twopercenz">twopercenz</a> / <a href="https://github.com/regx64">regx64</a></p>
 </footer>
+<script>
+/* 도표와 요약 숫자 애니메이션: 화면에 들어올 때 한 번 재생 */
+(() => {
+  if (matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+  if (!('IntersectionObserver' in window)) return;
+
+  const ease = (t) => 1 - Math.pow(1 - t, 3);
+
+  function tween(dur, delay, fn) {
+    const start = performance.now() + delay;
+    function step(now) {
+      const p = Math.min(1, Math.max(0, (now - start) / dur));
+      fn(ease(p));
+      if (p < 1) requestAnimationFrame(step);
+    }
+    requestAnimationFrame(step);
+  }
+
+  function prepareChart(svg) {
+    svg.querySelectorAll('[data-reveal]').forEach((r) => r.setAttribute('width', 0));
+    svg.querySelectorAll('.bar').forEach((r) => {
+      r.dataset.h = r.getAttribute('height');
+      r.setAttribute('y', r.dataset.base);
+      r.setAttribute('height', 0);
+    });
+    svg.querySelectorAll('.hbar').forEach((r) => {
+      r.dataset.w = r.getAttribute('width');
+      r.setAttribute('width', 0);
+    });
+    svg.querySelectorAll('.lbl').forEach((e) => { e.style.opacity = 0; });
+  }
+
+  function playChart(svg) {
+    svg.querySelectorAll('[data-reveal]').forEach((r) => {
+      const w = +r.dataset.reveal;
+      tween(1600, 0, (k) => r.setAttribute('width', w * k));
+    });
+    svg.querySelectorAll('.bar').forEach((r) => {
+      const h = +r.dataset.h, base = +r.dataset.base;
+      tween(800, +r.dataset.d, (k) => {
+        r.setAttribute('height', h * k);
+        r.setAttribute('y', base - h * k);
+      });
+    });
+    svg.querySelectorAll('.hbar').forEach((r) => {
+      const w = +r.dataset.w;
+      tween(+(r.dataset.dur || 900), +r.dataset.d, (k) => r.setAttribute('width', w * k));
+    });
+    svg.querySelectorAll('.lbl').forEach((e) => {
+      setTimeout(() => {
+        e.style.transition = 'opacity 0.4s';
+        e.style.opacity = 1;
+      }, +e.dataset.d);
+    });
+  }
+
+  function prepareCount(el) {
+    el.dataset.dec = el.dataset.dec || 0;
+    el.textContent = (0).toFixed(+el.dataset.dec);
+  }
+
+  function playCount(el) {
+    const to = +el.dataset.count, dec = +el.dataset.dec;
+    tween(1200, 0, (k) => { el.textContent = (to * k).toFixed(dec); });
+  }
+
+  const once = (targets, prepare, play, threshold) => {
+    const io = new IntersectionObserver((entries) => {
+      entries.forEach((en) => {
+        if (!en.isIntersecting) return;
+        io.unobserve(en.target);
+        play(en.target);
+      });
+    }, { threshold });
+    targets.forEach((t) => { prepare(t); io.observe(t); });
+  };
+
+  once(document.querySelectorAll('.chart svg'), prepareChart, playChart, 0.4);
+  once(document.querySelectorAll('[data-count]'), prepareCount, playCount, 0.6);
+})();
+</script>
 </body>
 </html>

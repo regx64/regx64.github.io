@@ -4,12 +4,99 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>MUXIC.js | regx64</title>
-<meta name="description" content="music.player의 오디오 추출 계층으로 쓸지 검토하고 있습니다.">
+<meta name="description" content="URL을 넣으면 이미 열린 mp3 오디오 스트림을 돌려주는 TypeScript 라이브러리입니다. music.player가 그대로 가져다 쓸 수 있도록, URL 해석과 실제 추출을 두 층으로 나눠 다시 설계했습니다.">
 <link rel="icon" href="../favicon.ico" sizes="48x48">
 <link rel="icon" href="../favicon.svg" type="image/svg+xml">
 <link rel="apple-touch-icon" href="../apple-touch-icon.png">
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css">
 <link rel="stylesheet" href="../style.css">
+<style>
+  /* 이 페이지에만 쓰는 스타일 */
+  .doc-sec h3 { margin: 2rem 0 0.6rem; font-size: 1rem; }
+  .doc-sec h3:first-child { margin-top: 0; }
+
+  .stats {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 1.75rem 2rem;
+    margin: 0;
+  }
+  .stats div { border-top: 2px solid var(--ink); padding-top: 0.75rem; }
+  .stats dt { font-size: 2.25rem; font-weight: 700; letter-spacing: -0.03em; line-height: 1.2; }
+  .stats dd { margin: 0.25rem 0 0; font-size: 0.9375rem; color: var(--muted); }
+
+  .table-wrap { overflow-x: auto; margin: 0 0 0.9rem; }
+  .data {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.875rem;
+    font-variant-numeric: tabular-nums;
+    white-space: nowrap;
+  }
+  .data caption { text-align: left; font-weight: 600; font-size: 0.9375rem; padding-bottom: 0.5rem; }
+  .data th, .data td { padding: 0.45rem 0.6rem; border-bottom: 1px solid rgba(0, 0, 0, 0.1); }
+  .data thead th { border-bottom: 2px solid var(--ink); font-weight: 600; text-align: right; }
+  .data thead th:first-child, .data tbody th { text-align: left; }
+  .data tbody th { font-weight: 500; }
+  .data td { text-align: right; }
+  .data td.strong { font-weight: 700; }
+  .data tbody tr.split th, .data tbody tr.split td { border-top: 2px solid rgba(0, 0, 0, 0.25); }
+  .data.left td { text-align: left; }
+
+  .chart { margin: 1.5rem 0; }
+  .chart svg { display: block; width: 100%; height: auto; }
+
+  .formula {
+    margin: 1rem 0;
+    padding: 0.9rem 1.1rem;
+    background: #FFFFFF;
+    border-radius: 0.75rem;
+    font-size: 1.0625rem;
+    text-align: center;
+  }
+
+  .code {
+    margin: 1rem 0;
+    padding: 1rem 1.1rem;
+    overflow-x: auto;
+    background: #1B1B1B;
+    color: #E6E6E6;
+    border-radius: 0.75rem;
+    font-family: ui-monospace, Consolas, "D2Coding", monospace;
+    font-size: 0.8125rem;
+    line-height: 1.6;
+  }
+
+  .numbered { margin: 0 0 0.9rem; padding-left: 1.4rem; }
+  .numbered li { margin-bottom: 0.6rem; }
+  .numbered li:last-child { margin-bottom: 0; }
+
+  .refs { margin: 0; padding-left: 1.4rem; font-size: 0.9375rem; }
+  .refs li { margin-bottom: 0.4rem; }
+
+  @media (max-width: 820px) {
+    .stats dt { font-size: 1.75rem; }
+  }
+
+  .flow { stroke-dasharray: 6 5; animation: flow 1.2s linear infinite; }
+  @keyframes flow { to { stroke-dashoffset: -22; } }
+  @media (prefers-reduced-motion: reduce) { .flow { animation: none; } }
+
+  .steps li.part::before { background: linear-gradient(90deg, var(--ink) 50%, transparent 50%); }
+  .steps li.plan::before { border-style: dashed; }
+
+  .timeline { list-style: none; margin: 0; padding: 0; }
+  .timeline li {
+    display: grid;
+    grid-template-columns: 6.5rem minmax(0, 1fr);
+    gap: 1rem;
+    padding: 0.6rem 0;
+    border-bottom: 1px solid rgba(0, 0, 0, 0.08);
+  }
+  .timeline time { color: var(--muted); font-size: 0.875rem; font-variant-numeric: tabular-nums; padding-top: 0.1rem; }
+
+  .note { font-size: 0.875rem; color: var(--muted); }
+</style>
 <script type="importmap">
 {
   "imports": {
@@ -36,39 +123,172 @@
     <div class="copy">
       <h1 class="name">MUXIC.js</h1>
       <p class="headline">mp3를 받아 오는<br>라이브러리.</p>
-      <p class="body">music.player의 오디오 추출 계층으로 쓸지 검토하고 있습니다.</p>
+      <p class="body">URL을 넣으면 이미 열린 mp3 오디오 스트림을 돌려주는 TypeScript 라이브러리입니다. music.player가 그대로 가져다 쓸 수 있도록, URL 해석과 실제 추출을 두 층으로 나눠 다시 설계했습니다.</p>
+      <p class="meta">TypeScript, Bun, MIT</p>
       <div class="actions">
-        <a href="https://github.com/twopercenz/MUXIC.js">GitHub에서 보기</a>
+        <a class="btn" href="https://github.com/twopercenz/MUXIC.js">GitHub에서 보기</a>
       </div>
     </div>
     <div class="stage" data-model="muxic" role="img" aria-label="원형으로 늘어선 이퀄라이저 막대"></div>
   </section>
 
   <div class="doc tone-a">
+
     <section class="doc-sec">
-      <h2>개요</h2>
+      <h2>요약</h2>
       <div>
-        <p>mp3 다운로더 라이브러리입니다.</p>
+        <dl class="stats">
+          <div><dt>514줄</dt><dd>TypeScript 소스</dd></div>
+          <div><dt>14개</dt><dd>bun test 테스트 케이스</dd></div>
+          <div><dt>2개</dt><dd>추출 엔진. 기본 하나, 선택 하나</dd></div>
+          <div><dt>0단계</dt><dd>빌드 과정. TypeScript 소스를 그대로 배포</dd></div>
+        </dl>
       </div>
     </section>
+
     <section class="doc-sec">
-      <h2>쓰임</h2>
+      <h2>사용법</h2>
       <div>
-        <p><a href='../music-player/'>music.player</a>의 오디오 추출 계층으로 쓰는 방안을 검토하고 있습니다.</p>
+        <pre class="code"><code>import { openAudioStream } from &quot;muxic&quot;;
+
+const { stream, contentType, abort } = await openAudioStream(
+  &quot;https://www.youtube.com/watch?v=...&quot;,
+);
+// stream: ReadableStream&lt;Uint8Array&gt;, contentType: &quot;audio/mpeg&quot;</code></pre><p>반환값은 주소 목록이 아니라 이미 열린 바이트 스트림입니다. 호출하는 쪽은 이걸 HTTP 응답 본문에 바로 꽂거나 <code>.tee()</code>로 나눠 쓰면 됩니다.</p>
       </div>
     </section>
-    <!-- 사진, 결과 그래프, 개발 기록을 넣으려면 아래 형식으로 섹션을 추가하세요.
+
+    <section class="doc-sec">
+      <h2>구조</h2>
+      <div>
+        <figure class="chart">
+          <svg viewBox="0 0 700 300" role="img" aria-label="MUXIC.js 구조. URL을 resolver가 사이트와 ID로 바꾸고, engine이 바이트 스트림을 연다. 기본 엔진은 ytdlp-ffmpeg, 선택 엔진은 innertube" xmlns="http://www.w3.org/2000/svg" font-family="Pretendard, -apple-system, sans-serif">
+          <defs><marker id="mx1-ah" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#1D1D1D"/></marker><marker id="mx1-ahm" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#9A9A9A"/></marker></defs>
+          <text class="lbl" data-d="0" x="0.0" y="14.0" font-size="12" fill="#7A5BC7" text-anchor="start" font-weight="600">openAudioStream(url)</text>
+          <g class="lbl" data-d="0"><rect x="0" y="30" width="110" height="70" rx="10" fill="#FFFFFF" stroke="#9A9A9A" stroke-width="1.5"/><text x="55.0" y="62.5" font-size="13" fill="#1D1D1D" text-anchor="middle" font-weight="600">URL</text><text x="55.0" y="82.5" font-size="11" fill="#6E6E6E" text-anchor="middle" font-weight="400" font-family="ui-monospace, Consolas, monospace">youtube.com/…</text></g>
+          <g class="lbl" data-d="150"><line class="flow" x1="112" y1="65" x2="147" y2="65" stroke="#1D1D1D" stroke-width="1.5" marker-end="url(#mx1-ah)"/></g>
+          <g class="lbl" data-d="300"><rect x="150" y="30" width="150" height="70" rx="10" fill="#ECE6F7" stroke="#7A5BC7" stroke-width="1.5"/><text x="225.0" y="55.5" font-size="13" fill="#1D1D1D" text-anchor="middle" font-weight="600">resolver</text><text x="225.0" y="75.5" font-size="11" fill="#6E6E6E" text-anchor="middle" font-weight="400">순수 함수</text><text x="225.0" y="89.5" font-size="11" fill="#6E6E6E" text-anchor="middle" font-weight="400">네트워크 없음</text></g>
+          <g class="lbl" data-d="450"><line class="flow" x1="302" y1="65" x2="337" y2="65" stroke="#1D1D1D" stroke-width="1.5" marker-end="url(#mx1-ah)"/></g>
+          <g class="lbl" data-d="600"><rect x="340" y="30" width="110" height="70" rx="10" fill="#FFFFFF" stroke="#9A9A9A" stroke-width="1.5"/><text x="395.0" y="62.5" font-size="13" fill="#1D1D1D" text-anchor="middle" font-weight="600">{ site, id }</text><text x="395.0" y="82.5" font-size="11" fill="#6E6E6E" text-anchor="middle" font-weight="400">정규화된 식별자</text></g>
+          <g class="lbl" data-d="750"><line class="flow" x1="452" y1="65" x2="487" y2="65" stroke="#1D1D1D" stroke-width="1.5" marker-end="url(#mx1-ah)"/></g>
+          <g class="lbl" data-d="900"><rect x="490" y="30" width="210" height="70" rx="10" fill="#ECE6F7" stroke="#7A5BC7" stroke-width="1.5"/><text x="595.0" y="55.5" font-size="13" fill="#1D1D1D" text-anchor="middle" font-weight="600">engine</text><text x="595.0" y="75.5" font-size="11" fill="#6E6E6E" text-anchor="middle" font-weight="400">부수효과는 전부 여기</text><text x="595.0" y="89.5" font-size="11" fill="#6E6E6E" text-anchor="middle" font-weight="400">동시 실행 슬롯으로 제한</text></g>
+          <g class="lbl" data-d="1050"><path d="M 595 102 V 124 H 530 V 140" fill="none" stroke="#1D1D1D" stroke-width="1.5" marker-end="url(#mx1-ah)"/></g>
+          <g class="lbl" data-d="1050"><path d="M 595 124 H 660 V 140" fill="none" stroke="#9A9A9A" stroke-width="1.5" stroke-dasharray="5 4" marker-end="url(#mx1-ahm)"/></g>
+          <g class="lbl" data-d="1200"><rect x="440" y="142" width="180" height="66" rx="10" fill="#7A5BC7" stroke="#7A5BC7" stroke-width="1.5"/><text x="530.0" y="172.5" font-size="13" fill="#FFFFFF" text-anchor="middle" font-weight="600">ytdlp-ffmpeg</text><text x="530.0" y="192.5" font-size="11" fill="#E6DDF7" text-anchor="middle" font-weight="400">기본 · mp3 스트림</text></g>
+          <g class="lbl" data-d="1300"><rect x="630" y="142" width="70" height="66" rx="10" fill="#FFFFFF" stroke="#9A9A9A" stroke-width="1.5" stroke-dasharray="5 4"/><text x="665.0" y="171.5" font-size="11" fill="#1D1D1D" text-anchor="middle" font-weight="600">innertube</text><text x="665.0" y="191.5" font-size="11" fill="#6E6E6E" text-anchor="middle" font-weight="400">선택</text></g>
+          <g class="lbl" data-d="1450"><line class="flow" x1="530" y1="210" x2="530" y2="243" stroke="#1D1D1D" stroke-width="1.5" marker-end="url(#mx1-ah)"/></g>
+          <g class="lbl" data-d="1600"><rect x="330" y="246" width="370" height="48" rx="10" fill="#FFFFFF" stroke="#9A9A9A" stroke-width="1.5"/><text x="515.0" y="274.7" font-size="13" fill="#1D1D1D" text-anchor="middle" font-weight="600">{ stream, contentType, abort }</text></g>
+          <g class="lbl" data-d="1500"><rect x="0" y="142" width="250" height="66" rx="10" fill="#FFFFFF" stroke="#9A9A9A" stroke-width="1.5" stroke-dasharray="5 4"/><text x="125.0" y="165.5" font-size="13" fill="#1D1D1D" text-anchor="middle" font-weight="600">ExtractionError</text><text x="125.0" y="185.5" font-size="11" fill="#6E6E6E" text-anchor="middle" font-weight="400">사용자 문구 대신 기계용 코드</text><text x="125.0" y="199.5" font-size="11" fill="#6E6E6E" text-anchor="middle" font-weight="400">BOT_CHECK · PRIVATE · TIMEOUT …</text></g>
+          <g class="lbl" data-d="1500"><path d="M 438 175 H 252" fill="none" stroke="#9A9A9A" stroke-width="1.5" stroke-dasharray="5 4" marker-end="url(#mx1-ahm)"/></g>
+          </svg>
+          <figcaption>resolver와 engine의 두 층 구조</figcaption>
+        </figure>
+        <h3>resolver</h3>
+        <p>URL을 정규화된 식별자 <code>{ site, id }</code>로 바꿉니다. 네트워크를 쓰지 않는 순수 함수라서 테스트하기 쉽습니다.</p>
+        <h3>engine</h3>
+        <p>식별자를 받아 바이트 스트림을 엽니다. 외부 프로세스 실행 같은 부수효과는 전부 여기에 모았습니다.</p>
+        <ul class="plain">
+          <li><strong>ytdlp-ffmpeg (기본):</strong> <code>yt-dlp</code>의 출력을 <code>ffmpeg</code>로 넘겨 mp3 스트림을 만듭니다. 두 프로그램이 <code>PATH</code>에 있어야 합니다.</li>
+          <li><strong>innertube (선택):</strong> <code>youtubei.js</code>로 프로세스 없이 JavaScript만으로 가져오는 빠른 경로입니다. 기본으로 등록돼 있지 않아서 직접 등록해야 씁니다.</li>
+        </ul>
+        <pre class="code"><code>import { openAudioStream, registerEngine, innertubeEngine } from &quot;muxic&quot;;
+
+registerEngine(&quot;innertube&quot;, innertubeEngine);
+await openAudioStream(url, { engine: &quot;innertube&quot; });</code></pre>
+      </div>
+    </section>
+
+    <section class="doc-sec">
+      <h2>다시 설계한 이유</h2>
+      <div>
+        <p>처음 버전은 JavaScript만으로 직접 주소를 뽑아 넘기는 방식이었습니다. music.player에 붙이려고 보니 세 가지가 맞지 않았습니다.</p><ol class="numbered">
+          <li>뽑아 온 주소는 요청한 서버의 IP에 묶여 있어서 브라우저에 그대로 넘길 수 없습니다. 결국 서버가 중계해야 합니다.</li>
+          <li>주소가 가리키는 파일은 대개 webm/opus입니다. music.player는 Safari에서도 재생되도록 mp3 192k로 맞추고 있어서 이 보장이 깨집니다.</li>
+          <li><code>download()</code>가 파일 전체를 메모리에 올렸습니다. music.player가 쓰는 점진적 스트리밍과 정반대였습니다.</li>
+        </ol><p>그래서 인터페이스 모양(엔진 레지스트리)은 살리고, 엔진은 music.player에서 이미 검증한 <code>yt-dlp</code> + <code>ffmpeg</code>를 옮겨 왔습니다. JavaScript만 쓰는 경로는 기본이 아니라 선택용으로 남겼습니다. 함께 TypeScript로 옮겼습니다.</p>
+      </div>
+    </section>
+
+    <section class="doc-sec">
+      <h2>에러</h2>
+      <div>
+        <p>라이브러리에는 한국어든 영어든 사용자에게 보여 줄 문구를 넣지 않았습니다. 대신 기계가 읽는 코드를 던지고, 코드를 화면 문구로 바꾸는 일은 앱이 맡습니다. <code>yt-dlp</code>의 에러 출력을 읽어 코드로 분류합니다.</p><div class="table-wrap">
+          <table class="data left">
+            <caption>ExtractionError 코드</caption>
+            <thead><tr><th scope="col">코드</th><th scope="col" style="text-align:left">뜻</th></tr></thead>
+            <tbody>
+              <tr><th scope="row">BOT_CHECK</th><td>봇 확인 요구</td></tr>
+              <tr><th scope="row">RELOAD_REQUIRED</th><td>페이지 새로고침 필요</td></tr>
+              <tr><th scope="row">PRIVATE</th><td>비공개 영상</td></tr>
+              <tr><th scope="row">UNAVAILABLE</th><td>볼 수 없는 영상</td></tr>
+              <tr><th scope="row">GEO_BLOCKED</th><td>지역 제한</td></tr>
+              <tr><th scope="row">TIMEOUT</th><td>시간 초과</td></tr>
+              <tr><th scope="row">SPAWN_FAILED</th><td>외부 프로세스 실행 실패</td></tr>
+              <tr><th scope="row">UNKNOWN</th><td>분류되지 않은 실패</td></tr>
+            </tbody>
+          </table>
+        </div><p>동시에 너무 많은 추출이 돌지 않도록 슬롯을 두었고, 한도를 넘으면 <code>TooManyExtractionsError</code>를 던집니다.</p><pre class="code"><code>export function createSlots(limit: number): Slots {
+  let active = 0;
+  return {
+    acquire() {
+      if (active &gt;= limit) throw new TooManyExtractionsError(limit);
+      active++;
+      let released = false;
+      return () =&gt; {              // 여러 번 불러도 한 번만 반납
+        if (released) return;
+        released = true;
+        active--;
+      };
+    },
+    get active() { return active; },
+  };
+}</code></pre>
+      </div>
+    </section>
+
+    <section class="doc-sec">
+      <h2>코드 구성</h2>
+      <div>
+        <figure class="chart">
+          <svg viewBox="0 0 640 284" role="img" aria-label="파일별 줄 수. ytdlp-ffmpeg 246, innertube 93, errors 47, index 44, types 29, youtube resolver 28, concurrency 27" xmlns="http://www.w3.org/2000/svg" font-family="Pretendard, -apple-system, sans-serif">
+          <defs><marker id="mx2-ah" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#1D1D1D"/></marker><marker id="mx2-ahm" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#9A9A9A"/></marker></defs>
+          <text x="0.0" y="18.0" font-size="13" fill="#1D1D1D" text-anchor="start" font-weight="600">src/ 파일별 줄 수 (합계 514줄)</text>
+          <text x="178.0" y="54.0" font-size="12" fill="#1D1D1D" text-anchor="end" font-weight="500" font-family="ui-monospace, Consolas, monospace">engines/ytdlp-ffmpeg.ts</text>
+          <rect class="hbar" data-d="0" x="190" y="40" width="360.0" height="20" rx="3" fill="#7A5BC7"/>
+          <text class="lbl" data-d="600" x="558.0" y="55.0" font-size="12" fill="#1D1D1D" text-anchor="start" font-weight="600">246줄</text>
+          <text x="178.0" y="88.0" font-size="12" fill="#1D1D1D" text-anchor="end" font-weight="500" font-family="ui-monospace, Consolas, monospace">engines/innertube.ts</text>
+          <rect class="hbar" data-d="120" x="190" y="74" width="136.1" height="20" rx="3" fill="#7A5BC7"/>
+          <text class="lbl" data-d="720" x="334.1" y="89.0" font-size="12" fill="#1D1D1D" text-anchor="start" font-weight="600">93줄</text>
+          <text x="178.0" y="122.0" font-size="12" fill="#1D1D1D" text-anchor="end" font-weight="500" font-family="ui-monospace, Consolas, monospace">errors.ts</text>
+          <rect class="hbar" data-d="240" x="190" y="108" width="68.8" height="20" rx="3" fill="#7A5BC7"/>
+          <text class="lbl" data-d="840" x="266.8" y="123.0" font-size="12" fill="#1D1D1D" text-anchor="start" font-weight="600">47줄</text>
+          <text x="178.0" y="156.0" font-size="12" fill="#1D1D1D" text-anchor="end" font-weight="500" font-family="ui-monospace, Consolas, monospace">index.ts</text>
+          <rect class="hbar" data-d="360" x="190" y="142" width="64.4" height="20" rx="3" fill="#7A5BC7"/>
+          <text class="lbl" data-d="960" x="262.4" y="157.0" font-size="12" fill="#1D1D1D" text-anchor="start" font-weight="600">44줄</text>
+          <text x="178.0" y="190.0" font-size="12" fill="#1D1D1D" text-anchor="end" font-weight="500" font-family="ui-monospace, Consolas, monospace">types.ts</text>
+          <rect class="hbar" data-d="480" x="190" y="176" width="42.4" height="20" rx="3" fill="#7A5BC7"/>
+          <text class="lbl" data-d="1080" x="240.4" y="191.0" font-size="12" fill="#1D1D1D" text-anchor="start" font-weight="600">29줄</text>
+          <text x="178.0" y="224.0" font-size="12" fill="#1D1D1D" text-anchor="end" font-weight="500" font-family="ui-monospace, Consolas, monospace">resolvers/youtube.ts</text>
+          <rect class="hbar" data-d="600" x="190" y="210" width="41.0" height="20" rx="3" fill="#7A5BC7"/>
+          <text class="lbl" data-d="1200" x="239.0" y="225.0" font-size="12" fill="#1D1D1D" text-anchor="start" font-weight="600">28줄</text>
+          <text x="178.0" y="258.0" font-size="12" fill="#1D1D1D" text-anchor="end" font-weight="500" font-family="ui-monospace, Consolas, monospace">concurrency.ts</text>
+          <rect class="hbar" data-d="720" x="190" y="244" width="39.5" height="20" rx="3" fill="#7A5BC7"/>
+          <text class="lbl" data-d="1320" x="237.5" y="259.0" font-size="12" fill="#1D1D1D" text-anchor="start" font-weight="600">27줄</text>
+          </svg>
+          <figcaption>외부 프로세스를 다루는 기본 엔진이 코드의 절반 가까이를 차지합니다.</figcaption>
+        </figure>
+      </div>
+    </section>
+
     <section class="doc-sec">
       <h2>기록</h2>
       <div>
-        <figure>
-          <img src="이미지.png" alt="이미지 설명">
-          <figcaption>설명</figcaption>
-        </figure>
-        <p>내용</p>
+        <ol class="timeline">
+          <li><time>2026. 8. 30.</time><div>저장소 생성, 첫 JavaScript 버전</div></li>
+          <li><time>2026. 8. 30.</time><div><code>FIXES.md</code> 계획대로 resolver/engine 구조로 재설계, TypeScript 전환</div></li>
+        </ol><p>이 라이브러리를 쓰는 쪽은 <a href="../music-player/">music.player</a>입니다.</p>
       </div>
     </section>
-    -->
 
     <nav class="pager" aria-label="다른 프로젝트">
       <a class="prev" href="../music-player/"><span>이전 프로젝트</span>music.player</a>
@@ -82,5 +302,86 @@
   <p>x86-64 ASM, C, Rust, TypeScript, Next.js, Supabase, Arduino, KiCad, QEMU, Docker, Oracle Cloud</p>
   <p><a href="https://github.com/twopercenz">twopercenz</a> / <a href="https://github.com/regx64">regx64</a></p>
 </footer>
+<script>
+/* 도표와 요약 숫자 애니메이션: 화면에 들어올 때 한 번 재생 */
+(() => {
+  if (matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+  if (!('IntersectionObserver' in window)) return;
+
+  const ease = (t) => 1 - Math.pow(1 - t, 3);
+
+  function tween(dur, delay, fn) {
+    const start = performance.now() + delay;
+    function step(now) {
+      const p = Math.min(1, Math.max(0, (now - start) / dur));
+      fn(ease(p));
+      if (p < 1) requestAnimationFrame(step);
+    }
+    requestAnimationFrame(step);
+  }
+
+  function prepareChart(svg) {
+    svg.querySelectorAll('[data-reveal]').forEach((r) => r.setAttribute('width', 0));
+    svg.querySelectorAll('.bar').forEach((r) => {
+      r.dataset.h = r.getAttribute('height');
+      r.setAttribute('y', r.dataset.base);
+      r.setAttribute('height', 0);
+    });
+    svg.querySelectorAll('.hbar').forEach((r) => {
+      r.dataset.w = r.getAttribute('width');
+      r.setAttribute('width', 0);
+    });
+    svg.querySelectorAll('.lbl').forEach((e) => { e.style.opacity = 0; });
+  }
+
+  function playChart(svg) {
+    svg.querySelectorAll('[data-reveal]').forEach((r) => {
+      const w = +r.dataset.reveal;
+      tween(1600, 0, (k) => r.setAttribute('width', w * k));
+    });
+    svg.querySelectorAll('.bar').forEach((r) => {
+      const h = +r.dataset.h, base = +r.dataset.base;
+      tween(800, +r.dataset.d, (k) => {
+        r.setAttribute('height', h * k);
+        r.setAttribute('y', base - h * k);
+      });
+    });
+    svg.querySelectorAll('.hbar').forEach((r) => {
+      const w = +r.dataset.w;
+      tween(+(r.dataset.dur || 900), +r.dataset.d, (k) => r.setAttribute('width', w * k));
+    });
+    svg.querySelectorAll('.lbl').forEach((e) => {
+      setTimeout(() => {
+        e.style.transition = 'opacity 0.4s';
+        e.style.opacity = 1;
+      }, +e.dataset.d);
+    });
+  }
+
+  function prepareCount(el) {
+    el.dataset.dec = el.dataset.dec || 0;
+    el.textContent = (0).toFixed(+el.dataset.dec);
+  }
+
+  function playCount(el) {
+    const to = +el.dataset.count, dec = +el.dataset.dec;
+    tween(1200, 0, (k) => { el.textContent = (to * k).toFixed(dec); });
+  }
+
+  const once = (targets, prepare, play, threshold) => {
+    const io = new IntersectionObserver((entries) => {
+      entries.forEach((en) => {
+        if (!en.isIntersecting) return;
+        io.unobserve(en.target);
+        play(en.target);
+      });
+    }, { threshold });
+    targets.forEach((t) => { prepare(t); io.observe(t); });
+  };
+
+  once(document.querySelectorAll('.chart svg'), prepareChart, playChart, 0.4);
+  once(document.querySelectorAll('[data-count]'), prepareCount, playCount, 0.6);
+})();
+</script>
 </body>
 </html>

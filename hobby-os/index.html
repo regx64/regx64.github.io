@@ -4,12 +4,99 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Hobby OS | regx64</title>
-<meta name="description" content="x86-64 어셈블리로 만드는 운영체제입니다. 커널 로드, 32비트 보호 모드, 페이징, 64비트 롱 모드를 지나 지금은 freestanding C 커널에서 VGA 드라이버가 돌아갑니다. 테스트는 QEMU로 합니다.">
+<meta name="description" content="x86-64 어셈블리로 만드는 운영체제입니다. 전원이 들어온 뒤 BIOS가 읽어 오는 512바이트에서 시작해, 보호 모드와 페이징, 64비트 롱 모드를 지나 C로 짠 커널에서 VGA 드라이버가 돌아가는 데까지 왔습니다.">
 <link rel="icon" href="../favicon.ico" sizes="48x48">
 <link rel="icon" href="../favicon.svg" type="image/svg+xml">
 <link rel="apple-touch-icon" href="../apple-touch-icon.png">
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css">
 <link rel="stylesheet" href="../style.css">
+<style>
+  /* 이 페이지에만 쓰는 스타일 */
+  .doc-sec h3 { margin: 2rem 0 0.6rem; font-size: 1rem; }
+  .doc-sec h3:first-child { margin-top: 0; }
+
+  .stats {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 1.75rem 2rem;
+    margin: 0;
+  }
+  .stats div { border-top: 2px solid var(--ink); padding-top: 0.75rem; }
+  .stats dt { font-size: 2.25rem; font-weight: 700; letter-spacing: -0.03em; line-height: 1.2; }
+  .stats dd { margin: 0.25rem 0 0; font-size: 0.9375rem; color: var(--muted); }
+
+  .table-wrap { overflow-x: auto; margin: 0 0 0.9rem; }
+  .data {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.875rem;
+    font-variant-numeric: tabular-nums;
+    white-space: nowrap;
+  }
+  .data caption { text-align: left; font-weight: 600; font-size: 0.9375rem; padding-bottom: 0.5rem; }
+  .data th, .data td { padding: 0.45rem 0.6rem; border-bottom: 1px solid rgba(0, 0, 0, 0.1); }
+  .data thead th { border-bottom: 2px solid var(--ink); font-weight: 600; text-align: right; }
+  .data thead th:first-child, .data tbody th { text-align: left; }
+  .data tbody th { font-weight: 500; }
+  .data td { text-align: right; }
+  .data td.strong { font-weight: 700; }
+  .data tbody tr.split th, .data tbody tr.split td { border-top: 2px solid rgba(0, 0, 0, 0.25); }
+  .data.left td { text-align: left; }
+
+  .chart { margin: 1.5rem 0; }
+  .chart svg { display: block; width: 100%; height: auto; }
+
+  .formula {
+    margin: 1rem 0;
+    padding: 0.9rem 1.1rem;
+    background: #FFFFFF;
+    border-radius: 0.75rem;
+    font-size: 1.0625rem;
+    text-align: center;
+  }
+
+  .code {
+    margin: 1rem 0;
+    padding: 1rem 1.1rem;
+    overflow-x: auto;
+    background: #1B1B1B;
+    color: #E6E6E6;
+    border-radius: 0.75rem;
+    font-family: ui-monospace, Consolas, "D2Coding", monospace;
+    font-size: 0.8125rem;
+    line-height: 1.6;
+  }
+
+  .numbered { margin: 0 0 0.9rem; padding-left: 1.4rem; }
+  .numbered li { margin-bottom: 0.6rem; }
+  .numbered li:last-child { margin-bottom: 0; }
+
+  .refs { margin: 0; padding-left: 1.4rem; font-size: 0.9375rem; }
+  .refs li { margin-bottom: 0.4rem; }
+
+  @media (max-width: 820px) {
+    .stats dt { font-size: 1.75rem; }
+  }
+
+  .flow { stroke-dasharray: 6 5; animation: flow 1.2s linear infinite; }
+  @keyframes flow { to { stroke-dashoffset: -22; } }
+  @media (prefers-reduced-motion: reduce) { .flow { animation: none; } }
+
+  .steps li.part::before { background: linear-gradient(90deg, var(--ink) 50%, transparent 50%); }
+  .steps li.plan::before { border-style: dashed; }
+
+  .timeline { list-style: none; margin: 0; padding: 0; }
+  .timeline li {
+    display: grid;
+    grid-template-columns: 6.5rem minmax(0, 1fr);
+    gap: 1rem;
+    padding: 0.6rem 0;
+    border-bottom: 1px solid rgba(0, 0, 0, 0.08);
+  }
+  .timeline time { color: var(--muted); font-size: 0.875rem; font-variant-numeric: tabular-nums; padding-top: 0.1rem; }
+
+  .note { font-size: 0.875rem; color: var(--muted); }
+</style>
 <script type="importmap">
 {
   "imports": {
@@ -36,18 +123,191 @@
     <div class="copy">
       <h1 class="name">Hobby OS</h1>
       <p class="headline">부트섹터부터<br>VGA 드라이버까지.</p>
-      <p class="body"><span class='nowrap'>x86-64</span> 어셈블리로 만드는 운영체제입니다. 커널 로드, 32비트 보호 모드, 페이징, 64비트 롱 모드를 지나 지금은 freestanding C 커널에서 VGA 드라이버가 돌아갑니다. 테스트는 QEMU로 합니다.</p>
+      <p class="body"><span class='nowrap'>x86-64</span> 어셈블리로 만드는 운영체제입니다. 전원이 들어온 뒤 BIOS가 읽어 오는 512바이트에서 시작해, 보호 모드와 페이징, 64비트 롱 모드를 지나 C로 짠 커널에서 VGA 드라이버가 돌아가는 데까지 왔습니다.</p>
+      <p class="meta">NASM, C, QEMU</p>
     </div>
     <div class="stage" data-model="os" role="img" aria-label="부팅 메시지가 출력되는 모니터"></div>
   </section>
 
   <div class="doc tone-a">
+
     <section class="doc-sec">
-      <h2>개요</h2>
+      <h2>요약</h2>
       <div>
-        <p>전원이 들어온 직후 실행되는 부트섹터부터 시작해, 운영체제가 뜨기까지의 과정을 직접 구현하고 있습니다. <span class='nowrap'>x86-64</span> 어셈블리로 시작해 지금은 C로 짠 커널까지 올라왔습니다.</p>
+        <dl class="stats">
+          <div><dt>512바이트</dt><dd>BIOS가 처음 읽어 오는 부트섹터 크기</dd></div>
+          <div><dt>2MB</dt><dd>페이지 하나의 크기. 큰 페이지로 항등 매핑</dd></div>
+          <div><dt>0xB8000</dt><dd>VGA 텍스트 버퍼 주소. 여기에 쓰면 화면에 글자가 찍힘</dd></div>
+          <div><dt>0x500</dt><dd>롱 모드 진입 후 EFER 레지스터 값</dd></div>
+        </dl>
       </div>
     </section>
+
+    <section class="doc-sec">
+      <h2>시작한 계기</h2>
+      <div>
+        <p>어셈블리를 처음부터 배우면서 레지스터, 산술, 분기, 스택, 호출 규약, 메모리 주소 계산까지 익혔고, 배운 걸 실제로 쓸 프로젝트로 운영체제를 골랐습니다. 어셈블리 경험 없이 시작했고, 환경은 GitHub Codespaces(Ubuntu x86-64)에 NASM과 QEMU를 올려 썼습니다.</p><p>리눅스도 부팅 부분만 어셈블리이고 나머지는 C입니다. 그래서 CPU를 64비트 모드까지 끌어올리는 부분은 어셈블리로, 그 뒤는 C로 넘어가는 구조로 잡았습니다.</p>
+      </div>
+    </section>
+
+    <section class="doc-sec">
+      <h2>부팅 순서</h2>
+      <div>
+        <figure class="chart">
+          <svg viewBox="0 0 640 262" role="img" aria-label="부팅 순서. BIOS, 부트섹터, 커널 로드, A20과 GDT, 보호 모드, 페이징, 롱 모드, C 커널 순으로 진행" xmlns="http://www.w3.org/2000/svg" font-family="Pretendard, -apple-system, sans-serif">
+          <defs><marker id="os1-ah" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#1D1D1D"/></marker><marker id="os1-ahm" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#9A9A9A"/></marker></defs>
+          <text class="lbl" data-d="0" x="0.0" y="24.0" font-size="12" fill="#6E6E6E" text-anchor="start" font-weight="600">16비트 리얼 모드</text>
+          <g class="lbl" data-d="0"><rect x="0" y="36" width="138" height="74" rx="10" fill="#FFFFFF" stroke="#9A9A9A" stroke-width="1.5"/><text x="69.0" y="63.5" font-size="13" fill="#1D1D1D" text-anchor="middle" font-weight="600">BIOS</text><text x="69.0" y="83.5" font-size="11" fill="#6E6E6E" text-anchor="middle" font-weight="400">전원 켜짐</text><text x="69.0" y="97.5" font-size="11" fill="#6E6E6E" text-anchor="middle" font-weight="400">0x7C00에 적재</text></g>
+          <g class="lbl" data-d="140"><line x1="140" y1="73" x2="164" y2="73" stroke="#1D1D1D" stroke-width="1.5" marker-end="url(#os1-ah)"/></g>
+          <g class="lbl" data-d="280"><rect x="167" y="36" width="138" height="74" rx="10" fill="#FFFFFF" stroke="#9A9A9A" stroke-width="1.5"/><text x="236.0" y="63.5" font-size="13" fill="#1D1D1D" text-anchor="middle" font-weight="600">부트섹터</text><text x="236.0" y="83.5" font-size="11" fill="#6E6E6E" text-anchor="middle" font-weight="400">512바이트</text><text x="236.0" y="97.5" font-size="11" fill="#6E6E6E" text-anchor="middle" font-weight="400">int 0x13 디스크 읽기</text></g>
+          <g class="lbl" data-d="420"><line x1="307" y1="73" x2="331" y2="73" stroke="#1D1D1D" stroke-width="1.5" marker-end="url(#os1-ah)"/></g>
+          <g class="lbl" data-d="560"><rect x="334" y="36" width="138" height="74" rx="10" fill="#FFFFFF" stroke="#9A9A9A" stroke-width="1.5"/><text x="403.0" y="63.5" font-size="13" fill="#1D1D1D" text-anchor="middle" font-weight="600">커널 로드</text><text x="403.0" y="83.5" font-size="11" fill="#6E6E6E" text-anchor="middle" font-weight="400">2단계 코드를</text><text x="403.0" y="97.5" font-size="11" fill="#6E6E6E" text-anchor="middle" font-weight="400">0x7E00에 적재</text></g>
+          <g class="lbl" data-d="700"><line x1="474" y1="73" x2="498" y2="73" stroke="#1D1D1D" stroke-width="1.5" marker-end="url(#os1-ah)"/></g>
+          <g class="lbl" data-d="840"><rect x="501" y="36" width="138" height="74" rx="10" fill="#FFFFFF" stroke="#9A9A9A" stroke-width="1.5"/><text x="570.0" y="63.5" font-size="13" fill="#1D1D1D" text-anchor="middle" font-weight="600">A20 · GDT</text><text x="570.0" y="83.5" font-size="11" fill="#6E6E6E" text-anchor="middle" font-weight="400">A20 활성화</text><text x="570.0" y="97.5" font-size="11" fill="#6E6E6E" text-anchor="middle" font-weight="400">flat GDT 구성</text></g>
+          <g class="lbl" data-d="1000"><path d="M 570.0 111 V 138 H 69.0 V 170" fill="none" stroke="#1D1D1D" stroke-width="1.5" marker-end="url(#os1-ah)"/></g>
+          <text class="lbl" data-d="1120" x="0.0" y="162.0" font-size="12" fill="#1D8585" text-anchor="start" font-weight="600">32비트 보호 모드</text>
+          <text class="lbl" data-d="1680" x="334.0" y="162.0" font-size="12" fill="#1D8585" text-anchor="start" font-weight="600">64비트 롱 모드</text>
+          <g class="lbl" data-d="1120"><rect x="0" y="172" width="138" height="74" rx="10" fill="#DCEFEF" stroke="#1D8585" stroke-width="1.5"/><text x="69.0" y="199.5" font-size="13" fill="#1D1D1D" text-anchor="middle" font-weight="600">보호 모드</text><text x="69.0" y="219.5" font-size="11" fill="#6E6E6E" text-anchor="middle" font-weight="400">CR0.PE = 1</text><text x="69.0" y="233.5" font-size="11" fill="#6E6E6E" text-anchor="middle" font-weight="400">far jump</text></g>
+          <g class="lbl" data-d="1260"><line x1="140" y1="209" x2="164" y2="209" stroke="#1D1D1D" stroke-width="1.5" marker-end="url(#os1-ah)"/></g>
+          <g class="lbl" data-d="1400"><rect x="167" y="172" width="138" height="74" rx="10" fill="#DCEFEF" stroke="#1D8585" stroke-width="1.5"/><text x="236.0" y="199.5" font-size="13" fill="#1D1D1D" text-anchor="middle" font-weight="600">페이징</text><text x="236.0" y="219.5" font-size="11" fill="#6E6E6E" text-anchor="middle" font-weight="400">PML4·PDPT·PD</text><text x="236.0" y="233.5" font-size="11" fill="#6E6E6E" text-anchor="middle" font-weight="400">2MB 항등 매핑</text></g>
+          <g class="lbl" data-d="1540"><line x1="307" y1="209" x2="331" y2="209" stroke="#1D1D1D" stroke-width="1.5" marker-end="url(#os1-ah)"/></g>
+          <g class="lbl" data-d="1680"><rect x="334" y="172" width="138" height="74" rx="10" fill="#1D8585" stroke="#1D8585" stroke-width="1.5"/><text x="403.0" y="199.5" font-size="13" fill="#FFFFFF" text-anchor="middle" font-weight="600">롱 모드</text><text x="403.0" y="219.5" font-size="11" fill="#D6EFEF" text-anchor="middle" font-weight="400">EFER.LME = 1</text><text x="403.0" y="233.5" font-size="11" fill="#D6EFEF" text-anchor="middle" font-weight="400">CR0.PG = 1</text></g>
+          <g class="lbl" data-d="1820"><line x1="474" y1="209" x2="498" y2="209" stroke="#1D1D1D" stroke-width="1.5" marker-end="url(#os1-ah)"/></g>
+          <g class="lbl" data-d="1960"><rect x="501" y="172" width="138" height="74" rx="10" fill="#1D8585" stroke="#1D8585" stroke-width="1.5"/><text x="570.0" y="199.5" font-size="13" fill="#FFFFFF" text-anchor="middle" font-weight="600">kmain()</text><text x="570.0" y="219.5" font-size="11" fill="#D6EFEF" text-anchor="middle" font-weight="400">freestanding C</text><text x="570.0" y="233.5" font-size="11" fill="#D6EFEF" text-anchor="middle" font-weight="400">VGA 드라이버</text></g>
+          </svg>
+          <figcaption>전원이 들어온 뒤 C 커널이 실행되기까지의 순서</figcaption>
+        </figure>
+        <h3>리얼 모드</h3>
+        <p>BIOS는 디스크의 첫 섹터 512바이트를 메모리 0x7C00에 올리고 실행합니다. 이 공간에 다 들어가지 않는 나머지 코드는 부트섹터가 BIOS 인터럽트 <code>int 0x13</code>으로 디스크에서 읽어 와 0x7E00에 올립니다. 그다음 A20 라인을 켜고, null, 32비트 코드, 데이터, 64비트 코드 디스크립터로 이루어진 flat 모델 GDT를 만듭니다.</p>
+        <h3>보호 모드와 페이징</h3>
+        <p>CR0의 PE 비트를 켜고 far jump를 하면 32비트 보호 모드로 넘어갑니다. 64비트로 가려면 페이징이 먼저 필요해서 0x1000, 0x2000, 0x3000에 PML4, PDPT, PD 테이블을 두고, 2MB 큰 페이지로 가상 주소와 물리 주소가 같게(항등 매핑) 설정했습니다.</p>
+        <h3>롱 모드와 C</h3>
+        <p><code>rdmsr</code>/<code>wrmsr</code>로 EFER의 LME 비트를 켜고, CR0의 PG 비트로 페이징을 켜면 CPU가 롱 모드로 들어갑니다. 여기서 C로 작성한 <code>kmain()</code>을 호출합니다. 어셈블리에서 C 함수를 부르는 경계를 직접 만들면서, 앞서 배운 호출 규약을 실제로 쓰게 됐습니다.
+      </div>
+    </section>
+
+    <section class="doc-sec">
+      <h2>메모리 배치</h2>
+      <div>
+        <figure class="chart">
+          <svg viewBox="0 0 640 262" role="img" aria-label="메모리 배치. 0x1000부터 페이지 테이블, 0x7C00 부트섹터, 0x7E00 커널, 0xB8000 VGA 텍스트 버퍼" xmlns="http://www.w3.org/2000/svg" font-family="Pretendard, -apple-system, sans-serif">
+          <defs><marker id="os2-ah" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#1D1D1D"/></marker><marker id="os2-ahm" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#9A9A9A"/></marker></defs>
+          <text x="0.0" y="30.0" font-size="12" fill="#6E6E6E" text-anchor="start" font-weight="500" font-family="ui-monospace, Consolas, monospace">0x0000_1000</text>
+          <rect class="hbar" data-d="0" x="120" y="8" width="520" height="34" rx="6" fill="#DCEFEF"/>
+          <text class="lbl" data-d="500" x="134.0" y="30.0" font-size="12" fill="#1D1D1D" text-anchor="start" font-weight="400"><tspan font-weight="700">PML4</tspan><tspan dx="10" fill="#6E6E6E">최상위 페이지 테이블, CR3가 가리킴</tspan></text>
+          <text x="0.0" y="72.0" font-size="12" fill="#6E6E6E" text-anchor="start" font-weight="500" font-family="ui-monospace, Consolas, monospace">0x0000_2000</text>
+          <rect class="hbar" data-d="150" x="120" y="50" width="520" height="34" rx="6" fill="#DCEFEF"/>
+          <text class="lbl" data-d="650" x="134.0" y="72.0" font-size="12" fill="#1D1D1D" text-anchor="start" font-weight="400"><tspan font-weight="700">PDPT</tspan><tspan dx="10" fill="#6E6E6E">페이지 디렉터리 포인터 테이블</tspan></text>
+          <text x="0.0" y="114.0" font-size="12" fill="#6E6E6E" text-anchor="start" font-weight="500" font-family="ui-monospace, Consolas, monospace">0x0000_3000</text>
+          <rect class="hbar" data-d="300" x="120" y="92" width="520" height="34" rx="6" fill="#DCEFEF"/>
+          <text class="lbl" data-d="800" x="134.0" y="114.0" font-size="12" fill="#1D1D1D" text-anchor="start" font-weight="400"><tspan font-weight="700">PD</tspan><tspan dx="10" fill="#6E6E6E">2MB 큰 페이지로 항등 매핑</tspan></text>
+          <text x="0.0" y="156.0" font-size="12" fill="#6E6E6E" text-anchor="start" font-weight="500" font-family="ui-monospace, Consolas, monospace">0x0000_7C00</text>
+          <rect class="hbar" data-d="450" x="120" y="134" width="520" height="34" rx="6" fill="#E6E6E6"/>
+          <text class="lbl" data-d="950" x="134.0" y="156.0" font-size="12" fill="#1D1D1D" text-anchor="start" font-weight="400"><tspan font-weight="700">부트섹터</tspan><tspan dx="10" fill="#6E6E6E">BIOS가 올려 주는 512바이트</tspan></text>
+          <text x="0.0" y="198.0" font-size="12" fill="#6E6E6E" text-anchor="start" font-weight="500" font-family="ui-monospace, Consolas, monospace">0x0000_7E00</text>
+          <rect class="hbar" data-d="600" x="120" y="176" width="520" height="34" rx="6" fill="#1D8585"/>
+          <text class="lbl" data-d="1100" x="134.0" y="198.0" font-size="12" fill="#FFFFFF" text-anchor="start" font-weight="400"><tspan font-weight="700">커널</tspan><tspan dx="10" fill="#D6EFEF">linker.ld에서 .text 시작 위치</tspan></text>
+          <text x="0.0" y="240.0" font-size="12" fill="#6E6E6E" text-anchor="start" font-weight="500" font-family="ui-monospace, Consolas, monospace">0x000B_8000</text>
+          <rect class="hbar" data-d="750" x="120" y="218" width="520" height="34" rx="6" fill="#1D1D1D"/>
+          <text class="lbl" data-d="1250" x="134.0" y="240.0" font-size="12" fill="#FFFFFF" text-anchor="start" font-weight="400"><tspan font-weight="700">VGA 텍스트 버퍼</tspan><tspan dx="10" fill="#D6EFEF">80×25칸, 칸마다 글자 + 색 2바이트</tspan></text>
+          </svg>
+          <figcaption>실제 크기 비율이 아니라 주소 순서대로 나열한 그림</figcaption>
+        </figure>
+      </div>
+    </section>
+
+    <section class="doc-sec">
+      <h2>C 커널</h2>
+      <div>
+        <p>C 커널은 운영체제 위에서 도는 프로그램이 아니라서 표준 라이브러리도, 레드 존도, SSE도 쓸 수 없습니다. 그래서 아래 옵션으로 컴파일하고, 링커 스크립트 <code>linker.ld</code>로 <code>.text</code>가 0x7E00에서 시작하도록 배치했습니다.</p>
+        <pre class="code"><code>gcc -ffreestanding -nostdlib -mno-red-zone -mno-sse ...</code></pre>
+        <p>VGA 드라이버는 0xB8000부터 한 칸에 글자 1바이트와 색 1바이트를 쓰는 방식입니다. <code>clear_screen()</code>, 줄바꿈을 처리하는 <code>putchar()</code>, 색을 지정해 문자열을 찍는 <code>print()</code>를 만들었습니다. 줄바꿈은 커서를 <code>(cursor / 80 + 1) * 80</code>으로 옮깁니다.</p>
+        <figure class="chart">
+          <svg viewBox="0 0 640 150" role="img" aria-label="VGA 텍스트 버퍼 내용. 첫 줄 초록색 Kernel running in C!, 둘째 줄 흰색 VGA driver working." xmlns="http://www.w3.org/2000/svg" font-family="Pretendard, -apple-system, sans-serif">
+          <defs><marker id="os3-ah" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#1D1D1D"/></marker><marker id="os3-ahm" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#9A9A9A"/></marker></defs>
+          <rect x="0" y="0" width="640" height="150" rx="10" fill="#0B0B0B"/>
+          <text class="lbl" data-d="0" x="24.0" y="48.0" font-size="21" fill="#55FF55" text-anchor="start" font-weight="400" font-family="ui-monospace, Consolas, monospace">K</text>
+          <text class="lbl" data-d="55" x="36.6" y="48.0" font-size="21" fill="#55FF55" text-anchor="start" font-weight="400" font-family="ui-monospace, Consolas, monospace">e</text>
+          <text class="lbl" data-d="110" x="49.2" y="48.0" font-size="21" fill="#55FF55" text-anchor="start" font-weight="400" font-family="ui-monospace, Consolas, monospace">r</text>
+          <text class="lbl" data-d="165" x="61.8" y="48.0" font-size="21" fill="#55FF55" text-anchor="start" font-weight="400" font-family="ui-monospace, Consolas, monospace">n</text>
+          <text class="lbl" data-d="220" x="74.4" y="48.0" font-size="21" fill="#55FF55" text-anchor="start" font-weight="400" font-family="ui-monospace, Consolas, monospace">e</text>
+          <text class="lbl" data-d="275" x="87.0" y="48.0" font-size="21" fill="#55FF55" text-anchor="start" font-weight="400" font-family="ui-monospace, Consolas, monospace">l</text>
+          <text class="lbl" data-d="330" x="99.6" y="48.0" font-size="21" fill="#55FF55" text-anchor="start" font-weight="400" font-family="ui-monospace, Consolas, monospace">&#160;</text>
+          <text class="lbl" data-d="385" x="112.2" y="48.0" font-size="21" fill="#55FF55" text-anchor="start" font-weight="400" font-family="ui-monospace, Consolas, monospace">r</text>
+          <text class="lbl" data-d="440" x="124.8" y="48.0" font-size="21" fill="#55FF55" text-anchor="start" font-weight="400" font-family="ui-monospace, Consolas, monospace">u</text>
+          <text class="lbl" data-d="495" x="137.4" y="48.0" font-size="21" fill="#55FF55" text-anchor="start" font-weight="400" font-family="ui-monospace, Consolas, monospace">n</text>
+          <text class="lbl" data-d="550" x="150.0" y="48.0" font-size="21" fill="#55FF55" text-anchor="start" font-weight="400" font-family="ui-monospace, Consolas, monospace">n</text>
+          <text class="lbl" data-d="605" x="162.6" y="48.0" font-size="21" fill="#55FF55" text-anchor="start" font-weight="400" font-family="ui-monospace, Consolas, monospace">i</text>
+          <text class="lbl" data-d="660" x="175.2" y="48.0" font-size="21" fill="#55FF55" text-anchor="start" font-weight="400" font-family="ui-monospace, Consolas, monospace">n</text>
+          <text class="lbl" data-d="715" x="187.8" y="48.0" font-size="21" fill="#55FF55" text-anchor="start" font-weight="400" font-family="ui-monospace, Consolas, monospace">g</text>
+          <text class="lbl" data-d="770" x="200.4" y="48.0" font-size="21" fill="#55FF55" text-anchor="start" font-weight="400" font-family="ui-monospace, Consolas, monospace">&#160;</text>
+          <text class="lbl" data-d="825" x="213.0" y="48.0" font-size="21" fill="#55FF55" text-anchor="start" font-weight="400" font-family="ui-monospace, Consolas, monospace">i</text>
+          <text class="lbl" data-d="880" x="225.6" y="48.0" font-size="21" fill="#55FF55" text-anchor="start" font-weight="400" font-family="ui-monospace, Consolas, monospace">n</text>
+          <text class="lbl" data-d="935" x="238.2" y="48.0" font-size="21" fill="#55FF55" text-anchor="start" font-weight="400" font-family="ui-monospace, Consolas, monospace">&#160;</text>
+          <text class="lbl" data-d="990" x="250.8" y="48.0" font-size="21" fill="#55FF55" text-anchor="start" font-weight="400" font-family="ui-monospace, Consolas, monospace">C</text>
+          <text class="lbl" data-d="1045" x="263.4" y="48.0" font-size="21" fill="#55FF55" text-anchor="start" font-weight="400" font-family="ui-monospace, Consolas, monospace">!</text>
+          <text class="lbl" data-d="1400" x="24.0" y="84.0" font-size="21" fill="#FFFFFF" text-anchor="start" font-weight="400" font-family="ui-monospace, Consolas, monospace">V</text>
+          <text class="lbl" data-d="1455" x="36.6" y="84.0" font-size="21" fill="#FFFFFF" text-anchor="start" font-weight="400" font-family="ui-monospace, Consolas, monospace">G</text>
+          <text class="lbl" data-d="1510" x="49.2" y="84.0" font-size="21" fill="#FFFFFF" text-anchor="start" font-weight="400" font-family="ui-monospace, Consolas, monospace">A</text>
+          <text class="lbl" data-d="1565" x="61.8" y="84.0" font-size="21" fill="#FFFFFF" text-anchor="start" font-weight="400" font-family="ui-monospace, Consolas, monospace">&#160;</text>
+          <text class="lbl" data-d="1620" x="74.4" y="84.0" font-size="21" fill="#FFFFFF" text-anchor="start" font-weight="400" font-family="ui-monospace, Consolas, monospace">d</text>
+          <text class="lbl" data-d="1675" x="87.0" y="84.0" font-size="21" fill="#FFFFFF" text-anchor="start" font-weight="400" font-family="ui-monospace, Consolas, monospace">r</text>
+          <text class="lbl" data-d="1730" x="99.6" y="84.0" font-size="21" fill="#FFFFFF" text-anchor="start" font-weight="400" font-family="ui-monospace, Consolas, monospace">i</text>
+          <text class="lbl" data-d="1785" x="112.2" y="84.0" font-size="21" fill="#FFFFFF" text-anchor="start" font-weight="400" font-family="ui-monospace, Consolas, monospace">v</text>
+          <text class="lbl" data-d="1840" x="124.8" y="84.0" font-size="21" fill="#FFFFFF" text-anchor="start" font-weight="400" font-family="ui-monospace, Consolas, monospace">e</text>
+          <text class="lbl" data-d="1895" x="137.4" y="84.0" font-size="21" fill="#FFFFFF" text-anchor="start" font-weight="400" font-family="ui-monospace, Consolas, monospace">r</text>
+          <text class="lbl" data-d="1950" x="150.0" y="84.0" font-size="21" fill="#FFFFFF" text-anchor="start" font-weight="400" font-family="ui-monospace, Consolas, monospace">&#160;</text>
+          <text class="lbl" data-d="2005" x="162.6" y="84.0" font-size="21" fill="#FFFFFF" text-anchor="start" font-weight="400" font-family="ui-monospace, Consolas, monospace">w</text>
+          <text class="lbl" data-d="2060" x="175.2" y="84.0" font-size="21" fill="#FFFFFF" text-anchor="start" font-weight="400" font-family="ui-monospace, Consolas, monospace">o</text>
+          <text class="lbl" data-d="2115" x="187.8" y="84.0" font-size="21" fill="#FFFFFF" text-anchor="start" font-weight="400" font-family="ui-monospace, Consolas, monospace">r</text>
+          <text class="lbl" data-d="2170" x="200.4" y="84.0" font-size="21" fill="#FFFFFF" text-anchor="start" font-weight="400" font-family="ui-monospace, Consolas, monospace">k</text>
+          <text class="lbl" data-d="2225" x="213.0" y="84.0" font-size="21" fill="#FFFFFF" text-anchor="start" font-weight="400" font-family="ui-monospace, Consolas, monospace">i</text>
+          <text class="lbl" data-d="2280" x="225.6" y="84.0" font-size="21" fill="#FFFFFF" text-anchor="start" font-weight="400" font-family="ui-monospace, Consolas, monospace">n</text>
+          <text class="lbl" data-d="2335" x="238.2" y="84.0" font-size="21" fill="#FFFFFF" text-anchor="start" font-weight="400" font-family="ui-monospace, Consolas, monospace">g</text>
+          <text class="lbl" data-d="2390" x="250.8" y="84.0" font-size="21" fill="#FFFFFF" text-anchor="start" font-weight="400" font-family="ui-monospace, Consolas, monospace">.</text>
+          <rect class="lbl" data-d="2545" x="265.4" y="72" width="12" height="3" fill="#FFFFFF"/>
+          <text class="lbl" data-d="0" x="24.0" y="128.0" font-size="12" fill="#8A8A8A" text-anchor="start" font-weight="400">색 속성 0x0A (밝은 초록) · 0x0F (흰색) · 한 줄 = 80칸 = 160바이트</text>
+          </svg>
+          <figcaption>VGA 메모리 내용을 화면처럼 다시 그린 것</figcaption>
+        </figure>
+        <div class="table-wrap">
+          <table class="data left">
+            <caption>파일 구성</caption>
+            <thead><tr><th scope="col">파일</th><th scope="col" style="text-align:left">역할</th></tr></thead>
+            <tbody>
+              <tr><th scope="row">boot.asm</th><td>BIOS에서 제어를 받아 커널을 디스크에서 읽어 옴</td></tr>
+              <tr><th scope="row">kernel.asm</th><td>A20, GDT, 보호 모드, 페이징, 롱 모드, C 호출</td></tr>
+              <tr><th scope="row">kmain.c</th><td>VGA 텍스트 드라이버</td></tr>
+              <tr><th scope="row">linker.ld</th><td>메모리 배치</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+    <section class="doc-sec">
+      <h2>검증 방법</h2>
+      <div>
+        <p>QEMU를 curses 화면으로 띄우면 처음부터 끝까지 'VGA Blank mode'만 보였습니다. 그래서 화면 대신 QEMU 모니터로 CPU와 메모리 상태를 직접 읽어서 확인했습니다. <code>info registers</code>로 레지스터를, <code>xp</code>로 VGA 메모리를 봤습니다.</p>
+        <pre class="code"><code>(qemu) info registers
+CS =0018 ... CS64      64비트 코드 세그먼트에서 실행 중
+EFER=0000000000000500  LME(8번 비트) + LMA(10번 비트)
+CR0=80000011           최상위 비트 PG = 페이징 켜짐
+CR3=0000000000001000   PML4 주소
+CR4=00000020           5번 비트 PAE</code></pre>
+        <p>VGA 메모리에는 첫 줄이 색 속성 <code>\n</code>(0x0A, 밝은 초록)으로, 둘째 줄이 <code>\x0f</code>(흰색)로 들어가 있습니다. 둘째 줄이 0xB80A0, 즉 160바이트(80칸 × 2바이트) 뒤에서 시작하는 것으로 줄바꿈 계산이 맞다는 것도 확인했습니다.</p>
+        <pre class="code"><code>(qemu) xp/60c 0xb8000
+00000000000b8000: &#x27;K&#x27; &#x27;\n&#x27; &#x27;e&#x27; &#x27;\n&#x27; &#x27;r&#x27; &#x27;\n&#x27; &#x27;n&#x27; &#x27;\n&#x27; &#x27;e&#x27; &#x27;\n&#x27; &#x27;l&#x27; &#x27;\n&#x27; &#x27; &#x27; &#x27;\n&#x27; &#x27;r&#x27; &#x27;\n&#x27;
+00000000000b8010: &#x27;u&#x27; &#x27;\n&#x27; &#x27;n&#x27; &#x27;\n&#x27; &#x27;n&#x27; &#x27;\n&#x27; &#x27;i&#x27; &#x27;\n&#x27; &#x27;n&#x27; &#x27;\n&#x27; &#x27;g&#x27; &#x27;\n&#x27; &#x27; &#x27; &#x27;\n&#x27; &#x27;i&#x27; &#x27;\n&#x27;
+00000000000b8020: &#x27;n&#x27; &#x27;\n&#x27; &#x27; &#x27; &#x27;\n&#x27; &#x27;C&#x27; &#x27;\n&#x27; &#x27;!&#x27; &#x27;\n&#x27; &#x27; &#x27; &#x27;\x07&#x27; &#x27; &#x27; &#x27;\x07&#x27; &#x27; &#x27; &#x27;\x07&#x27; &#x27; &#x27; &#x27;\x07&#x27;
+...
+00000000000b80a0: &#x27;V&#x27; &#x27;\x0f&#x27; &#x27;G&#x27; &#x27;\x0f&#x27; &#x27;A&#x27; &#x27;\x0f&#x27; &#x27; &#x27; &#x27;\x0f&#x27; &#x27;d&#x27; &#x27;\x0f&#x27; &#x27;r&#x27; &#x27;\x0f&#x27; &#x27;i&#x27; &#x27;\x0f&#x27; &#x27;v&#x27; &#x27;\x0f&#x27;
+00000000000b80b0: &#x27;e&#x27; &#x27;\x0f&#x27; &#x27;r&#x27; &#x27;\x0f&#x27; &#x27; &#x27; &#x27;\x0f&#x27; &#x27;w&#x27; &#x27;\x0f&#x27; &#x27;o&#x27; &#x27;\x0f&#x27; &#x27;r&#x27; &#x27;\x0f&#x27; &#x27;k&#x27; &#x27;\x0f&#x27; &#x27;i&#x27; &#x27;\x0f&#x27;
+00000000000b80c0: &#x27;n&#x27; &#x27;\x0f&#x27; &#x27;g&#x27; &#x27;\x0f&#x27; &#x27;.&#x27; &#x27;\x0f&#x27; &#x27; &#x27; &#x27;\x07&#x27; &#x27; &#x27; &#x27;\x07&#x27; &#x27; &#x27; &#x27;\x07&#x27; &#x27; &#x27; &#x27;\x07&#x27; &#x27; &#x27; &#x27;\x07&#x27;</code></pre>
+        <p>디스크 읽기가 실패하면 EIP가 0x7C3x 근처에 멈추고 AH가 0x0E로 남는다는 것도 이 과정에서 알게 됐습니다.</p>
+      </div>
+    </section>
+
     <section class="doc-sec">
       <h2>진행</h2>
       <div>
@@ -58,28 +318,10 @@
           <li class="done"><span>페이징</span><span class="state">완료</span></li>
           <li class="done"><span>64비트 롱 모드</span><span class="state">완료</span></li>
           <li class="done"><span>freestanding C 커널</span><span class="state">완료</span></li>
-          <li class="done"><span>VGA 드라이버</span><span class="state">완료</span></li>
-        </ol>
+          <li class="done"><span>VGA 텍스트 드라이버</span><span class="state">완료</span></li>
+        </ol><p class='note'>보통 이 다음 단계는 인터럽트(IDT)와 키보드 입력, 메모리 관리, 멀티태스킹입니다.</p>
       </div>
     </section>
-    <section class="doc-sec">
-      <h2>도구</h2>
-      <div>
-        <p><span class='nowrap'>x86-64</span> 어셈블리, C, QEMU</p>
-      </div>
-    </section>
-    <!-- 사진, 결과 그래프, 개발 기록을 넣으려면 아래 형식으로 섹션을 추가하세요.
-    <section class="doc-sec">
-      <h2>기록</h2>
-      <div>
-        <figure>
-          <img src="이미지.png" alt="이미지 설명">
-          <figcaption>설명</figcaption>
-        </figure>
-        <p>내용</p>
-      </div>
-    </section>
-    -->
 
     <nav class="pager" aria-label="다른 프로젝트">
       <a class="prev" href="../kdaa/"><span>이전 프로젝트</span>KDAA</a>
@@ -93,5 +335,86 @@
   <p>x86-64 ASM, C, Rust, TypeScript, Next.js, Supabase, Arduino, KiCad, QEMU, Docker, Oracle Cloud</p>
   <p><a href="https://github.com/twopercenz">twopercenz</a> / <a href="https://github.com/regx64">regx64</a></p>
 </footer>
+<script>
+/* 도표와 요약 숫자 애니메이션: 화면에 들어올 때 한 번 재생 */
+(() => {
+  if (matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+  if (!('IntersectionObserver' in window)) return;
+
+  const ease = (t) => 1 - Math.pow(1 - t, 3);
+
+  function tween(dur, delay, fn) {
+    const start = performance.now() + delay;
+    function step(now) {
+      const p = Math.min(1, Math.max(0, (now - start) / dur));
+      fn(ease(p));
+      if (p < 1) requestAnimationFrame(step);
+    }
+    requestAnimationFrame(step);
+  }
+
+  function prepareChart(svg) {
+    svg.querySelectorAll('[data-reveal]').forEach((r) => r.setAttribute('width', 0));
+    svg.querySelectorAll('.bar').forEach((r) => {
+      r.dataset.h = r.getAttribute('height');
+      r.setAttribute('y', r.dataset.base);
+      r.setAttribute('height', 0);
+    });
+    svg.querySelectorAll('.hbar').forEach((r) => {
+      r.dataset.w = r.getAttribute('width');
+      r.setAttribute('width', 0);
+    });
+    svg.querySelectorAll('.lbl').forEach((e) => { e.style.opacity = 0; });
+  }
+
+  function playChart(svg) {
+    svg.querySelectorAll('[data-reveal]').forEach((r) => {
+      const w = +r.dataset.reveal;
+      tween(1600, 0, (k) => r.setAttribute('width', w * k));
+    });
+    svg.querySelectorAll('.bar').forEach((r) => {
+      const h = +r.dataset.h, base = +r.dataset.base;
+      tween(800, +r.dataset.d, (k) => {
+        r.setAttribute('height', h * k);
+        r.setAttribute('y', base - h * k);
+      });
+    });
+    svg.querySelectorAll('.hbar').forEach((r) => {
+      const w = +r.dataset.w;
+      tween(+(r.dataset.dur || 900), +r.dataset.d, (k) => r.setAttribute('width', w * k));
+    });
+    svg.querySelectorAll('.lbl').forEach((e) => {
+      setTimeout(() => {
+        e.style.transition = 'opacity 0.4s';
+        e.style.opacity = 1;
+      }, +e.dataset.d);
+    });
+  }
+
+  function prepareCount(el) {
+    el.dataset.dec = el.dataset.dec || 0;
+    el.textContent = (0).toFixed(+el.dataset.dec);
+  }
+
+  function playCount(el) {
+    const to = +el.dataset.count, dec = +el.dataset.dec;
+    tween(1200, 0, (k) => { el.textContent = (to * k).toFixed(dec); });
+  }
+
+  const once = (targets, prepare, play, threshold) => {
+    const io = new IntersectionObserver((entries) => {
+      entries.forEach((en) => {
+        if (!en.isIntersecting) return;
+        io.unobserve(en.target);
+        play(en.target);
+      });
+    }, { threshold });
+    targets.forEach((t) => { prepare(t); io.observe(t); });
+  };
+
+  once(document.querySelectorAll('.chart svg'), prepareChart, playChart, 0.4);
+  once(document.querySelectorAll('[data-count]'), prepareCount, playCount, 0.6);
+})();
+</script>
 </body>
 </html>

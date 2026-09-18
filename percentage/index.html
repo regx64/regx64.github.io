@@ -4,12 +4,99 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Percentage | regx64</title>
-<meta name="description" content="나무위키 같은 한국어 개방형 위키입니다. 문서는 직접 만든 위키 문법 PerMark로 쓰고, Next.js와 Supabase로 만들었습니다.">
+<meta name="description" content="나무위키와 같은 구조와 기능을 목표로 하는 한국어 개방형 위키입니다. 위키 문법 PerMark의 파서를 외부 라이브러리 없이 직접 만들었고, Next.js와 Supabase 위에서 문서, 역사, 토론까지 돌아갑니다.">
 <link rel="icon" href="../favicon.ico" sizes="48x48">
 <link rel="icon" href="../favicon.svg" type="image/svg+xml">
 <link rel="apple-touch-icon" href="../apple-touch-icon.png">
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css">
 <link rel="stylesheet" href="../style.css">
+<style>
+  /* 이 페이지에만 쓰는 스타일 */
+  .doc-sec h3 { margin: 2rem 0 0.6rem; font-size: 1rem; }
+  .doc-sec h3:first-child { margin-top: 0; }
+
+  .stats {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 1.75rem 2rem;
+    margin: 0;
+  }
+  .stats div { border-top: 2px solid var(--ink); padding-top: 0.75rem; }
+  .stats dt { font-size: 2.25rem; font-weight: 700; letter-spacing: -0.03em; line-height: 1.2; }
+  .stats dd { margin: 0.25rem 0 0; font-size: 0.9375rem; color: var(--muted); }
+
+  .table-wrap { overflow-x: auto; margin: 0 0 0.9rem; }
+  .data {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.875rem;
+    font-variant-numeric: tabular-nums;
+    white-space: nowrap;
+  }
+  .data caption { text-align: left; font-weight: 600; font-size: 0.9375rem; padding-bottom: 0.5rem; }
+  .data th, .data td { padding: 0.45rem 0.6rem; border-bottom: 1px solid rgba(0, 0, 0, 0.1); }
+  .data thead th { border-bottom: 2px solid var(--ink); font-weight: 600; text-align: right; }
+  .data thead th:first-child, .data tbody th { text-align: left; }
+  .data tbody th { font-weight: 500; }
+  .data td { text-align: right; }
+  .data td.strong { font-weight: 700; }
+  .data tbody tr.split th, .data tbody tr.split td { border-top: 2px solid rgba(0, 0, 0, 0.25); }
+  .data.left td { text-align: left; }
+
+  .chart { margin: 1.5rem 0; }
+  .chart svg { display: block; width: 100%; height: auto; }
+
+  .formula {
+    margin: 1rem 0;
+    padding: 0.9rem 1.1rem;
+    background: #FFFFFF;
+    border-radius: 0.75rem;
+    font-size: 1.0625rem;
+    text-align: center;
+  }
+
+  .code {
+    margin: 1rem 0;
+    padding: 1rem 1.1rem;
+    overflow-x: auto;
+    background: #1B1B1B;
+    color: #E6E6E6;
+    border-radius: 0.75rem;
+    font-family: ui-monospace, Consolas, "D2Coding", monospace;
+    font-size: 0.8125rem;
+    line-height: 1.6;
+  }
+
+  .numbered { margin: 0 0 0.9rem; padding-left: 1.4rem; }
+  .numbered li { margin-bottom: 0.6rem; }
+  .numbered li:last-child { margin-bottom: 0; }
+
+  .refs { margin: 0; padding-left: 1.4rem; font-size: 0.9375rem; }
+  .refs li { margin-bottom: 0.4rem; }
+
+  @media (max-width: 820px) {
+    .stats dt { font-size: 1.75rem; }
+  }
+
+  .flow { stroke-dasharray: 6 5; animation: flow 1.2s linear infinite; }
+  @keyframes flow { to { stroke-dashoffset: -22; } }
+  @media (prefers-reduced-motion: reduce) { .flow { animation: none; } }
+
+  .steps li.part::before { background: linear-gradient(90deg, var(--ink) 50%, transparent 50%); }
+  .steps li.plan::before { border-style: dashed; }
+
+  .timeline { list-style: none; margin: 0; padding: 0; }
+  .timeline li {
+    display: grid;
+    grid-template-columns: 6.5rem minmax(0, 1fr);
+    gap: 1rem;
+    padding: 0.6rem 0;
+    border-bottom: 1px solid rgba(0, 0, 0, 0.08);
+  }
+  .timeline time { color: var(--muted); font-size: 0.875rem; font-variant-numeric: tabular-nums; padding-top: 0.1rem; }
+
+  .note { font-size: 0.875rem; color: var(--muted); }
+</style>
 <script type="importmap">
 {
   "imports": {
@@ -36,45 +123,175 @@
     <div class="copy">
       <h1 class="name">Percentage</h1>
       <p class="headline">쌓으면,<br>보입니다.</p>
-      <p class="body">나무위키 같은 한국어 개방형 위키입니다. 문서는 직접 만든 위키 문법 PerMark로 쓰고, Next.js와 Supabase로 만들었습니다.</p>
+      <p class="body">나무위키와 같은 구조와 기능을 목표로 하는 한국어 개방형 위키입니다. 위키 문법 PerMark의 파서를 외부 라이브러리 없이 직접 만들었고, Next.js와 Supabase 위에서 문서, 역사, 토론까지 돌아갑니다.</p>
+      <p class="meta">Next.js 16, React 19, TypeScript, Supabase</p>
       <div class="actions">
-        <a href="https://github.com/twopercenz/percentage">GitHub에서 보기</a>
+        <a class="btn" href="https://github.com/twopercenz/percentage">GitHub에서 보기</a>
       </div>
     </div>
     <div class="stage" data-model="percentage" role="img" aria-label="차곡차곡 쌓이는 문서 더미"></div>
   </section>
 
   <div class="doc tone-a">
+
     <section class="doc-sec">
-      <h2>개요</h2>
+      <h2>요약</h2>
       <div>
-        <p>누구나 문서를 쓰고 고칠 수 있는 한국어 개방형 위키입니다. 슬로건은 “쌓으면, 보입니다.”입니다.</p>
+        <dl class="stats">
+          <div><dt>7,471줄</dt><dd>TypeScript 코드</dd></div>
+          <div><dt>1,980줄</dt><dd>PerMark 렉서, 파서, 렌더러</dd></div>
+          <div><dt>약 200개</dt><dd>Vitest 테스트 케이스</dd></div>
+          <div><dt>7개</dt><dd>Supabase 마이그레이션</dd></div>
+        </dl>
       </div>
     </section>
+
+    <section class="doc-sec">
+      <h2>슬로건</h2>
+      <div>
+        <p>“쌓으면, 보입니다.”는 편집이 한 번씩 쌓여서(리비전) 지식이 드러난다는 뜻입니다. 빈 문서 안내나 푸터 같은 화면 문구도 이 말투에 맞춰 씁니다.</p><p>나무위키의 기능, 구조, 문법 사양은 참고하지만 로고, 마스코트, CSS, 문서 본문은 가져오지 않습니다. 테스트용 문서도 직접 쓴 내용만 쓰고, 라이선스는 CC BY-NC-SA 2.0 KR 기준 문구를 따로 작성해 표시합니다.</p>
+      </div>
+    </section>
+
     <section class="doc-sec">
       <h2>PerMark</h2>
       <div>
-        <p>Percentage 문서를 쓰기 위해 직접 만든 위키 문법입니다.</p>
+        <p>Percentage 문서를 쓰는 위키 문법입니다. 제목, 굵게와 기울임, 내부 링크, 각주, 표, 접기 블록, 목차, 틀 불러오기, 분류를 지원합니다.</p><pre class="code"><code>== 개요 ==
+[목차]
+&#x27;&#x27;&#x27;폰 노이만 구조&#x27;&#x27;&#x27;는 명령어와 데이터를 같은 메모리에 두는 방식이다.[* 1945년 EDVAC 보고서 초안]
+
+=== 등장 배경 ===
+* [[ENIAC]]은 계산을 바꿀 때마다 배선을 다시 했다.
+* 자세한 건 [[프로그램 내장 방식|이 문서]] 참고.
+
+|| 기계 || 시기 ||
+|| Manchester Baby || 1948 ||
+
+{{{#!folding 여담
+&#x27;&#x27;이름&#x27;&#x27;을 두고 논란이 있다.
+}}}
+
+[include(틀:컴퓨터 구조)]
+[각주]
+[[분류:컴퓨터 구조]]</code></pre>
+        <p>파서가 알아듣는 요소는 이 밖에도 취소선, 인라인 코드, 코드 블록, 글자 크기와 색 블록, 파일 링크, 리다이렉트, 날짜·나이·D-day·루비·앵커·페이지 수 매크로가 있습니다.</p>
+        <h3>직접 만든 이유</h3>
+        <p>위키 문법은 마크다운과 규칙이 달라서 외부 마크다운 라이브러리를 쓰지 않고 렉서, 파서, 렌더러를 전부 직접 구현했습니다. 잘못 닫히거나 안 닫힌 서식은 에러를 내지 않고 원문 그대로 남깁니다.</p>
+        <p>작은 부분도 신경 썼습니다. 제목은 앞뒤 <code>=</code>의 개수가 정확히 같아야 인식하는데, 역참조 정규식 <code>/^(={1,6})(.+?)\1\s*$/</code>은 <code>== 개요 =</code> 같은 줄에서 여분의 <code>=</code>를 본문으로 삼켜 버립니다. 그래서 앞뒤 <code>=</code>를 따로 세서 비교합니다. <code>[include(...)]</code>도 한 줄 전체가 정확히 그 형태일 때만 틀 블록으로 펼칩니다.</p>
       </div>
     </section>
+
     <section class="doc-sec">
-      <h2>기술</h2>
+      <h2>처리 과정</h2>
       <div>
-        <p>Next.js, Supabase</p>
+        <figure class="chart">
+          <svg viewBox="0 0 700 262" role="img" aria-label="PerMark 문서가 화면에 나오기까지. 원문, 렉서, 파서, 틀 전개, 렌더러, 문서. 저장하면 리비전과 역링크, 분류가 갱신됨" xmlns="http://www.w3.org/2000/svg" font-family="Pretendard, -apple-system, sans-serif">
+          <defs><marker id="pc1-ah" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#1D1D1D"/></marker><marker id="pc1-ahm" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#9A9A9A"/></marker></defs>
+          <g class="lbl" data-d="0"><rect x="0" y="30" width="100" height="76" rx="10" fill="#FFFFFF" stroke="#9A9A9A" stroke-width="1.5"/><text x="50.0" y="65.5" font-size="13" fill="#1D1D1D" text-anchor="middle" font-weight="600">원문</text><text x="50.0" y="85.5" font-size="11" fill="#6E6E6E" text-anchor="middle" font-weight="400">PerMark</text></g>
+          <g class="lbl" data-d="120"><line class="flow" x1="102" y1="68" x2="117" y2="68" stroke="#1D1D1D" stroke-width="1.5" marker-end="url(#pc1-ah)"/></g>
+          <g class="lbl" data-d="220"><rect x="120" y="30" width="100" height="76" rx="10" fill="#ECE6F7" stroke="#7A5BC7" stroke-width="1.5"/><text x="170.0" y="58.5" font-size="13" fill="#1D1D1D" text-anchor="middle" font-weight="600">Lexer</text><text x="170.0" y="78.5" font-size="11" fill="#6E6E6E" text-anchor="middle" font-weight="400">블록 토큰</text><text x="170.0" y="92.5" font-size="11" fill="#6E6E6E" text-anchor="middle" font-weight="400">177줄</text></g>
+          <g class="lbl" data-d="340"><line class="flow" x1="222" y1="68" x2="237" y2="68" stroke="#1D1D1D" stroke-width="1.5" marker-end="url(#pc1-ah)"/></g>
+          <g class="lbl" data-d="440"><rect x="240" y="30" width="100" height="76" rx="10" fill="#ECE6F7" stroke="#7A5BC7" stroke-width="1.5"/><text x="290.0" y="58.5" font-size="13" fill="#1D1D1D" text-anchor="middle" font-weight="600">Parser</text><text x="290.0" y="78.5" font-size="11" fill="#6E6E6E" text-anchor="middle" font-weight="400">AST</text><text x="290.0" y="92.5" font-size="11" fill="#6E6E6E" text-anchor="middle" font-weight="400">1,075줄</text></g>
+          <g class="lbl" data-d="560"><line class="flow" x1="342" y1="68" x2="357" y2="68" stroke="#1D1D1D" stroke-width="1.5" marker-end="url(#pc1-ah)"/></g>
+          <g class="lbl" data-d="660"><rect x="360" y="30" width="100" height="76" rx="10" fill="#FFFFFF" stroke="#9A9A9A" stroke-width="1.5"/><text x="410.0" y="65.5" font-size="13" fill="#1D1D1D" text-anchor="middle" font-weight="600">틀 전개</text><text x="410.0" y="85.5" font-size="11" fill="#6E6E6E" text-anchor="middle" font-weight="400">include.ts</text></g>
+          <g class="lbl" data-d="780"><line class="flow" x1="462" y1="68" x2="477" y2="68" stroke="#1D1D1D" stroke-width="1.5" marker-end="url(#pc1-ah)"/></g>
+          <g class="lbl" data-d="880"><rect x="480" y="30" width="100" height="76" rx="10" fill="#ECE6F7" stroke="#7A5BC7" stroke-width="1.5"/><text x="530.0" y="58.5" font-size="13" fill="#1D1D1D" text-anchor="middle" font-weight="600">Renderer</text><text x="530.0" y="78.5" font-size="11" fill="#6E6E6E" text-anchor="middle" font-weight="400">React</text><text x="530.0" y="92.5" font-size="11" fill="#6E6E6E" text-anchor="middle" font-weight="400">728줄</text></g>
+          <g class="lbl" data-d="1000"><line class="flow" x1="582" y1="68" x2="597" y2="68" stroke="#1D1D1D" stroke-width="1.5" marker-end="url(#pc1-ah)"/></g>
+          <g class="lbl" data-d="1100"><rect x="600" y="30" width="100" height="76" rx="10" fill="#FFFFFF" stroke="#9A9A9A" stroke-width="1.5"/><text x="650.0" y="65.5" font-size="13" fill="#1D1D1D" text-anchor="middle" font-weight="600">문서</text><text x="650.0" y="85.5" font-size="11" fill="#6E6E6E" text-anchor="middle" font-weight="400">/w/제목</text></g>
+          <text class="lbl" data-d="0" x="0.0" y="18.0" font-size="12" fill="#7A5BC7" text-anchor="start" font-weight="600">보기</text>
+          <text class="lbl" data-d="1400" x="0.0" y="150.0" font-size="12" fill="#7A5BC7" text-anchor="start" font-weight="600">저장</text>
+          <g class="lbl" data-d="1400"><rect x="0" y="162" width="120" height="70" rx="10" fill="#FFFFFF" stroke="#9A9A9A" stroke-width="1.5"/><text x="60.0" y="194.5" font-size="13" fill="#1D1D1D" text-anchor="middle" font-weight="600">편집 저장</text><text x="60.0" y="214.5" font-size="11" fill="#6E6E6E" text-anchor="middle" font-weight="400">서버 액션</text></g>
+          <g class="lbl" data-d="1600"><rect x="140" y="162" width="120" height="70" rx="10" fill="#FFFFFF" stroke="#9A9A9A" stroke-width="1.5"/><text x="200.0" y="194.5" font-size="13" fill="#1D1D1D" text-anchor="middle" font-weight="600">revisions</text><text x="200.0" y="214.5" font-size="11" fill="#6E6E6E" text-anchor="middle" font-weight="400">리비전 누적</text></g>
+          <g class="lbl" data-d="1800"><rect x="280" y="162" width="120" height="70" rx="10" fill="#FFFFFF" stroke="#9A9A9A" stroke-width="1.5"/><text x="340.0" y="194.5" font-size="13" fill="#1D1D1D" text-anchor="middle" font-weight="600">역사 · 비교</text><text x="340.0" y="214.5" font-size="11" fill="#6E6E6E" text-anchor="middle" font-weight="400">diff</text></g>
+          <g class="lbl" data-d="2000"><rect x="420" y="162" width="120" height="70" rx="10" fill="#FFFFFF" stroke="#9A9A9A" stroke-width="1.5"/><text x="480.0" y="194.5" font-size="13" fill="#1D1D1D" text-anchor="middle" font-weight="600">backlinks</text><text x="480.0" y="214.5" font-size="11" fill="#6E6E6E" text-anchor="middle" font-weight="400">역링크</text></g>
+          <g class="lbl" data-d="2200"><rect x="560" y="162" width="120" height="70" rx="10" fill="#FFFFFF" stroke="#9A9A9A" stroke-width="1.5"/><text x="620.0" y="195.0" font-size="13" fill="#1D1D1D" text-anchor="middle" font-weight="600">분류</text><text x="620.0" y="214.0" font-size="10" fill="#6E6E6E" text-anchor="middle" font-weight="400" font-family="ui-monospace, Consolas, monospace">document_categories</text></g>
+          <g class="lbl" data-d="1500"><line x1="122" y1="197" x2="137" y2="197" stroke="#1D1D1D" stroke-width="1.5" marker-end="url(#pc1-ah)"/></g>
+          <g class="lbl" data-d="1700"><line x1="262" y1="197" x2="277" y2="197" stroke="#1D1D1D" stroke-width="1.5" marker-end="url(#pc1-ah)"/></g>
+          <g class="lbl" data-d="1900"><path d="M 60 233 V 250 H 480 V 236" fill="none" stroke="#1D1D1D" stroke-width="1.5" marker-end="url(#pc1-ah)"/></g>
+          <g class="lbl" data-d="2100"><path d="M 480 250 H 620 V 236" fill="none" stroke="#1D1D1D" stroke-width="1.5" marker-end="url(#pc1-ah)"/></g>
+          </svg>
+          <figcaption>문서를 볼 때와 저장할 때의 흐름</figcaption>
+        </figure><figure class="chart">
+          <svg viewBox="0 0 640 148" role="img" aria-label="PerMark 처리 코드 줄 수. lexer 177, parser 1,075, renderer 728" xmlns="http://www.w3.org/2000/svg" font-family="Pretendard, -apple-system, sans-serif">
+          <defs><marker id="pc2-ah" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#1D1D1D"/></marker><marker id="pc2-ahm" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#9A9A9A"/></marker></defs>
+          <text x="0.0" y="18.0" font-size="13" fill="#1D1D1D" text-anchor="start" font-weight="600">lib/namumark/ 줄 수 (합계 1,980줄)</text>
+          <text x="138.0" y="54.0" font-size="12" fill="#1D1D1D" text-anchor="end" font-weight="500" font-family="ui-monospace, Consolas, monospace">lexer.ts</text>
+          <rect class="hbar" data-d="0" x="150" y="40" width="65.9" height="20" rx="3" fill="#7A5BC7"/>
+          <text class="lbl" data-d="600" x="223.9" y="55.0" font-size="12" fill="#1D1D1D" text-anchor="start" font-weight="600">177줄</text>
+          <text x="138.0" y="88.0" font-size="12" fill="#1D1D1D" text-anchor="end" font-weight="500" font-family="ui-monospace, Consolas, monospace">parser.ts</text>
+          <rect class="hbar" data-d="120" x="150" y="74" width="400.0" height="20" rx="3" fill="#7A5BC7"/>
+          <text class="lbl" data-d="720" x="558.0" y="89.0" font-size="12" fill="#1D1D1D" text-anchor="start" font-weight="600">1,075줄</text>
+          <text x="138.0" y="122.0" font-size="12" fill="#1D1D1D" text-anchor="end" font-weight="500" font-family="ui-monospace, Consolas, monospace">renderer.tsx</text>
+          <rect class="hbar" data-d="240" x="150" y="108" width="270.9" height="20" rx="3" fill="#7A5BC7"/>
+          <text class="lbl" data-d="840" x="428.9" y="123.0" font-size="12" fill="#1D1D1D" text-anchor="start" font-weight="600">728줄</text>
+          </svg>
+          <figcaption>PerMark 처리 코드의 구성</figcaption>
+        </figure>
       </div>
     </section>
-    <!-- 사진, 결과 그래프, 개발 기록을 넣으려면 아래 형식으로 섹션을 추가하세요.
+
+    <section class="doc-sec">
+      <h2>기능</h2>
+      <div>
+        <div class="table-wrap">
+          <table class="data left">
+            <caption>구현한 기능</caption>
+            <thead><tr><th scope="col">구분</th><th scope="col" style="text-align:left">기능</th></tr></thead>
+            <tbody>
+              <tr><th scope="row">문서</th><td>보기, 편집, 역사, 두 리비전 비교(diff), 이동, 삭제, 되돌리기, 리다이렉트</td></tr>
+              <tr><th scope="row">연결</th><td>역링크, 분류, 틀 불러오기</td></tr>
+              <tr><th scope="row">참여</th><td>토론, 편집 요청, 신고</td></tr>
+              <tr><th scope="row">탐색</th><td>최근 변경, 검색</td></tr>
+              <tr><th scope="row">계정</th><td>로그인, 가입, 설정, 프로필</td></tr>
+              <tr><th scope="row">관리</th><td>문서별 ACL, IP 처리, 요청 횟수 제한</td></tr>
+            </tbody>
+          </table>
+        </div>
+        <h3>마크다운 변환</h3>
+        <p>이미 가진 노트나 README를 옮기기 쉽게 마크다운을 PerMark로 바꾸는 스크립트를 만들었습니다. 제목, 굵게·기울임·취소선, 인라인 코드, 링크, 이미지, 목록과 체크박스, 인용, 수평선, 코드 블록, GFM 표를 변환합니다.</p>
+        <pre class="code"><code>bun run convert:md &lt;입력.md&gt; [출력파일]</code></pre>
+      </div>
+    </section>
+
+    <section class="doc-sec">
+      <h2>데이터</h2>
+      <div>
+        <p>ORM 없이 Supabase JS 클라이언트와 <code>supabase gen types</code>로 만든 타입을 씁니다. 문서 저장, 되돌리기, 이동처럼 여러 테이블을 함께 바꾸는 작업은 Postgres 함수나 트랜잭션으로 한 번에 처리합니다.</p><div class="table-wrap">
+          <table class="data left">
+            <caption>테이블</caption>
+            <thead><tr><th scope="col">테이블</th><th scope="col" style="text-align:left">내용</th></tr></thead>
+            <tbody>
+              <tr><th scope="row">profiles</th><td>사용자 프로필</td></tr>
+              <tr><th scope="row">documents</th><td>문서</td></tr>
+              <tr><th scope="row">revisions</th><td>문서의 편집 기록</td></tr>
+              <tr><th scope="row">document_categories</th><td>문서와 분류의 연결</td></tr>
+              <tr><th scope="row">backlinks</th><td>문서 사이의 링크</td></tr>
+              <tr><th scope="row">discussions, discussion_comments</th><td>토론과 댓글</td></tr>
+              <tr><th scope="row">edit_requests</th><td>편집 요청</td></tr>
+              <tr><th scope="row">reports</th><td>신고</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+    <section class="doc-sec">
+      <h2>품질 기준</h2>
+      <div>
+        <p>작업이 끝났다고 보는 기준은 네 가지를 모두 통과하는 것입니다.</p><pre class="code"><code>bun run lint &amp;&amp; bun run typecheck &amp;&amp; bun run test &amp;&amp; bun run build</code></pre><p>테스트는 렉서와 렌더러, 마크다운 변환, diff, ACL, IP 처리, 요청 제한, 문서 제목과 사용자 이름 규칙까지 약 200개입니다.</p>
+      </div>
+    </section>
+
     <section class="doc-sec">
       <h2>기록</h2>
       <div>
-        <figure>
-          <img src="이미지.png" alt="이미지 설명">
-          <figcaption>설명</figcaption>
-        </figure>
-        <p>내용</p>
+        <ol class="timeline">
+          <li><time>2026. 8. 3.</time><div>Next.js로 시작, 레이아웃과 ACL, IP 유틸리티</div></li>
+          <li><time>2026. 8. 4.</time><div>PerMark 렌더러와 문단 나누기, 나무위키형 화면</div></li>
+          <li><time>2026. 8. 5.</time><div>마크다운 변환, 토론·편집 요청·신고, 로그인·가입·설정</div></li>
+        </ol>
       </div>
     </section>
-    -->
 
     <nav class="pager" aria-label="다른 프로젝트">
       <a class="prev" href="../cotton/"><span>이전 프로젝트</span>Cotton</a>
@@ -88,5 +305,86 @@
   <p>x86-64 ASM, C, Rust, TypeScript, Next.js, Supabase, Arduino, KiCad, QEMU, Docker, Oracle Cloud</p>
   <p><a href="https://github.com/twopercenz">twopercenz</a> / <a href="https://github.com/regx64">regx64</a></p>
 </footer>
+<script>
+/* 도표와 요약 숫자 애니메이션: 화면에 들어올 때 한 번 재생 */
+(() => {
+  if (matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+  if (!('IntersectionObserver' in window)) return;
+
+  const ease = (t) => 1 - Math.pow(1 - t, 3);
+
+  function tween(dur, delay, fn) {
+    const start = performance.now() + delay;
+    function step(now) {
+      const p = Math.min(1, Math.max(0, (now - start) / dur));
+      fn(ease(p));
+      if (p < 1) requestAnimationFrame(step);
+    }
+    requestAnimationFrame(step);
+  }
+
+  function prepareChart(svg) {
+    svg.querySelectorAll('[data-reveal]').forEach((r) => r.setAttribute('width', 0));
+    svg.querySelectorAll('.bar').forEach((r) => {
+      r.dataset.h = r.getAttribute('height');
+      r.setAttribute('y', r.dataset.base);
+      r.setAttribute('height', 0);
+    });
+    svg.querySelectorAll('.hbar').forEach((r) => {
+      r.dataset.w = r.getAttribute('width');
+      r.setAttribute('width', 0);
+    });
+    svg.querySelectorAll('.lbl').forEach((e) => { e.style.opacity = 0; });
+  }
+
+  function playChart(svg) {
+    svg.querySelectorAll('[data-reveal]').forEach((r) => {
+      const w = +r.dataset.reveal;
+      tween(1600, 0, (k) => r.setAttribute('width', w * k));
+    });
+    svg.querySelectorAll('.bar').forEach((r) => {
+      const h = +r.dataset.h, base = +r.dataset.base;
+      tween(800, +r.dataset.d, (k) => {
+        r.setAttribute('height', h * k);
+        r.setAttribute('y', base - h * k);
+      });
+    });
+    svg.querySelectorAll('.hbar').forEach((r) => {
+      const w = +r.dataset.w;
+      tween(+(r.dataset.dur || 900), +r.dataset.d, (k) => r.setAttribute('width', w * k));
+    });
+    svg.querySelectorAll('.lbl').forEach((e) => {
+      setTimeout(() => {
+        e.style.transition = 'opacity 0.4s';
+        e.style.opacity = 1;
+      }, +e.dataset.d);
+    });
+  }
+
+  function prepareCount(el) {
+    el.dataset.dec = el.dataset.dec || 0;
+    el.textContent = (0).toFixed(+el.dataset.dec);
+  }
+
+  function playCount(el) {
+    const to = +el.dataset.count, dec = +el.dataset.dec;
+    tween(1200, 0, (k) => { el.textContent = (to * k).toFixed(dec); });
+  }
+
+  const once = (targets, prepare, play, threshold) => {
+    const io = new IntersectionObserver((entries) => {
+      entries.forEach((en) => {
+        if (!en.isIntersecting) return;
+        io.unobserve(en.target);
+        play(en.target);
+      });
+    }, { threshold });
+    targets.forEach((t) => { prepare(t); io.observe(t); });
+  };
+
+  once(document.querySelectorAll('.chart svg'), prepareChart, playChart, 0.4);
+  once(document.querySelectorAll('[data-count]'), prepareCount, playCount, 0.6);
+})();
+</script>
 </body>
 </html>
