@@ -1,0 +1,113 @@
+---
+interface Props {
+  title: string;
+  description: string;
+}
+const { title, description } = Astro.props;
+---
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>{title} | regx64</title>
+<meta name="description" content={description}>
+<link rel="icon" href="/favicon.ico" sizes="48x48">
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<link rel="apple-touch-icon" href="/apple-touch-icon.png">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css">
+<link rel="stylesheet" href="/style.css">
+<style is:global>
+  .notes-doc {
+    position: relative;
+    z-index: 2;
+    max-width: 40rem;
+    margin: 0 auto;
+    padding: 7rem 1.5rem 5rem;
+  }
+  .notes-doc h1 { margin: 0 0 0.5rem; font-size: clamp(1.9rem, 4vw, 2.5rem); font-weight: 700; letter-spacing: -0.03em; line-height: 1.2; }
+  .notes-doc .lede { margin: 0 0 1rem; color: var(--muted); font-size: 1.0625rem; }
+  .notes-meta { display: flex; flex-wrap: wrap; gap: 0.5rem 1rem; margin: 0 0 2.5rem; font-size: 0.875rem; color: var(--muted); font-family: ui-monospace, Consolas, "D2Coding", monospace; }
+  .notes-meta a { color: var(--ink); text-decoration: underline; text-underline-offset: 0.2em; }
+
+  .notes-doc article :is(h2, h3) { margin: 2.25rem 0 0.75rem; letter-spacing: -0.01em; }
+  .notes-doc article h2 { font-size: 1.25rem; }
+  .notes-doc article h3 { font-size: 1.0625rem; }
+  .notes-doc article p { margin: 0 0 1.1rem; }
+  .notes-doc article ul, .notes-doc article ol { margin: 0 0 1.1rem; padding-left: 1.3rem; }
+  .notes-doc article li { margin-bottom: 0.4rem; }
+  .notes-doc article code {
+    font-family: ui-monospace, Consolas, "D2Coding", monospace;
+    font-size: 0.875em;
+    background: rgba(0, 0, 0, 0.06);
+    padding: 0.1em 0.35em;
+    border-radius: 0.3em;
+  }
+  .notes-doc article pre {
+    margin: 1.25rem 0;
+    padding: 1rem 1.1rem;
+    overflow-x: auto;
+    background: #1B1B1B;
+    color: #E6E6E6;
+    border-radius: 0.75rem;
+    font-size: 0.8125rem;
+    line-height: 1.6;
+  }
+  .notes-doc article pre code { background: none; padding: 0; }
+
+  /* 분해 다이어그램: SYSTEM ↓ SUBSYSTEM ↓ ... 모티프 */
+  .flow {
+    list-style: none;
+    margin: 1.5rem 0;
+    padding: 1.25rem 1.4rem;
+    background: var(--tone-a);
+    border-radius: 0.75rem;
+    font-family: ui-monospace, Consolas, "D2Coding", monospace;
+    font-size: 0.9375rem;
+  }
+  .flow li { padding: 0.35rem 0; }
+  .flow li:not(:last-child)::after { content: "↓"; display: block; color: var(--muted); padding-top: 0.35rem; }
+
+  .callout {
+    margin: 1.5rem 0;
+    padding: 1rem 1.2rem;
+    border-left: 3px solid var(--ink);
+    background: var(--tone-a);
+    border-radius: 0 0.5rem 0.5rem 0;
+  }
+  .callout p:last-child { margin-bottom: 0; }
+
+  .notes-pager {
+    display: flex;
+    justify-content: space-between;
+    gap: 1.5rem;
+    margin-top: 3rem;
+    padding-top: 2rem;
+    border-top: 1px solid rgba(0, 0, 0, 0.1);
+    font-size: 0.9375rem;
+  }
+  .notes-pager a { text-decoration: none; font-weight: 600; }
+  .notes-pager a:hover { text-decoration: underline; }
+</style>
+</head>
+<body>
+<a class="skip" href="#main">본문으로 건너뛰기</a>
+
+<header class="nav">
+  <a class="brand" href="/">regx64</a>
+  <nav class="nav-links">
+    <a href="/notes/">NOTES</a>
+    <a href="https://github.com/twopercenz">GitHub</a>
+  </nav>
+</header>
+
+<main id="main" class="notes-doc">
+  <slot />
+</main>
+
+<footer class="foot tone-a">
+  <p>x86-64 ASM, C, Rust, TypeScript, Next.js, Supabase, Arduino, KiCad, QEMU, Docker, Oracle Cloud</p>
+  <p><a href="https://github.com/twopercenz">twopercenz</a> / <a href="https://github.com/regx64">regx64</a></p>
+</footer>
+</body>
+</html>

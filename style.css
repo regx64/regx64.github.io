@@ -63,6 +63,7 @@ a { color: inherit; text-underline-offset: 0.22em; }
 }
 .nav a { text-decoration: none; }
 .nav .brand { font-weight: 700; font-size: 1rem; letter-spacing: -0.02em; }
+.nav-links { display: flex; align-items: center; gap: 1.25rem; }
 
 /* 섹션 */
 .tone-a { background: var(--tone-a); }

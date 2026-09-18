@@ -1,0 +1,39 @@
+---
+import Layout from '../layouts/Layout.astro';
+import { getCollection } from 'astro:content';
+
+export async function getStaticPaths() {
+  const notes = await getCollection('notes');
+  return notes.map((note) => ({
+    params: { slug: note.slug },
+    props: { note },
+  }));
+}
+
+const { note } = Astro.props;
+const { Content } = await note.render();
+const notes = (await getCollection('notes')).sort(
+  (a, b) => b.data.date.valueOf() - a.data.date.valueOf()
+);
+const i = notes.findIndex((n) => n.slug === note.slug);
+const prev = notes[i + 1];
+const next = notes[i - 1];
+---
+<Layout title={note.data.title} description={note.data.description}>
+  <h1>{note.data.title}</h1>
+  <p class="lede">{note.data.description}</p>
+  <p class="notes-meta">
+    <span>{note.data.date.toISOString().slice(0, 10)}</span>
+    {note.data.status && <span>{note.data.status}</span>}
+    {note.data.projectHref && <a href={note.data.projectHref}>관련 프로젝트: {note.data.project} →</a>}
+  </p>
+
+  <article>
+    <Content />
+  </article>
+
+  <nav class="notes-pager" aria-label="다른 노트">
+    <a href={prev ? `/notes/${prev.slug}/` : '/notes/'}>{prev ? `← ${prev.data.title}` : '← 목록으로'}</a>
+    {next && <a href={`/notes/${next.slug}/`}>{next.data.title} →</a>}
+  </nav>
+</Layout>
