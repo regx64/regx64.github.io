@@ -1,0 +1,23 @@
+---
+import Layout from '../../layouts/Layout.astro';
+import NoteList from '../../components/NoteList.astro';
+import { allNotes, allSeries, notesInSeries, seriesSlug } from '../../lib/notes';
+
+export async function getStaticPaths() {
+  const notes = await allNotes();
+  const series = await allSeries(notes);
+  return Promise.all(
+    series.map(async (name) => ({
+      params: { series: seriesSlug(name) },
+      props: { name, notes: await notesInSeries(name, notes) },
+    }))
+  );
+}
+
+const { name, notes } = Astro.props;
+---
+<Layout title={`시리즈: ${name}`} description={`${name} 시리즈의 엔지니어링 노트 목록`}>
+  <p class="lede"><a href="/notes/">← NOTES</a></p>
+  <h1>시리즈: {name}</h1>
+  <NoteList notes={notes} />
+</Layout>

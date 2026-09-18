@@ -1,0 +1,21 @@
+---
+import Layout from '../../layouts/Layout.astro';
+import NoteList from '../../components/NoteList.astro';
+import { allNotes, allTags, tagSlug } from '../../lib/notes';
+
+export async function getStaticPaths() {
+  const notes = await allNotes();
+  const tags = await allTags(notes);
+  return tags.map((tag) => ({
+    params: { tag: tagSlug(tag) },
+    props: { tag, notes: notes.filter((n) => n.data.tags.includes(tag)) },
+  }));
+}
+
+const { tag, notes } = Astro.props;
+---
+<Layout title={`#${tag}`} description={`#${tag} 태그가 붙은 엔지니어링 노트 목록`}>
+  <p class="lede"><a href="/notes/">← NOTES</a></p>
+  <h1>#{tag}</h1>
+  <NoteList notes={notes} />
+</Layout>

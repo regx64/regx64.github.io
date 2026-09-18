@@ -9,6 +9,9 @@ const notes = defineCollection({
     project: z.string().optional(),
     projectHref: z.string().optional(),
     status: z.string().optional(),
+    tags: z.array(z.string()).default([]),
+    series: z.string().optional(),
+    seriesOrder: z.number().optional(),
   }),
 });
 

@@ -88,7 +88,99 @@ const { title, description } = Astro.props;
   }
   .notes-pager a { text-decoration: none; font-weight: 600; }
   .notes-pager a:hover { text-decoration: underline; }
+
+  /* 태그 */
+  .tag-row { margin: 0 0 1.5rem; display: flex; flex-wrap: wrap; gap: 0.5rem; }
+  .tag {
+    font-size: 0.8125rem;
+    font-family: ui-monospace, Consolas, "D2Coding", monospace;
+    color: var(--muted);
+    text-decoration: none;
+    padding: 0.15rem 0.55rem;
+    border: 1px solid rgba(0, 0, 0, 0.15);
+    border-radius: 999px;
+  }
+  .tag:hover { color: var(--ink); border-color: var(--ink); }
+
+  /* 시리즈 */
+  .series-box {
+    margin: 0 0 2rem;
+    padding: 1rem 1.2rem;
+    background: var(--tone-a);
+    border-radius: 0.75rem;
+    font-size: 0.9375rem;
+  }
+  .series-box-label { margin: 0 0 0.6rem; font-weight: 600; }
+  .series-box-label a { text-decoration: underline; text-underline-offset: 0.2em; }
+  .series-box-label span { font-weight: 400; color: var(--muted); font-family: ui-monospace, Consolas, "D2Coding", monospace; }
+  .series-box-list { list-style: none; margin: 0; padding: 0; counter-reset: none; }
+  .series-box-list li { padding: 0.25rem 0; color: var(--muted); }
+  .series-box-list li.current { color: var(--ink); font-weight: 600; }
+  .series-box-list a { color: var(--muted); text-decoration: none; }
+  .series-box-list a:hover { color: var(--ink); text-decoration: underline; }
+
+  /* 마우스 오버 각주: 본문 중 <span class="fn">트리거<span class="fn-note">각주 내용</span></span> 로 작성 */
+  .fn {
+    position: relative;
+    border-bottom: 1px dotted var(--muted);
+    cursor: help;
+  }
+  .fn-note {
+    position: absolute;
+    left: 50%;
+    bottom: calc(100% + 0.5rem);
+    transform: translateX(-50%);
+    width: max-content;
+    max-width: min(20rem, 80vw);
+    background: var(--ink);
+    color: #fff;
+    font-size: 0.8125rem;
+    line-height: 1.55;
+    font-weight: 400;
+    padding: 0.6rem 0.8rem;
+    border-radius: 0.5rem;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.12s ease;
+    z-index: 10;
+  }
+  .fn-note::after {
+    content: "";
+    position: absolute;
+    top: 100%;
+    left: 50%;
+    transform: translateX(-50%);
+    border: 0.35rem solid transparent;
+    border-top-color: var(--ink);
+  }
+  .fn:hover .fn-note,
+  .fn:focus .fn-note,
+  .fn:focus-within .fn-note,
+  .fn.is-open .fn-note {
+    opacity: 1;
+    pointer-events: auto;
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .fn-note { transition: none; }
+  }
+  @media (max-width: 480px) {
+    .fn-note { left: 0; transform: none; }
+    .fn-note::after { left: 1rem; transform: none; }
+  }
 </style>
+<script>
+  /* 각주 트리거를 탭하면 열리고, 바깥을 탭하면 닫힘 (터치 기기용 보조 동작) */
+  document.addEventListener('click', (e) => {
+    const target = e.target as HTMLElement;
+    const hit = target.closest('.fn');
+    document.querySelectorAll('.fn.is-open').forEach((el) => {
+      if (el !== hit) el.classList.remove('is-open');
+    });
+    if (hit && !hit.querySelector('.fn-note')?.contains(target)) {
+      hit.classList.toggle('is-open');
+    }
+  });
+</script>
 </head>
 <body>
 <a class="skip" href="#main">본문으로 건너뛰기</a>

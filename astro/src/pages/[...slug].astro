@@ -1,5 +1,7 @@
 ---
 import Layout from '../layouts/Layout.astro';
+import Giscus from '../components/Giscus.astro';
+import { allNotes, notesInSeries, tagSlug, seriesSlug } from '../lib/notes';
 import { getCollection } from 'astro:content';
 
 export async function getStaticPaths() {
@@ -12,12 +14,12 @@ export async function getStaticPaths() {
 
 const { note } = Astro.props;
 const { Content } = await note.render();
-const notes = (await getCollection('notes')).sort(
-  (a, b) => b.data.date.valueOf() - a.data.date.valueOf()
-);
+const notes = await allNotes();
 const i = notes.findIndex((n) => n.slug === note.slug);
 const prev = notes[i + 1];
 const next = notes[i - 1];
+const seriesMates = note.data.series ? await notesInSeries(note.data.series, notes) : [];
+const seriesIndex = seriesMates.findIndex((n) => n.slug === note.slug);
 ---
 <Layout title={note.data.title} description={note.data.description}>
   <h1>{note.data.title}</h1>
@@ -27,6 +29,29 @@ const next = notes[i - 1];
     {note.data.status && <span>{note.data.status}</span>}
     {note.data.projectHref && <a href={note.data.projectHref}>관련 프로젝트: {note.data.project} →</a>}
   </p>
+  {note.data.tags.length > 0 && (
+    <p class="tag-row">
+      {note.data.tags.map((tag) => (
+        <a class="tag" href={`/notes/tags/${tagSlug(tag)}/`}>#{tag}</a>
+      ))}
+    </p>
+  )}
+
+  {note.data.series && (
+    <div class="series-box">
+      <p class="series-box-label">
+        시리즈: <a href={`/notes/series/${seriesSlug(note.data.series)}/`}>{note.data.series}</a>
+        <span>({seriesIndex + 1}/{seriesMates.length})</span>
+      </p>
+      <ol class="series-box-list">
+        {seriesMates.map((n, idx) => (
+          n.slug === note.slug
+            ? <li class="current">{idx + 1}. {n.data.title}</li>
+            : <li><a href={`/notes/${n.slug}/`}>{idx + 1}. {n.data.title}</a></li>
+        ))}
+      </ol>
+    </div>
+  )}
 
   <article>
     <Content />
@@ -36,4 +61,6 @@ const next = notes[i - 1];
     <a href={prev ? `/notes/${prev.slug}/` : '/notes/'}>{prev ? `← ${prev.data.title}` : '← 목록으로'}</a>
     {next && <a href={`/notes/${next.slug}/`}>{next.data.title} →</a>}
   </nav>
+
+  <Giscus />
 </Layout>
