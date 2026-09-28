@@ -33,7 +33,7 @@
       <a href="#work">작업</a>
       <a href="notes/">노트</a>
       <a href="#about">소개</a>
-      <a href="https://github.com/twopercenz">GitHub</a>
+      <a href="https://github.com/regx64">GitHub</a>
     </nav>
   </div>
 </header>
@@ -136,14 +136,15 @@
     <div class="ch-body">
       <div class="ch-text reveal">
         <p class="ch-lede">아두이노 나노 4대로 2×2 시스톨릭 배열을 만들고, 폰 노이만식 순차 처리와 같은 행렬곱을 돌려 비교했습니다. <strong>PE끼리는 비트뱅잉으로 통신</strong>하고, 처리 시간과 데이터 이동 횟수를 쟀습니다.</p>
-        <p class="ch-links"><a class="more" href="systolic/">연구 보기</a><a class="more" href="notes/05-movement-vs-time-paradox/">왜 313배 느려졌나</a></p>
+        <p class="ch-links"><a class="more" href="systolic/">연구 보기</a><a class="more" href="https://doi.org/10.5281/zenodo.22038219">Zenodo 논문</a><a class="more" href="notes/05-movement-vs-time-paradox/">왜 313배 느려졌나</a></p>
       </div>
       <dl class="spec reveal">
         <div><dt>프로세서</dt><dd>ATmega328P × 5</dd></div>
         <div><dt>클럭</dt><dd>16 MHz</dd></div>
-        <div><dt>배열</dt><dd>2 × 2, 출력 고정형</dd></div>
+        <div><dt>배열</dt><dd>2 × 2, 출력 고정형(OS)</dd></div>
         <div><dt>연결</dt><dd>GPIO 비트뱅잉</dd></div>
         <div><dt>스큐</dt><dd>4,000 µs</dd></div>
+        <div><dt>게시</dt><dd>Zenodo, 2026</dd></div>
       </dl>
     </div>
     <ol class="decomp reveal" aria-label="행렬곱 한 단계가 격자를 지나는 과정">
@@ -198,23 +199,25 @@
     <div class="stage" data-model="kdaa" role="img" aria-label="눌릴 때마다 소리가 퍼지는 ㅎ 키캡"></div>
     <div class="ch-body">
       <div class="ch-text reveal">
-        <p class="ch-lede">키보드 소리로 입력을 알아내는 음향 사이드채널 공격을 <strong>한글 두벌식 자판</strong>에 적용합니다. 지금까지 공개 연구는 거의 영문 QWERTY만 다뤘습니다. 근접 마이크, 원거리 마이크, 배경소음 세 시나리오에서 CNN 성능을 비교합니다.</p>
-        <p class="ch-links"><a class="more" href="kdaa/">자세히 보기</a></p>
+        <p class="ch-lede">키보드 소리로 입력을 알아내는 음향 사이드채널 공격을 <strong>한글 두벌식 자판</strong>에 적용하는 팀 연구입니다. 영문과 달리 한글은 초성·중성·종성이 음절로 합쳐지는 규칙이 있어서, 분류기가 틀린 자모도 오토마타가 걸러 낼 수 있습니다. 저는 타건음 하나를 38개 기호로 분류하는 <strong>음향 프런트엔드(CNN)</strong>를 맡았습니다.</p>
+        <p class="ch-links"><a class="more" href="kdaa/">자세히 보기</a><a class="more" href="https://github.com/regx64/KDAA">GitHub</a></p>
       </div>
       <dl class="spec reveal">
         <div><dt>대상</dt><dd>두벌식</dd></div>
-        <div><dt>녹음</dt><dd>44.1 kHz · 16 bit · mono</dd></div>
+        <div><dt>녹음</dt><dd>48 kHz · mono</dd></div>
+        <div><dt>입력</dt><dd>log-mel 64 × 48</dd></div>
+        <div><dt>분류</dt><dd>38개 (자모 33 + 특수키 5)</dd></div>
         <div><dt>시나리오</dt><dd>근접 · 원거리 · 소음</dd></div>
-        <div><dt>참가자</dt><dd>3명, 화자독립 평가</dd></div>
-        <div><dt>모델</dt><dd>CNN</dd></div>
+        <div><dt>배포 목표</dt><dd>ESP32-S3, int8</dd></div>
       </dl>
     </div>
-    <ol class="decomp reveal" aria-label="녹음부터 자모 분류까지의 흐름">
-      <li><span>타건음 녹음</span><small>동기화 비프음</small></li>
-      <li><span>세그멘테이션</span><small>onset 검출</small></li>
-      <li><span>log-mel</span><small>press + release</small></li>
-      <li><span>CNN</span><small>자모 분류</small></li>
-      <li><span>자모</span><small>top-1 · CER</small></li>
+    <ol class="decomp reveal" aria-label="녹음부터 한글 복원까지의 흐름">
+      <li><span>타건음 녹음</span><small>48 kHz · 키로거 라벨</small></li>
+      <li><span>세그멘테이션</span><small>onset · 100 ms</small></li>
+      <li><span>log-mel</span><small>64 × 48</small></li>
+      <li><span>CNN</span><small>top-N · 38개 기호</small></li>
+      <li><span>오토마타 빔</span><small>두벌식 조합</small></li>
+      <li><span>한글</span><small>복원 문장</small></li>
     </ol>
   </section>
 
@@ -225,7 +228,7 @@
       <h2 class="ch-name reveal" id="os-t">Hobby OS</h2>
       <p class="ch-display reveal">부트섹터부터<br>VGA 드라이버까지.</p>
     </header>
-    <div class="stage" data-model="os" role="img" aria-label="부팅 메시지가 한 줄씩 출력되는 모니터"></div>
+    <div class="stage" data-model="os" role="img" aria-label="C 커널이 VGA 텍스트 버퍼에 찍는 두 줄이 나타나는 모니터"></div>
     <div class="ch-body">
       <div class="ch-text reveal">
         <p class="ch-lede"><span class="nowrap">x86-64</span> 어셈블리로 만드는 운영체제입니다. 커널 로드, 32비트 보호 모드, 페이징, 64비트 롱 모드를 지나 <strong>지금은 freestanding C 커널에서 VGA 드라이버가 돌아갑니다.</strong> 테스트는 QEMU로 합니다.</p>
@@ -244,7 +247,7 @@
       <li><span>보호 모드</span><small>32-bit</small></li>
       <li><span>페이징</span><small>2 MB 페이지</small></li>
       <li><span>롱 모드</span><small>64-bit</small></li>
-      <li><span>C 커널</span><small>kernel_main()</small></li>
+      <li><span>C 커널</span><small>kmain()</small></li>
       <li><span>VGA</span><small>텍스트 모드</small></li>
     </ol>
   </section>
@@ -259,13 +262,13 @@
     <div class="stage" data-model="cotton" role="img" aria-label="목화 솜 모형"></div>
     <div class="ch-body">
       <div class="ch-text reveal">
-        <p class="ch-lede">Rust, JavaScript, Python에서 좋았던 부분을 섞은 식 중심 언어입니다. <strong>명세 v0.2 전체를 실행하는 레퍼런스 인터프리터</strong>를 C++17로 만들었고, 다음은 바이트코드와 LLVM입니다.</p>
+        <p class="ch-lede">Rust, JavaScript, Python에서 좋았던 부분을 섞은 식 중심 언어입니다. <strong>설계한 문법 전체를 실행하는 레퍼런스 인터프리터</strong>를 C++17로 만들었고, 다음은 바이트코드와 LLVM입니다.</p>
         <p class="ch-links"><a class="more" href="cotton/">자세히 보기</a><a class="more" href="https://github.com/twopercenz/cotton">GitHub</a></p>
       </div>
       <dl class="spec reveal">
         <div><dt>구현</dt><dd>C++17, 4,134줄</dd></div>
         <div><dt>외부 의존성</dt><dd>0개</dd></div>
-        <div><dt>명세</dt><dd>v0.2</dd></div>
+        <div><dt>구성</dt><dd>렉서 · 파서 · 인터프리터</dd></div>
         <div><dt>예제</dt><dd>5개</dd></div>
         <div><dt>다음</dt><dd>바이트코드 · LLVM</dd></div>
       </dl>
@@ -290,7 +293,7 @@
     <div class="ch-body">
       <div class="ch-text reveal">
         <p class="ch-lede">나무위키 같은 한국어 개방형 위키입니다. 문서는 <strong>직접 만든 위키 문법 PerMark</strong>로 쓰고, Next.js와 Supabase로 만들었습니다.</p>
-        <p class="ch-links"><a class="more" href="percentage/">자세히 보기</a><a class="more" href="https://github.com/twopercenz/percentage">GitHub</a></p>
+        <p class="ch-links"><a class="more" href="percentage/">자세히 보기</a><a class="more" href="https://github.com/regx64/percentage">GitHub</a></p>
       </div>
       <dl class="spec reveal">
         <div><dt>코드</dt><dd>TypeScript 7,471줄</dd></div>
@@ -320,7 +323,7 @@
     <div class="ch-body">
       <div class="ch-text reveal">
         <p class="ch-lede">곡을 검색하면 YouTube에서 음원을 찾아 재생하는 개인용 뮤직 플레이어입니다. 인프라를 네 번 옮긴 끝에 <strong>지금은 Oracle Cloud 무료 VM 두 대</strong>에서 돌아갑니다.</p>
-        <p class="ch-links"><a class="more" href="music-player/">자세히 보기</a><a class="more" href="https://github.com/twopercenz/music.player">GitHub</a></p>
+        <p class="ch-links"><a class="more" href="music-player/">자세히 보기</a><a class="more" href="https://github.com/regx64/music.player">GitHub</a></p>
       </div>
       <dl class="spec reveal">
         <div><dt>커밋</dt><dd>18일간 49개</dd></div>
@@ -349,7 +352,7 @@
     <div class="ch-body">
       <div class="ch-text reveal">
         <p class="ch-lede">URL을 넣으면 <strong>이미 열린 mp3 오디오 스트림</strong>을 돌려주는 라이브러리입니다. music.player의 오디오 추출 계층으로 쓰려고, URL 해석과 실제 추출을 두 층으로 나눠 다시 설계했습니다.</p>
-        <p class="ch-links"><a class="more" href="muxic/">자세히 보기</a><a class="more" href="https://github.com/twopercenz/MUXIC.js">GitHub</a></p>
+        <p class="ch-links"><a class="more" href="muxic/">자세히 보기</a><a class="more" href="https://github.com/regx64/muxic.js">GitHub</a></p>
       </div>
       <dl class="spec reveal">
         <div><dt>소스</dt><dd>TypeScript 514줄</dd></div>
@@ -421,8 +424,14 @@
         <h2 class="section-title reveal" id="about-t">아래층부터<br>직접 만들어 봅니다.</h2>
       </div>
       <div class="about-text reveal">
-        <p>컴퓨터공학을 공부하는 학생입니다. 컴퓨터가 실제로 어떻게 돌아가는지 아래층부터 하나씩 만들어 보며 배우고 있습니다. 회로이론과 미적분은 기초부터 따로 공부하는 중입니다.</p>
-        <p class="muted">이 계정은 부계정이고, 코드는 대부분 <a href="https://github.com/twopercenz">@twopercenz</a>에 있습니다.</p>
+        <p><strong>방정훈</strong>입니다. 컴퓨터공학을 공부하는 학생이고, 컴퓨터가 실제로 어떻게 돌아가는지 아래층부터 하나씩 만들어 보며 배우고 있습니다. CPU 구조, x86-64, 컴파일러, 하드웨어 보안에 관심이 있고, 회로이론과 미적분은 기초부터 따로 공부하는 중입니다.</p>
+        <p class="muted">코드는 <a href="https://github.com/regx64">@regx64</a>에 있습니다. ORCID <a href="https://orcid.org/0009-0009-0896-3833">0009-0009-0896-3833</a></p>
+        <ul class="awards" aria-label="수상과 교육 이력">
+          <li><time>2024</time><span>코리아 코드페어 해커톤 부문 본선 진출</span></li>
+          <li><time>2024</time><span>임베디드SW 경진대회 세종대학교 총장상</span></li>
+          <li><time>2023–2025</time><span>부산광역시교육청 정보영재교육원 3년 과정</span></li>
+          <li><time>2023–2025</time><span>같은 교육원 학업 우수상</span></li>
+        </ul>
         <p class="tools" aria-label="다루는 도구">
           <span>x86-64 ASM</span><span>C</span><span>C++17</span><span>Rust</span><span>TypeScript</span><span>Next.js</span><span>Supabase</span><span>Arduino</span><span>KiCad</span><span>QEMU</span><span>Docker</span><span>Oracle Cloud</span>
         </p>
@@ -438,8 +447,8 @@
     <nav class="foot-links" aria-label="바닥 메뉴">
       <a href="#work">작업</a>
       <a href="notes/">노트</a>
-      <a href="https://github.com/twopercenz">twopercenz</a>
       <a href="https://github.com/regx64">regx64</a>
+      <a href="https://github.com/twopercenz">twopercenz</a>
     </nav>
   </div>
 </footer>

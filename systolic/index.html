@@ -30,7 +30,7 @@
     <nav class="nav-links" aria-label="주요 메뉴">
       <a href="../#systolic">작업</a>
       <a href="../notes/">노트</a>
-      <a href="https://github.com/twopercenz">GitHub</a>
+      <a href="https://github.com/regx64">GitHub</a>
     </nav>
   </div>
 </header>
@@ -44,9 +44,10 @@
       <h1 class="name">폰 노이만 병목과 시스톨릭 배열</h1>
       <p class="headline">아두이노 네 대로<br>만든 행렬 곱셈기.</p>
       <p class="body">아두이노 나노 호환보드로 2×2 시스톨릭 배열을 만들고, 폰 노이만식 순차 접근과 같은 행렬곱을 돌려 처리 시간과 데이터 이동 횟수를 비교했습니다. 데이터 재사용으로 이동 횟수는 25% 줄었지만, 보드 간 통신 비용 때문에 처리 시간은 300배 넘게 느렸습니다.</p>
-      <p class="meta"><span lang="en">Comparison of the von Neumann Bottleneck and the Efficiency of the Systolic Array Architecture</span><br>2026 과학탐구 프로젝트, 4인 팀</p>
+      <p class="meta"><span lang="en">Von Neumann Bottleneck and Systolic Array Architecture: An Empirical Efficiency Comparison</span><br>2026 과학탐구 프로젝트, 4인 팀 · Zenodo 게시</p>
       <div class="actions">
-        <a class="btn" href="https://github.com/Gradica/Arduino-repo">실험 코드 보기</a>
+        <a class="btn" href="https://doi.org/10.5281/zenodo.22038219">Zenodo에서 논문 보기</a>
+        <a href="https://github.com/regx64/Arduino-repo">실험 코드 →</a>
         <a href="../notes/05-movement-vs-time-paradox/">엔지니어링 노트: 왜 300배 느려졌나 →</a>
       </div>
     </div>
@@ -95,7 +96,7 @@
         <h3>시스톨릭 배열</h3>
         <p>1978년 카네기멜런 대학의 H. T. Kung과 Charles Leiserson이 제안한 구조입니다. 이름은 심장이 규칙적으로 수축해 혈액을 내보내는 동작(systole)에서 왔습니다. PE(Processing Element)라는 단순한 처리 소자를 격자로 늘어놓고, 각 PE가 클럭에 맞춰 동시에 MAC 연산을 한 뒤 결과를 이웃 PE로 넘깁니다. 각 PE는 부분합이나 입력값을 담아 둘 로컬 메모리를 갖습니다.</p>
         <p>핵심은 데이터 재사용입니다. 폰 노이만 구조에서는 결과 원소 K²개를 계산하는 동안 같은 행과 열을 K번씩 다시 읽습니다. 시스톨릭 배열에서는 한 번 격자에 들어온 원소가 여러 PE를 지나며 계속 연산에 쓰입니다.</p>
-        <p>데이터 흐름 방식은 여러 가지가 있는데, AI 연산에서 많이 쓰이는 것은 출력 고정형(OS, Output Stationary)과 가중치 고정형(WS, Weight Stationary)입니다. OS에서는 각 PE가 맡은 출력의 부분합을 붙잡고 있고, 입력값이 PE를 지나갑니다. 이 연구는 OS 방식을 구현했습니다.</p>
+        <p>데이터 흐름 방식은 여러 가지가 있는데, AI 연산에서 많이 쓰이는 것은 출력 고정형(OS, Output Stationary)과 가중치 고정형(WS, Weight Stationary)입니다. OS에서는 각 PE가 맡은 출력의 부분합을 붙잡고 있고, 입력값이 PE를 지나갑니다. 저장소에는 OS와 WS 코드가 모두 있지만, 이 연구의 측정과 결과는 OS 방식 기준입니다.</p>
 
         <h3>이론적 클럭 수와 한계</h3>
         <p>Raja(2024)는 시스톨릭 배열이 행렬곱을 끝내는 데 필요한 총 클럭 사이클 수를 다음과 같이 제시했습니다. S<sub>R</sub>은 격자의 행 수, S<sub>C</sub>는 열 수, T는 내부 차원입니다.</p>
@@ -418,7 +419,7 @@ inline int busRead(int value) {
     <section class="doc-sec">
       <h2>자료</h2>
       <div>
-        <p>실험 코드: <a href="https://github.com/Gradica/Arduino-repo">github.com/Gradica/Arduino-repo</a></p>
+        <p>논문: <a href="https://doi.org/10.5281/zenodo.22038219">doi.org/10.5281/zenodo.22038219</a><br>실험 코드: <a href="https://github.com/regx64/Arduino-repo">github.com/regx64/Arduino-repo</a></p>
         <ol class="refs">
           <li>T. Raja, <span lang="en">“Systolic Array Data Flows for Efficient Matrix Multiplication in Deep Neural Networks,”</span> 2024. <a href="https://arxiv.org/abs/2410.22595">arXiv:2410.22595</a></li>
           <li>A. de Vries, <span lang="en">“The Growing Energy Footprint of Artificial Intelligence,” Joule</span>, vol. 7, no. 10, pp. 2191–2194, 2023.</li>
@@ -443,8 +444,8 @@ inline int busRead(int value) {
     <nav class="foot-links" aria-label="바닥 메뉴">
       <a href="../#work">작업</a>
       <a href="../notes/">노트</a>
-      <a href="https://github.com/twopercenz">twopercenz</a>
       <a href="https://github.com/regx64">regx64</a>
+      <a href="https://github.com/twopercenz">twopercenz</a>
     </nav>
   </div>
 </footer>

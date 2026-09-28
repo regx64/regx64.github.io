@@ -584,6 +584,9 @@ a { color: inherit; text-underline-offset: 0.22em; }
 .about-text .muted { font-size: 1rem; }
 .about-text a { color: var(--link); text-decoration: none; }
 .about-text a:hover { text-decoration: underline; }
+.awards { list-style: none; margin: 1.75rem 0 0; padding: 0; border-top: 1px solid var(--line); }
+.awards li { display: grid; grid-template-columns: 6.5rem minmax(0, 1fr); gap: 1rem; padding: 0.7rem 0; border-bottom: 1px solid var(--line); font-size: 0.9375rem; }
+.awards time { font-family: var(--mono); font-size: 0.75rem; color: var(--muted); padding-top: 0.15rem; }
 .tools { display: flex; flex-wrap: wrap; gap: 0.5rem; margin-top: 2rem !important; }
 .tools span {
   font-family: var(--mono);

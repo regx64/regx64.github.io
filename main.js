@@ -315,15 +315,10 @@ const MODELS = {
     bezel.position.z = 0.74;
     g.add(bezel);
 
+    // kmain.c가 실제로 VGA 버퍼에 찍는 두 줄 (색 0x0A, 0x0F)
     const LINES = [
-      'regx64 hobby os',
-      'booting from disk...',
-      'loading kernel',
-      'entering 32-bit protected mode',
-      'paging enabled',
-      'entering 64-bit long mode',
-      'kernel_main()',
-      'vga: 80x25 text mode ready',
+      'Kernel running in C!',
+      'VGA driver working.',
     ];
     const TOTAL = LINES.join('').length;
     const { tex, ctx } = canvasTexture(640, 480, () => {});
@@ -336,12 +331,12 @@ const MODELS = {
       for (let i = 0; i < LINES.length && left > 0; i++) {
         const s = LINES[i].slice(0, left);
         left -= LINES[i].length;
-        ctx.fillStyle = i === 0 ? '#55FFFF' : '#AAAAAA';
+        ctx.fillStyle = i === 0 ? '#55FF55' : '#FFFFFF';
         ctx.fillText(s, 30, y);
         lastX = 30 + ctx.measureText(s).width;
         if (left > 0) { y += 44; lastX = 30; }
       }
-      if (n >= TOTAL) { y += 44; ctx.fillStyle = '#AAAAAA'; ctx.fillText('>', 30, y); lastX = 56; }
+      if (n >= TOTAL) { y += 44; lastX = 30; }   // 두 줄 다 '\n'으로 끝나서 커서는 다음 줄 맨 앞
       if (cursorOn) { ctx.fillStyle = '#AAAAAA'; ctx.fillRect(lastX + 4, y + 22, 16, 4); }
       tex.needsUpdate = true;
     }
