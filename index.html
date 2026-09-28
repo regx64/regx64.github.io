@@ -3,13 +3,15 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>regx64</title>
-<meta name="description" content="트랜지스터부터 컴파일러까지, 컴퓨터를 아래층부터 만들어 보며 공부하는 학생">
+<title>regx64 — 트랜지스터부터 컴파일러까지</title>
+<meta name="description" content="트랜지스터부터 컴파일러까지, 컴퓨터를 아래층부터 만들어 보며 공부하는 학생의 프로젝트와 엔지니어링 노트">
+<meta name="theme-color" content="#FFFFFF">
 <link rel="icon" href="favicon.ico" sizes="48x48">
 <link rel="icon" href="favicon.svg" type="image/svg+xml">
 <link rel="apple-touch-icon" href="apple-touch-icon.png">
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css">
 <link rel="stylesheet" href="style.css">
+<script>document.documentElement.classList.add('js');</script>
 <script type="importmap">
 {
   "imports": {
@@ -19,153 +21,427 @@
 }
 </script>
 <script type="module" src="main.js"></script>
+<script defer src="site.js"></script>
 </head>
-<body>
+<body class="home">
 <a class="skip" href="#main">본문으로 건너뛰기</a>
 
 <header class="nav">
-  <a class="brand" href="#top">regx64</a>
-  <nav class="nav-links">
-    <a href="notes/">NOTES</a>
-    <a href="https://github.com/twopercenz">GitHub</a>
-  </nav>
+  <div class="nav-inner">
+    <a class="brand" href="#top">regx64</a>
+    <nav class="nav-links" aria-label="주요 메뉴">
+      <a href="#work">작업</a>
+      <a href="notes/">노트</a>
+      <a href="#about">소개</a>
+      <a href="https://github.com/twopercenz">GitHub</a>
+    </nav>
+  </div>
 </header>
 
 <canvas id="gl" aria-hidden="true"></canvas>
 
 <main id="main">
 
-  <section class="panel hero tone-a" id="top">
-    <div class="copy">
-      <h1>regx64</h1>
-      <p class="headline">트랜지스터부터<br>컴파일러까지.</p>
-      <p class="body">컴퓨터공학을 공부하는 학생입니다. 컴퓨터가 실제로 어떻게 돌아가는지 아래층부터 하나씩 만들어 보며 배우고 있습니다. 회로이론과 미적분은 기초부터 따로 공부하는 중입니다.</p>
-      <p class="meta">이 계정은 부계정이고, 코드는 대부분 <a href="https://github.com/twopercenz">@twopercenz</a>에 있습니다.</p>
+  <!-- 첫 화면 -->
+  <section class="hero" id="top">
+    <div class="hero-copy">
+      <p class="hero-eyebrow reveal">regx64</p>
+      <h1 class="hero-title reveal">트랜지스터부터<br>컴파일러까지.</h1>
+      <p class="hero-sub reveal">컴퓨터가 실제로 어떻게 돌아가는지,<br class="br-wide"> 아래층부터 하나씩 직접 만들어 보며 배우고 있습니다.</p>
     </div>
-    <div class="stage" data-model="stack" role="img" aria-label="회로부터 응용까지 여섯 층이 쌓인 모형"></div>
+    <div class="stage stage-hero" data-model="stack" role="img" aria-label="회로부터 응용까지 여섯 층이 쌓인 모형. 스크롤하면 층 사이가 벌어집니다."></div>
+    <a class="scroll-cue" href="#work">아래층부터 보기</a>
   </section>
 
-  <section class="panel tone-b" id="trng">
-    <div class="copy">
-      <h2 class="name">TRNG 엔트로피원 비교</h2>
-      <p class="headline">잡음에서<br>난수를 꺼냅니다.</p>
-      <p class="body">애벌랜치 노이즈, 이산소자 링 오실레이터, FPGA 링 오실레이터로 각각 진짜 난수생성기를 만들어 비교하고 있습니다.</p>
-      <p class="meta">진행 중</p>
-      <div class="actions">
-        <a class="btn" href="trng/" aria-label="TRNG 엔트로피원 비교 자세히 보기">자세히 보기</a>
-      </div>
+  <!-- 층별 목차 -->
+  <section class="index" id="work" aria-labelledby="index-title">
+    <div class="wrap">
+      <p class="eyebrow reveal">컴퓨팅 스택</p>
+      <h2 class="section-title reveal" id="index-title">여섯 개의 층.<br><span class="dim">아홉 개의 프로젝트.</span></h2>
+      <p class="section-lede reveal">서로 다른 프로젝트처럼 보이지만, 모두 한 대의 컴퓨터를 위아래로 가로지릅니다. 위 모형의 층과 같은 색입니다.</p>
+
+      <ol class="layers">
+        <li class="layer reveal" style="--accent: var(--c-app)">
+          <span class="layer-no">L6</span>
+          <span class="layer-name">응용</span>
+          <span class="layer-items"><a href="#percentage">Percentage</a><a href="#player">music.player</a><a href="#muxic">MUXIC.js</a><a href="#ksca">KSCA</a></span>
+        </li>
+        <li class="layer reveal" style="--accent: var(--c-lang)">
+          <span class="layer-no">L5</span>
+          <span class="layer-name">언어</span>
+          <span class="layer-items"><a href="#cotton">Cotton</a></span>
+        </li>
+        <li class="layer reveal" style="--accent: var(--c-os)">
+          <span class="layer-no">L4</span>
+          <span class="layer-name">운영체제</span>
+          <span class="layer-items"><a href="#os">Hobby OS</a></span>
+        </li>
+        <li class="layer reveal" style="--accent: var(--c-sec)">
+          <span class="layer-no">L3</span>
+          <span class="layer-name">보안</span>
+          <span class="layer-items"><a href="#kdaa">KDAA</a></span>
+        </li>
+        <li class="layer reveal" style="--accent: var(--c-arch)">
+          <span class="layer-no">L2</span>
+          <span class="layer-name">컴퓨터 구조</span>
+          <span class="layer-items"><a href="#systolic">시스톨릭 배열</a></span>
+        </li>
+        <li class="layer reveal" style="--accent: var(--c-dev)">
+          <span class="layer-no">L1</span>
+          <span class="layer-name">소자</span>
+          <span class="layer-items"><a href="#trng">TRNG</a></span>
+        </li>
+      </ol>
     </div>
-    <div class="stage" data-model="trng" role="img" aria-label="인버터 다섯 개로 이루어진 링 오실레이터 모형"></div>
   </section>
 
-  <section class="panel tone-a" id="systolic">
-    <div class="copy">
-      <h2 class="name">폰 노이만 병목과 시스톨릭 배열</h2>
-      <p class="headline">아두이노 네 대로<br>만든 행렬 곱셈기.</p>
-      <p class="body">아두이노 나노 4대로 2×2 시스톨릭 배열을 만들고, 폰 노이만식 순차 처리와 시스톨릭 배열의 두 데이터 흐름(OS, WS)으로 행렬 곱셈을 돌려 비교했습니다. PE끼리는 비트뱅잉으로 통신하고, 처리 시간, MAC 연산 수, 메모리 접근 횟수, 사이클 수를 쟀습니다.</p>
-      <p class="meta"><span lang='en'>Von Neumann Bottleneck and Systolic Array Architecture: An Empirical Efficiency Comparison</span><br>2026년, 4인 팀 연구</p>
-      <div class="actions">
-        <a class="btn" href="systolic/" aria-label="폰 노이만 병목과 시스톨릭 배열 자세히 보기">자세히 보기</a>
+  <!-- L1 TRNG -->
+  <section class="chapter" id="trng" style="--accent: var(--c-dev)" aria-labelledby="trng-t">
+    <header class="ch-head">
+      <p class="ch-layer reveal">L1 · 소자</p>
+      <h2 class="ch-name reveal" id="trng-t">TRNG 엔트로피원 비교</h2>
+      <p class="ch-display reveal">잡음에서<br>난수를 꺼냅니다.</p>
+    </header>
+    <div class="stage" data-model="trng" role="img" aria-label="인버터 다섯 개로 이루어진 링 오실레이터 모형. 고리를 따라 펄스가 돌고 가운데에서 잡음이 흩어집니다."></div>
+    <div class="ch-body">
+      <div class="ch-text reveal">
+        <p class="ch-lede">애벌랜치 노이즈, 이산소자 링 오실레이터, FPGA 링 오실레이터. <strong>난이도가 계단식으로 올라가는 세 가지 엔트로피원</strong>으로 진짜 난수생성기를 만들고, NIST 기준으로 어느 쪽이 더 좋은 난수를 내는지 비교합니다.</p>
+        <p class="ch-links"><a class="more" href="trng/">자세히 보기</a><a class="more" href="notes/trng-entropy-sources/">엔지니어링 노트</a></p>
       </div>
+      <dl class="spec reveal">
+        <div><dt>엔트로피원</dt><dd>3종</dd></div>
+        <div><dt>인버터</dt><dd>74HC04</dd></div>
+        <div><dt>후처리</dt><dd>von Neumann · SHA-256</dd></div>
+        <div><dt>검증</dt><dd>NIST SP 800-90B</dd></div>
+        <div><dt>상태</dt><dd>제작 중</dd></div>
+      </dl>
     </div>
-    <div class="stage" data-model="systolic" role="img" aria-label="전선으로 연결된 아두이노 나노 네 대"></div>
+    <ol class="decomp reveal" aria-label="엔트로피원에서 검증까지의 흐름">
+      <li><span>물리 잡음</span><small>다이오드 · 링 오실레이터</small></li>
+      <li><span>raw 비트</span><small>ADC / 로직</small></li>
+      <li><span>후처리</span><small>XOR 짝 · SHA-256</small></li>
+      <li><span>시리얼</span><small>PC로 전송</small></li>
+      <li><span>검증</span><small>min-entropy</small></li>
+    </ol>
   </section>
 
-  <section class="panel tone-b" id="kdaa">
-    <div class="copy">
-      <h2 class="name">KDAA</h2>
-      <p class="headline">타건음만 듣고<br>한글을 읽을 수 있을까.</p>
-      <p class="body">키보드 소리로 입력을 알아내는 음향 사이드채널 공격(ASCA)을 한글 두벌식 자판에 적용하는 연구입니다. 지금까지 연구는 거의 영문 QWERTY만 다뤘습니다. 근접 마이크, 원거리 마이크, 배경소음이 섞인 경우로 나눠 CNN 모델 성능을 비교합니다.</p>
-      <p class="meta"><span lang='en'>Korean Dubeolsik Acoustic Attack</span><br>진행 중</p>
-      <div class="actions">
-        <a class="btn" href="kdaa/" aria-label="KDAA 자세히 보기">자세히 보기</a>
+  <!-- L2 시스톨릭 배열 -->
+  <section class="chapter alt" id="systolic" style="--accent: var(--c-arch)" aria-labelledby="systolic-t">
+    <header class="ch-head">
+      <p class="ch-layer reveal">L2 · 컴퓨터 구조</p>
+      <h2 class="ch-name reveal" id="systolic-t">폰 노이만 병목과 시스톨릭 배열</h2>
+      <p class="ch-display reveal">아두이노 네 대로<br>만든 행렬 곱셈기.</p>
+    </header>
+    <div class="stage" data-model="systolic" role="img" aria-label="전선으로 연결된 아두이노 나노 네 대. 전선 위로 데이터가 이동합니다."></div>
+    <div class="ch-body">
+      <div class="ch-text reveal">
+        <p class="ch-lede">아두이노 나노 4대로 2×2 시스톨릭 배열을 만들고, 폰 노이만식 순차 처리와 같은 행렬곱을 돌려 비교했습니다. <strong>PE끼리는 비트뱅잉으로 통신</strong>하고, 처리 시간과 데이터 이동 횟수를 쟀습니다.</p>
+        <p class="ch-links"><a class="more" href="systolic/">연구 보기</a><a class="more" href="notes/05-movement-vs-time-paradox/">왜 313배 느려졌나</a></p>
       </div>
+      <dl class="spec reveal">
+        <div><dt>프로세서</dt><dd>ATmega328P × 5</dd></div>
+        <div><dt>클럭</dt><dd>16 MHz</dd></div>
+        <div><dt>배열</dt><dd>2 × 2, 출력 고정형</dd></div>
+        <div><dt>연결</dt><dd>GPIO 비트뱅잉</dd></div>
+        <div><dt>스큐</dt><dd>4,000 µs</dd></div>
+      </dl>
     </div>
+    <ol class="decomp reveal" aria-label="행렬곱 한 단계가 격자를 지나는 과정">
+      <li><span>행렬 A · B</span><small>2×K · K×2</small></li>
+      <li><span>PE(0,0) 주입</span><small>마스터</small></li>
+      <li><span>가로 · 세로 전달</span><small>단계당 6회 이동</small></li>
+      <li><span>스큐 대기</span><small>4,000 µs</small></li>
+      <li><span>MAC</span><small>부분합 누산</small></li>
+      <li><span>C</span><small>2×2</small></li>
+    </ol>
+  </section>
+
+  <!-- 시스톨릭 배열 결과 -->
+  <section class="results dark" id="systolic-results" style="--accent: var(--c-arch-on-dark)" aria-labelledby="results-t">
+    <div class="wrap">
+      <p class="eyebrow reveal">실험 결과 · 5회 반복 측정</p>
+      <h2 class="section-title reveal" id="results-t">이동은 25% 줄었습니다.<br><span class="dim">그런데 300배 느려졌습니다.</span></h2>
+
+      <dl class="figures">
+        <div class="reveal"><dt><span class="num">25</span><span class="unit">%</span></dt><dd>더 적은 데이터 이동. 격자 6K회, 단일 보드 8K회.</dd></div>
+        <div class="reveal"><dt><span class="num">295–326</span><span class="unit">×</span></dt><dd>격자가 단일 보드보다 느렸던 정도.</dd></div>
+        <div class="reveal"><dt><span class="num">417</span><span class="unit">×</span></dt><dd>이동 한 번의 비용 차이. 3.23 µs 대 1,346.9 µs.</dd></div>
+        <div class="reveal"><dt><span class="num">1.0</span><span class="unit">%</span></dt><dd>처리 시간 중 실제 계산에 쓰인 비율.</dd></div>
+      </dl>
+
+      <figure class="breakdown reveal">
+        <figcaption>K가 1 늘 때 늘어나는 8,081.1 µs는 어디에 쓰였나</figcaption>
+        <div class="bd-bar" aria-hidden="true">
+          <span class="bd-seg bd-comm" style="--w: 49.5%"></span>
+          <span class="bd-seg bd-skew" style="--w: 49.5%"></span>
+          <span class="bd-seg bd-mac" style="--w: 1%"></span>
+        </div>
+        <ul class="bd-legend">
+          <li><i class="bd-comm"></i><span>보드 간 통신</span><b>4,000 µs · 49.5%</b></li>
+          <li><i class="bd-skew"></i><span>스큐 대기</span><b>4,000 µs · 49.5%</b></li>
+          <li><i class="bd-mac"></i><span>연산 등</span><b>81 µs · 1.0%</b></li>
+        </ul>
+      </figure>
+
+      <p class="results-note reveal">데이터 재사용은 이론대로 일어났지만, PE 사이 전달이 칩 내부 배선이 아니라 보드 사이 핀 통신이 되자 이동 한 번이 약 417배 비싸졌습니다. <strong>PE를 왜 한 칩 안에 모아야 하는지</strong>를 거꾸로 보여 준 결과입니다.</p>
+      <p class="ch-links reveal"><a class="more" href="systolic/#main">측정 데이터와 회귀식 보기</a></p>
+    </div>
+  </section>
+
+  <!-- L3 KDAA -->
+  <section class="chapter" id="kdaa" style="--accent: var(--c-sec)" aria-labelledby="kdaa-t">
+    <header class="ch-head">
+      <p class="ch-layer reveal">L3 · 보안</p>
+      <h2 class="ch-name reveal" id="kdaa-t">KDAA</h2>
+      <p class="ch-display reveal">타건음만 듣고<br>한글을 읽을 수 있을까.</p>
+    </header>
     <div class="stage" data-model="kdaa" role="img" aria-label="눌릴 때마다 소리가 퍼지는 ㅎ 키캡"></div>
+    <div class="ch-body">
+      <div class="ch-text reveal">
+        <p class="ch-lede">키보드 소리로 입력을 알아내는 음향 사이드채널 공격을 <strong>한글 두벌식 자판</strong>에 적용합니다. 지금까지 공개 연구는 거의 영문 QWERTY만 다뤘습니다. 근접 마이크, 원거리 마이크, 배경소음 세 시나리오에서 CNN 성능을 비교합니다.</p>
+        <p class="ch-links"><a class="more" href="kdaa/">자세히 보기</a></p>
+      </div>
+      <dl class="spec reveal">
+        <div><dt>대상</dt><dd>두벌식</dd></div>
+        <div><dt>녹음</dt><dd>44.1 kHz · 16 bit · mono</dd></div>
+        <div><dt>시나리오</dt><dd>근접 · 원거리 · 소음</dd></div>
+        <div><dt>참가자</dt><dd>3명, 화자독립 평가</dd></div>
+        <div><dt>모델</dt><dd>CNN</dd></div>
+      </dl>
+    </div>
+    <ol class="decomp reveal" aria-label="녹음부터 자모 분류까지의 흐름">
+      <li><span>타건음 녹음</span><small>동기화 비프음</small></li>
+      <li><span>세그멘테이션</span><small>onset 검출</small></li>
+      <li><span>log-mel</span><small>press + release</small></li>
+      <li><span>CNN</span><small>자모 분류</small></li>
+      <li><span>자모</span><small>top-1 · CER</small></li>
+    </ol>
   </section>
 
-  <section class="panel tone-dark" id="os">
-    <div class="copy">
-      <h2 class="name">Hobby OS</h2>
-      <p class="headline">부트섹터부터<br>VGA 드라이버까지.</p>
-      <p class="body"><span class='nowrap'>x86-64</span> 어셈블리로 만드는 운영체제입니다. 커널 로드, 32비트 보호 모드, 페이징, 64비트 롱 모드를 지나 지금은 freestanding C 커널에서 VGA 드라이버가 돌아갑니다. 테스트는 QEMU로 합니다.</p>
-      <div class="actions">
-        <a class="btn" href="hobby-os/" aria-label="Hobby OS 자세히 보기">자세히 보기</a>
+  <!-- L4 Hobby OS -->
+  <section class="chapter dark" id="os" style="--accent: var(--c-os-on-dark)" aria-labelledby="os-t">
+    <header class="ch-head">
+      <p class="ch-layer reveal">L4 · 운영체제</p>
+      <h2 class="ch-name reveal" id="os-t">Hobby OS</h2>
+      <p class="ch-display reveal">부트섹터부터<br>VGA 드라이버까지.</p>
+    </header>
+    <div class="stage" data-model="os" role="img" aria-label="부팅 메시지가 한 줄씩 출력되는 모니터"></div>
+    <div class="ch-body">
+      <div class="ch-text reveal">
+        <p class="ch-lede"><span class="nowrap">x86-64</span> 어셈블리로 만드는 운영체제입니다. 커널 로드, 32비트 보호 모드, 페이징, 64비트 롱 모드를 지나 <strong>지금은 freestanding C 커널에서 VGA 드라이버가 돌아갑니다.</strong> 테스트는 QEMU로 합니다.</p>
+        <p class="ch-links"><a class="more" href="hobby-os/">자세히 보기</a></p>
       </div>
+      <dl class="spec reveal">
+        <div><dt>부트섹터</dt><dd>512 B</dd></div>
+        <div><dt>페이지</dt><dd>2 MB, 항등 매핑</dd></div>
+        <div><dt>EFER</dt><dd>0x500</dd></div>
+        <div><dt>VGA 버퍼</dt><dd>0xB8000, 80×25</dd></div>
+        <div><dt>에뮬레이터</dt><dd>QEMU</dd></div>
+      </dl>
     </div>
-    <div class="stage" data-model="os" role="img" aria-label="부팅 메시지가 출력되는 모니터"></div>
+    <ol class="decomp reveal" aria-label="전원이 들어온 뒤 커널까지의 단계">
+      <li><span>부트섹터</span><small>16-bit 리얼 모드</small></li>
+      <li><span>보호 모드</span><small>32-bit</small></li>
+      <li><span>페이징</span><small>2 MB 페이지</small></li>
+      <li><span>롱 모드</span><small>64-bit</small></li>
+      <li><span>C 커널</span><small>kernel_main()</small></li>
+      <li><span>VGA</span><small>텍스트 모드</small></li>
+    </ol>
   </section>
 
-  <section class="panel tone-b" id="cotton">
-    <div class="copy">
-      <h2 class="name">Cotton</h2>
-      <p class="headline">마음에 드는 것만<br>골라 만드는 언어.</p>
-      <p class="body">Rust, JavaScript, Python에서 좋았던 부분을 섞은 식 중심 언어입니다. 명세 v0.2 전체를 실행해 볼 수 있는 레퍼런스 인터프리터를 C++17로 만들었고, 다음은 바이트코드와 LLVM입니다.</p>
-      <div class="actions">
-        <a class="btn" href="cotton/" aria-label="Cotton 자세히 보기">자세히 보기</a>
-        <a href="https://github.com/twopercenz/cotton">GitHub에서 보기</a>
-      </div>
-    </div>
+  <!-- L5 Cotton -->
+  <section class="chapter alt" id="cotton" style="--accent: var(--c-lang)" aria-labelledby="cotton-t">
+    <header class="ch-head">
+      <p class="ch-layer reveal">L5 · 언어</p>
+      <h2 class="ch-name reveal" id="cotton-t">Cotton</h2>
+      <p class="ch-display reveal">마음에 드는 것만<br>골라 만드는 언어.</p>
+    </header>
     <div class="stage" data-model="cotton" role="img" aria-label="목화 솜 모형"></div>
+    <div class="ch-body">
+      <div class="ch-text reveal">
+        <p class="ch-lede">Rust, JavaScript, Python에서 좋았던 부분을 섞은 식 중심 언어입니다. <strong>명세 v0.2 전체를 실행하는 레퍼런스 인터프리터</strong>를 C++17로 만들었고, 다음은 바이트코드와 LLVM입니다.</p>
+        <p class="ch-links"><a class="more" href="cotton/">자세히 보기</a><a class="more" href="https://github.com/twopercenz/cotton">GitHub</a></p>
+      </div>
+      <dl class="spec reveal">
+        <div><dt>구현</dt><dd>C++17, 4,134줄</dd></div>
+        <div><dt>외부 의존성</dt><dd>0개</dd></div>
+        <div><dt>명세</dt><dd>v0.2</dd></div>
+        <div><dt>예제</dt><dd>5개</dd></div>
+        <div><dt>다음</dt><dd>바이트코드 · LLVM</dd></div>
+      </dl>
+    </div>
+    <ol class="decomp reveal" aria-label="소스 코드가 실행되기까지">
+      <li><span>소스</span><small>.cot</small></li>
+      <li><span>렉서</span><small>토큰</small></li>
+      <li><span>파서</span><small>AST</small></li>
+      <li><span>인터프리터</span><small>트리 워킹</small></li>
+      <li><span>실행</span><small>값</small></li>
+    </ol>
   </section>
 
-  <section class="panel tone-a" id="percentage">
-    <div class="copy">
-      <h2 class="name">Percentage</h2>
-      <p class="headline">쌓으면,<br>보입니다.</p>
-      <p class="body">나무위키 같은 한국어 개방형 위키입니다. 문서는 직접 만든 위키 문법 PerMark로 쓰고, Next.js와 Supabase로 만들었습니다.</p>
-      <div class="actions">
-        <a class="btn" href="percentage/" aria-label="Percentage 자세히 보기">자세히 보기</a>
-        <a href="https://github.com/twopercenz/percentage">GitHub에서 보기</a>
+  <!-- L6 Percentage -->
+  <section class="chapter" id="percentage" style="--accent: var(--c-app)" aria-labelledby="percentage-t">
+    <header class="ch-head">
+      <p class="ch-layer reveal">L6 · 응용</p>
+      <h2 class="ch-name reveal" id="percentage-t">Percentage</h2>
+      <p class="ch-display reveal">쌓으면,<br>보입니다.</p>
+    </header>
+    <div class="stage" data-model="percentage" role="img" aria-label="한 장씩 떨어져 차곡차곡 쌓이는 문서 더미"></div>
+    <div class="ch-body">
+      <div class="ch-text reveal">
+        <p class="ch-lede">나무위키 같은 한국어 개방형 위키입니다. 문서는 <strong>직접 만든 위키 문법 PerMark</strong>로 쓰고, Next.js와 Supabase로 만들었습니다.</p>
+        <p class="ch-links"><a class="more" href="percentage/">자세히 보기</a><a class="more" href="https://github.com/twopercenz/percentage">GitHub</a></p>
       </div>
+      <dl class="spec reveal">
+        <div><dt>코드</dt><dd>TypeScript 7,471줄</dd></div>
+        <div><dt>PerMark</dt><dd>1,980줄</dd></div>
+        <div><dt>테스트</dt><dd>Vitest 약 200개</dd></div>
+        <div><dt>마이그레이션</dt><dd>7개</dd></div>
+        <div><dt>스택</dt><dd>Next.js · Supabase</dd></div>
+      </dl>
     </div>
-    <div class="stage" data-model="percentage" role="img" aria-label="차곡차곡 쌓이는 문서 더미"></div>
+    <ol class="decomp reveal" aria-label="PerMark 문서가 화면에 그려지기까지">
+      <li><span>PerMark</span><small>위키 문법</small></li>
+      <li><span>렉서</span><small>토큰</small></li>
+      <li><span>파서</span><small>트리</small></li>
+      <li><span>렌더러</span><small>화면</small></li>
+      <li><span>문서</span><small>Supabase</small></li>
+    </ol>
   </section>
 
-  <section class="panel tone-b" id="player">
-    <div class="copy">
-      <h2 class="name">music.player</h2>
-      <p class="headline">제가 들으려고<br>만드는 플레이어.</p>
-      <p class="body">곡을 검색하면 YouTube에서 음원을 찾아 재생하는 개인용 뮤직 플레이어입니다. 지금은 Oracle Cloud 무료 VM 두 대에서 돌아갑니다.</p>
-      <div class="actions">
-        <a class="btn" href="music-player/" aria-label="music.player 자세히 보기">자세히 보기</a>
-        <a href="https://github.com/twopercenz/music.player">GitHub에서 보기</a>
-      </div>
-    </div>
+  <!-- L6 music.player -->
+  <section class="chapter alt" id="player" style="--accent: var(--c-app)" aria-labelledby="player-t">
+    <header class="ch-head">
+      <p class="ch-layer reveal">L6 · 응용</p>
+      <h2 class="ch-name reveal" id="player-t">music.player</h2>
+      <p class="ch-display reveal">제가 들으려고<br>만드는 플레이어.</p>
+    </header>
     <div class="stage" data-model="player" role="img" aria-label="돌아가는 레코드판과 턴테이블"></div>
+    <div class="ch-body">
+      <div class="ch-text reveal">
+        <p class="ch-lede">곡을 검색하면 YouTube에서 음원을 찾아 재생하는 개인용 뮤직 플레이어입니다. 인프라를 네 번 옮긴 끝에 <strong>지금은 Oracle Cloud 무료 VM 두 대</strong>에서 돌아갑니다.</p>
+        <p class="ch-links"><a class="more" href="music-player/">자세히 보기</a><a class="more" href="https://github.com/twopercenz/music.player">GitHub</a></p>
+      </div>
+      <dl class="spec reveal">
+        <div><dt>커밋</dt><dd>18일간 49개</dd></div>
+        <div><dt>서버</dt><dd>VM 2대</dd></div>
+        <div><dt>상시 비용</dt><dd>$0</dd></div>
+        <div><dt>배포 구조 변경</dt><dd>4번</dd></div>
+        <div><dt>스택</dt><dd>Next.js 14 · Docker</dd></div>
+      </dl>
+    </div>
+    <ol class="decomp reveal" aria-label="검색부터 재생까지의 흐름">
+      <li><span>검색</span><small>iTunes Search API</small></li>
+      <li><span>매칭</span><small>YouTube Data API</small></li>
+      <li><span>추출</span><small>확장 → Companion</small></li>
+      <li><span>재생</span><small>Range · IndexedDB</small></li>
+    </ol>
   </section>
 
-  <section class="panel tone-a" id="muxic">
-    <div class="copy">
-      <h2 class="name">MUXIC.js</h2>
-      <p class="headline">mp3를 받아 오는<br>라이브러리.</p>
-      <p class="body">URL을 넣으면 mp3 오디오 스트림을 돌려주는 라이브러리입니다. music.player의 오디오 추출 계층으로 쓰려고 다시 설계했습니다.</p>
-      <div class="actions">
-        <a class="btn" href="muxic/" aria-label="MUXIC.js 자세히 보기">자세히 보기</a>
-        <a href="https://github.com/twopercenz/MUXIC.js">GitHub에서 보기</a>
+  <!-- L6 MUXIC.js -->
+  <section class="chapter" id="muxic" style="--accent: var(--c-app)" aria-labelledby="muxic-t">
+    <header class="ch-head">
+      <p class="ch-layer reveal">L6 · 응용</p>
+      <h2 class="ch-name reveal" id="muxic-t">MUXIC.js</h2>
+      <p class="ch-display reveal">mp3를 받아 오는<br>라이브러리.</p>
+    </header>
+    <div class="stage" data-model="muxic" role="img" aria-label="원형으로 늘어선 이퀄라이저 막대와 가운데 내려받기 화살표"></div>
+    <div class="ch-body">
+      <div class="ch-text reveal">
+        <p class="ch-lede">URL을 넣으면 <strong>이미 열린 mp3 오디오 스트림</strong>을 돌려주는 라이브러리입니다. music.player의 오디오 추출 계층으로 쓰려고, URL 해석과 실제 추출을 두 층으로 나눠 다시 설계했습니다.</p>
+        <p class="ch-links"><a class="more" href="muxic/">자세히 보기</a><a class="more" href="https://github.com/twopercenz/MUXIC.js">GitHub</a></p>
       </div>
+      <dl class="spec reveal">
+        <div><dt>소스</dt><dd>TypeScript 514줄</dd></div>
+        <div><dt>테스트</dt><dd>bun test 14개</dd></div>
+        <div><dt>추출 엔진</dt><dd>2개</dd></div>
+        <div><dt>빌드</dt><dd>0단계</dd></div>
+        <div><dt>라이선스</dt><dd>MIT</dd></div>
+      </dl>
     </div>
-    <div class="stage" data-model="muxic" role="img" aria-label="원형으로 늘어선 이퀄라이저 막대"></div>
+    <ol class="decomp reveal" aria-label="resolver와 engine의 두 층 구조">
+      <li><span>URL</span><small>youtube.com/…</small></li>
+      <li><span>resolver</span><small>순수 함수</small></li>
+      <li><span>{ site, id }</span><small>식별자</small></li>
+      <li><span>engine</span><small>ytdlp-ffmpeg</small></li>
+      <li><span>stream</span><small>audio/mpeg</small></li>
+    </ol>
   </section>
 
-  <section class="panel tone-b" id="ksca">
-    <div class="copy">
-      <h2 class="name">KSCA</h2>
-      <p class="headline">학생 논문에도<br>영구 주소를.</p>
-      <p class="body">전국 청소년 컴퓨터 사이언스 학회용 웹 서비스입니다. Zenodo 같은 논문 아카이브에 영구 식별자, APA·BibTeX 인용, 버전 관리를 넣고, 게시판을 붙일 계획입니다.</p>
-      <p class="meta">기획 중</p>
-      <div class="actions">
-        <a class="btn" href="ksca/" aria-label="KSCA 자세히 보기">자세히 보기</a>
-      </div>
-    </div>
+  <!-- L6 KSCA -->
+  <section class="chapter alt" id="ksca" style="--accent: var(--c-app)" aria-labelledby="ksca-t">
+    <header class="ch-head">
+      <p class="ch-layer reveal">L6 · 응용</p>
+      <h2 class="ch-name reveal" id="ksca-t">KSCA</h2>
+      <p class="ch-display reveal">학생 논문에도<br>영구 주소를.</p>
+    </header>
     <div class="stage" data-model="ksca" role="img" aria-label="부채꼴로 펼쳐진 논문 원고"></div>
+    <div class="ch-body">
+      <div class="ch-text reveal">
+        <p class="ch-lede">전국 청소년 컴퓨터 사이언스 학회용 웹 서비스입니다. Zenodo 같은 논문 아카이브에 <strong>영구 식별자, APA·BibTeX 인용, 버전 관리</strong>를 넣고, 게시판을 붙일 계획입니다.</p>
+        <p class="ch-links"><a class="more" href="ksca/">자세히 보기</a></p>
+      </div>
+      <dl class="spec reveal">
+        <div><dt>식별자</dt><dd>KSCA-YYYY-NNNNNN</dd></div>
+        <div><dt>인용</dt><dd>APA · BibTeX</dd></div>
+        <div><dt>자동 비공개</dt><dd>신고 3건</dd></div>
+        <div><dt>스택</dt><dd>Next.js · Supabase</dd></div>
+        <div><dt>상태</dt><dd>기획 중</dd></div>
+      </dl>
+    </div>
+    <ol class="decomp reveal" aria-label="업로드부터 인용, 신고까지">
+      <li><span>업로드</span><small>PDF · 초록</small></li>
+      <li><span>식별자 발급</span><small>원자적 카운터</small></li>
+      <li><span>새 버전</span><small>concept_id 유지</small></li>
+      <li><span>인용</span><small>APA · BibTeX</small></li>
+    </ol>
+  </section>
+
+  <!-- 노트 -->
+  <section class="notes-teaser" id="notes" aria-labelledby="notes-t">
+    <div class="wrap">
+      <p class="eyebrow reveal">엔지니어링 노트</p>
+      <h2 class="section-title reveal" id="notes-t">완성본 말고,<br><span class="dim">그 과정을 기록합니다.</span></h2>
+      <p class="section-lede reveal">실험, 실패한 시도, 측정값, 구현 결정, 디버깅. 프로젝트 페이지가 “어떻게 동작하나”라면, 노트는 “왜 그렇게 됐나”입니다.</p>
+      <ul class="note-rows">
+        <li class="reveal"><a href="notes/05-movement-vs-time-paradox/"><time datetime="2026-08-18">2026.08.18</time><span class="nr-title">이동은 25% 줄였는데 313배 느려졌다: 시스톨릭 배열 실험의 역설</span><span class="nr-tag">결과</span></a></li>
+        <li class="reveal"><a href="notes/03-skew-wait-tradeoff/"><time datetime="2026-08-14">2026.08.14</time><span class="nr-title">순서를 보장하려고 넣은 4,000µs 대기가 시간의 절반이 됐다</span><span class="nr-tag">회고</span></a></li>
+        <li class="reveal"><a href="notes/von-in-arduino-nano/"><time datetime="2026-08-10">2026.08.10</time><span class="nr-title">아두이노로 폰 노이만 병목을 재현할 수 있을까</span><span class="nr-tag">설계</span></a></li>
+        <li class="reveal"><a href="notes/trng-entropy-sources/"><time datetime="2026-01-18">2026.01.18</time><span class="nr-title">TRNG용 잡음원을 왜 세 가지로 나눠 비교하나</span><span class="nr-tag">진행 중</span></a></li>
+      </ul>
+      <p class="ch-links reveal"><a class="more" href="notes/">노트 전체 보기</a></p>
+    </div>
+  </section>
+
+  <!-- 소개 -->
+  <section class="about alt" id="about" aria-labelledby="about-t">
+    <div class="wrap about-grid">
+      <div>
+        <p class="eyebrow reveal">소개</p>
+        <h2 class="section-title reveal" id="about-t">아래층부터<br>직접 만들어 봅니다.</h2>
+      </div>
+      <div class="about-text reveal">
+        <p>컴퓨터공학을 공부하는 학생입니다. 컴퓨터가 실제로 어떻게 돌아가는지 아래층부터 하나씩 만들어 보며 배우고 있습니다. 회로이론과 미적분은 기초부터 따로 공부하는 중입니다.</p>
+        <p class="muted">이 계정은 부계정이고, 코드는 대부분 <a href="https://github.com/twopercenz">@twopercenz</a>에 있습니다.</p>
+        <p class="tools" aria-label="다루는 도구">
+          <span>x86-64 ASM</span><span>C</span><span>C++17</span><span>Rust</span><span>TypeScript</span><span>Next.js</span><span>Supabase</span><span>Arduino</span><span>KiCad</span><span>QEMU</span><span>Docker</span><span>Oracle Cloud</span>
+        </p>
+      </div>
+    </div>
   </section>
 
 </main>
 
-<footer class="foot tone-a">
-  <p>x86-64 ASM, C, Rust, TypeScript, Next.js, Supabase, Arduino, KiCad, QEMU, Docker, Oracle Cloud</p>
-  <p><a href="https://github.com/twopercenz">twopercenz</a> / <a href="https://github.com/regx64">regx64</a></p>
+<footer class="foot">
+  <div class="foot-inner">
+    <p class="foot-tag">트랜지스터부터 컴파일러까지.</p>
+    <nav class="foot-links" aria-label="바닥 메뉴">
+      <a href="#work">작업</a>
+      <a href="notes/">노트</a>
+      <a href="https://github.com/twopercenz">twopercenz</a>
+      <a href="https://github.com/regx64">regx64</a>
+    </nav>
+  </div>
 </footer>
 </body>
 </html>

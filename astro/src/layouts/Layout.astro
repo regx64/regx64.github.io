@@ -15,29 +15,32 @@ const { title, description } = Astro.props;
 <link rel="icon" href="/favicon.ico" sizes="48x48">
 <link rel="icon" href="/favicon.svg" type="image/svg+xml">
 <link rel="apple-touch-icon" href="/apple-touch-icon.png">
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css">
 <link rel="stylesheet" href="/style.css">
 <style is:global>
   .notes-doc {
     position: relative;
     z-index: 2;
-    max-width: 40rem;
+    max-width: 43rem;
     margin: 0 auto;
-    padding: 7rem 1.5rem 5rem;
+    padding: 8rem 1.375rem 6rem;
   }
-  .notes-doc h1 { margin: 0 0 0.5rem; font-size: clamp(1.9rem, 4vw, 2.5rem); font-weight: 700; letter-spacing: -0.03em; line-height: 1.2; }
-  .notes-doc .lede { margin: 0 0 1rem; color: var(--muted); font-size: 1.0625rem; }
-  .notes-meta { display: flex; flex-wrap: wrap; gap: 0.5rem 1rem; margin: 0 0 2.5rem; font-size: 0.875rem; color: var(--muted); font-family: ui-monospace, Consolas, "D2Coding", monospace; }
+  .notes-doc h1 { margin: 0 0 1rem; font-size: clamp(2.25rem, 5vw, 3.25rem); font-weight: 700; letter-spacing: -0.045em; line-height: 1.12; }
+  .notes-doc .lede { margin: 0 0 1.5rem; color: var(--muted); font-size: clamp(1.1875rem, 1.8vw, 1.3125rem); line-height: 1.5; letter-spacing: -0.02em; }
+  .notes-meta { display: flex; flex-wrap: wrap; gap: 0.5rem 1rem; margin: 0 0 2.5rem; font-size: 0.875rem; color: var(--muted); font-family: var(--mono); }
   .notes-meta a { color: var(--ink); text-decoration: underline; text-underline-offset: 0.2em; }
 
   .notes-doc article :is(h2, h3) { margin: 2.25rem 0 0.75rem; letter-spacing: -0.01em; }
-  .notes-doc article h2 { font-size: 1.25rem; }
+  .notes-doc article h2 { font-size: 1.5rem; letter-spacing: -0.03em; margin-top: 3rem; }
   .notes-doc article h3 { font-size: 1.0625rem; }
-  .notes-doc article p { margin: 0 0 1.1rem; }
+  .notes-doc article { font-size: 1.0625rem; line-height: 1.8; }
+  .notes-doc article p { margin: 0 0 1.25rem; }
+  .notes-doc article a { color: var(--link); text-decoration: none; }
+  .notes-doc article a:hover { text-decoration: underline; }
   .notes-doc article ul, .notes-doc article ol { margin: 0 0 1.1rem; padding-left: 1.3rem; }
   .notes-doc article li { margin-bottom: 0.4rem; }
   .notes-doc article code {
-    font-family: ui-monospace, Consolas, "D2Coding", monospace;
+    font-family: var(--mono);
     font-size: 0.875em;
     background: rgba(0, 0, 0, 0.06);
     padding: 0.1em 0.35em;
@@ -47,9 +50,9 @@ const { title, description } = Astro.props;
     margin: 1.25rem 0;
     padding: 1rem 1.1rem;
     overflow-x: auto;
-    background: #1B1B1B;
-    color: #E6E6E6;
-    border-radius: 0.75rem;
+    background: #1D1D1F;
+    color: #E8E8ED;
+    border-radius: 1rem;
     font-size: 0.8125rem;
     line-height: 1.6;
   }
@@ -61,8 +64,8 @@ const { title, description } = Astro.props;
     margin: 1.5rem 0;
     padding: 1.25rem 1.4rem;
     background: var(--tone-a);
-    border-radius: 0.75rem;
-    font-family: ui-monospace, Consolas, "D2Coding", monospace;
+    border-radius: 1rem;
+    font-family: var(--mono);
     font-size: 0.9375rem;
   }
   .flow li { padding: 0.35rem 0; }
@@ -93,7 +96,7 @@ const { title, description } = Astro.props;
   .tag-row { margin: 0 0 1.5rem; display: flex; flex-wrap: wrap; gap: 0.5rem; }
   .tag {
     font-size: 0.8125rem;
-    font-family: ui-monospace, Consolas, "D2Coding", monospace;
+    font-family: var(--mono);
     color: var(--muted);
     text-decoration: none;
     padding: 0.15rem 0.55rem;
@@ -112,7 +115,7 @@ const { title, description } = Astro.props;
   }
   .series-box-label { margin: 0 0 0.6rem; font-weight: 600; }
   .series-box-label a { text-decoration: underline; text-underline-offset: 0.2em; }
-  .series-box-label span { font-weight: 400; color: var(--muted); font-family: ui-monospace, Consolas, "D2Coding", monospace; }
+  .series-box-label span { font-weight: 400; color: var(--muted); font-family: var(--mono); }
   .series-box-list { list-style: none; margin: 0; padding: 0; counter-reset: none; }
   .series-box-list li { padding: 0.25rem 0; color: var(--muted); }
   .series-box-list li.current { color: var(--ink); font-weight: 600; }
@@ -186,20 +189,31 @@ const { title, description } = Astro.props;
 <a class="skip" href="#main">본문으로 건너뛰기</a>
 
 <header class="nav">
-  <a class="brand" href="/">regx64</a>
-  <nav class="nav-links">
-    <a href="/notes/">NOTES</a>
-    <a href="https://github.com/twopercenz">GitHub</a>
-  </nav>
+  <div class="nav-inner">
+    <a class="brand" href="/">regx64</a>
+    <nav class="nav-links" aria-label="주요 메뉴">
+      <a href="/#work">작업</a>
+      <a href="/notes/">노트</a>
+      <a href="https://github.com/twopercenz">GitHub</a>
+    </nav>
+  </div>
 </header>
 
 <main id="main" class="notes-doc">
   <slot />
 </main>
 
-<footer class="foot tone-a">
-  <p>x86-64 ASM, C, Rust, TypeScript, Next.js, Supabase, Arduino, KiCad, QEMU, Docker, Oracle Cloud</p>
-  <p><a href="https://github.com/twopercenz">twopercenz</a> / <a href="https://github.com/regx64">regx64</a></p>
+<footer class="foot">
+  <div class="foot-inner">
+    <p class="foot-tag">트랜지스터부터 컴파일러까지.</p>
+    <nav class="foot-links" aria-label="바닥 메뉴">
+      <a href="/#work">작업</a>
+      <a href="/notes/">노트</a>
+      <a href="https://github.com/twopercenz">twopercenz</a>
+      <a href="https://github.com/regx64">regx64</a>
+    </nav>
+  </div>
 </footer>
+<script is:inline src="/site.js" defer></script>
 </body>
 </html>
