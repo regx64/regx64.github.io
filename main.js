@@ -12,7 +12,7 @@ const MONO = 'ui-monospace, Consolas, "D2Coding", monospace';
 
 const C = {
   app: 0x7A5BC7, lang: 0xA87808, os: 0x1D8585,
-  sec: 0xC23B5A, arch: 0x2F5FC4, dev: 0x2F9A57,
+  sec: 0xC23B5A, arch: 0x2F5FC4,
 };
 
 let renderer;
@@ -70,12 +70,12 @@ function lines(ctx, x, y, w, count, gap, color, rand) {
 
 const MODELS = {
 
-  // 첫 화면: 여섯 층 스택. 스크롤하면 층이 벌어짐
+  // 첫 화면: 다섯 층 스택(위부터 응용·언어·운영체제·보안·컴퓨터 구조). 스크롤하면 층이 벌어짐
   stack() {
     const g = new THREE.Group();
-    const cols = [C.app, C.lang, C.os, C.sec, C.arch, C.dev];
+    const cols = [C.app, C.lang, C.os, C.sec, C.arch];
     const slabs = cols.map((col, i) => {
-      const w = 1.9 + i * 0.34;
+      const w = 2.0 + i * 0.4;
       const m = rbox(w, 0.34, w, 0.07, mat(col, { roughness: 0.32, clearcoat: 0.6 }));
       g.add(m);
       return m;
@@ -85,75 +85,8 @@ const MODELS = {
       group: g, camZ: 12,
       update(t, p) {
         const gap = 0.42 + ease((p - 0.5) * 2.5) * 0.45;
-        slabs.forEach((m, i) => { m.position.y = (2.5 - i) * gap; });
+        slabs.forEach((m, i) => { m.position.y = (2 - i) * gap; });
         g.rotation.y = 0.7 + p * 1.4 + t * 0.12;
-      },
-    };
-  },
-
-  // 링 오실레이터: 인버터 다섯 개 + 도는 펄스 + 가운데 잡음
-  trng() {
-    const g = new THREE.Group();
-    const R = 1.75;
-    g.add(new THREE.Mesh(
-      new THREE.TorusGeometry(R, 0.035, 12, 200),
-      mat(0xbdbdbd, { metalness: 1, roughness: 0.25 }),
-    ));
-
-    const tri = new THREE.Shape();
-    tri.moveTo(-0.3, -0.32); tri.lineTo(0.32, 0); tri.lineTo(-0.3, 0.32); tri.closePath();
-    const triGeo = new THREE.ExtrudeGeometry(tri, {
-      depth: 0.2, bevelEnabled: true, bevelSize: 0.04, bevelThickness: 0.04, bevelSegments: 3,
-    });
-    triGeo.center();
-    const body = mat(C.dev, { roughness: 0.3, clearcoat: 0.6 });
-    const white = mat(0xf5f5f5, { roughness: 0.3 });
-    const bubbleGeo = new THREE.SphereGeometry(0.085, 20, 12);
-
-    for (let i = 0; i < 5; i++) {
-      const a = (i / 5) * Math.PI * 2;
-      const inv = new THREE.Group();
-      inv.position.set(Math.cos(a) * R, Math.sin(a) * R, 0);
-      inv.rotation.z = a + Math.PI / 2;
-      inv.add(new THREE.Mesh(triGeo, body));
-      const b = new THREE.Mesh(bubbleGeo, white);
-      b.position.x = 0.44;
-      inv.add(b);
-      g.add(inv);
-    }
-
-    const pulse = new THREE.Mesh(
-      new THREE.SphereGeometry(0.1, 20, 12),
-      new THREE.MeshBasicMaterial({ color: 0x9df0b8, toneMapped: false }),
-    );
-    g.add(pulse);
-
-    const N = 600;
-    const pos = new Float32Array(N * 3);
-    const rand = Math.random;
-    const place = (k) => {
-      const r = Math.sqrt(rand()) * 1.25, a = rand() * Math.PI * 2;
-      pos[k * 3] = Math.cos(a) * r;
-      pos[k * 3 + 1] = Math.sin(a) * r;
-      pos[k * 3 + 2] = (rand() - 0.5) * 0.5;
-    };
-    for (let k = 0; k < N; k++) place(k);
-    const pg = new THREE.BufferGeometry();
-    pg.setAttribute('position', new THREE.BufferAttribute(pos, 3));
-    const pts = new THREE.Points(pg, new THREE.PointsMaterial({ color: C.dev, size: 0.035 }));
-    g.add(pts);
-
-    return {
-      group: g, camZ: 10,
-      update(t, p) {
-        const a = t * 1.3;
-        pulse.position.set(Math.cos(a) * R, Math.sin(a) * R, 0);
-        if (!REDUCE) {
-          for (let j = 0; j < 45; j++) place((Math.random() * N) | 0);
-          pg.attributes.position.needsUpdate = true;
-        }
-        g.rotation.x = -0.35 + p * 0.5;
-        g.rotation.y = (p - 0.5) * 0.9;
       },
     };
   },

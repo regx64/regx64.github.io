@@ -49,7 +49,7 @@
       <h1 class="hero-title reveal">트랜지스터부터<br>컴파일러까지.</h1>
       <p class="hero-sub reveal">컴퓨터가 실제로 어떻게 돌아가는지,<br class="br-wide"> 아래층부터 하나씩 직접 만들어 보며 배우고 있습니다.</p>
     </div>
-    <div class="stage stage-hero" data-model="stack" role="img" aria-label="회로부터 응용까지 여섯 층이 쌓인 모형. 스크롤하면 층 사이가 벌어집니다."></div>
+    <div class="stage stage-hero" data-model="stack" role="img" aria-label="컴퓨터 구조부터 응용까지 다섯 층이 쌓인 모형. 스크롤하면 층 사이가 벌어집니다."></div>
     <a class="scroll-cue" href="#work">아래층부터 보기</a>
   </section>
 
@@ -57,78 +57,43 @@
   <section class="index" id="work" aria-labelledby="index-title">
     <div class="wrap">
       <p class="eyebrow reveal">컴퓨팅 스택</p>
-      <h2 class="section-title reveal" id="index-title">여섯 개의 층.<br><span class="dim">아홉 개의 프로젝트.</span></h2>
+      <h2 class="section-title reveal" id="index-title">다섯 개의 층.<br><span class="dim">열세 개의 프로젝트.</span></h2>
       <p class="section-lede reveal">서로 다른 프로젝트처럼 보이지만, 모두 한 대의 컴퓨터를 위아래로 가로지릅니다. 위 모형의 층과 같은 색입니다.</p>
 
       <ol class="layers">
         <li class="layer reveal" style="--accent: var(--c-app)">
-          <span class="layer-no">L6</span>
+          <span class="layer-no">L5</span>
           <span class="layer-name">응용</span>
-          <span class="layer-items"><a href="#percentage">Percentage</a><a href="#player">music.player</a><a href="#muxic">MUXIC.js</a><a href="#ksca">KSCA</a></span>
+          <span class="layer-items"><a href="#percentage">Percentage</a><a href="#player">music.player</a><a href="#muxic">MUXIC.js</a><a href="#ksca">KSCA</a><a href="#liner-notes">liner-notes</a><a href="#gijiguk">기지국</a><a href="#chespedia">chespedia</a><a href="#boj-cli">boj-cli</a></span>
         </li>
         <li class="layer reveal" style="--accent: var(--c-lang)">
-          <span class="layer-no">L5</span>
+          <span class="layer-no">L4</span>
           <span class="layer-name">언어</span>
           <span class="layer-items"><a href="#cotton">Cotton</a></span>
         </li>
         <li class="layer reveal" style="--accent: var(--c-os)">
-          <span class="layer-no">L4</span>
+          <span class="layer-no">L3</span>
           <span class="layer-name">운영체제</span>
-          <span class="layer-items"><a href="#os">Hobby OS</a></span>
+          <span class="layer-items"><a href="#os">Hobby OS</a><a href="#sqimp">Sqimp</a></span>
         </li>
         <li class="layer reveal" style="--accent: var(--c-sec)">
-          <span class="layer-no">L3</span>
+          <span class="layer-no">L2</span>
           <span class="layer-name">보안</span>
           <span class="layer-items"><a href="#kdaa">KDAA</a></span>
         </li>
         <li class="layer reveal" style="--accent: var(--c-arch)">
-          <span class="layer-no">L2</span>
+          <span class="layer-no">L1</span>
           <span class="layer-name">컴퓨터 구조</span>
           <span class="layer-items"><a href="#systolic">시스톨릭 배열</a></span>
-        </li>
-        <li class="layer reveal" style="--accent: var(--c-dev)">
-          <span class="layer-no">L1</span>
-          <span class="layer-name">소자</span>
-          <span class="layer-items"><a href="#trng">TRNG</a></span>
         </li>
       </ol>
     </div>
   </section>
 
-  <!-- L1 TRNG -->
-  <section class="chapter" id="trng" style="--accent: var(--c-dev)" aria-labelledby="trng-t">
+  <!-- L1 시스톨릭 배열 -->
+  <section class="chapter" id="systolic" style="--accent: var(--c-arch)" aria-labelledby="systolic-t">
     <header class="ch-head">
-      <p class="ch-layer reveal">L1 · 소자</p>
-      <h2 class="ch-name reveal" id="trng-t">TRNG 엔트로피원 비교</h2>
-      <p class="ch-display reveal">잡음에서<br>난수를 꺼냅니다.</p>
-    </header>
-    <div class="stage" data-model="trng" role="img" aria-label="인버터 다섯 개로 이루어진 링 오실레이터 모형. 고리를 따라 펄스가 돌고 가운데에서 잡음이 흩어집니다."></div>
-    <div class="ch-body">
-      <div class="ch-text reveal">
-        <p class="ch-lede">애벌랜치 노이즈, 이산소자 링 오실레이터, FPGA 링 오실레이터. <strong>난이도가 계단식으로 올라가는 세 가지 엔트로피원</strong>으로 진짜 난수생성기를 만들고, NIST 기준으로 어느 쪽이 더 좋은 난수를 내는지 비교합니다.</p>
-        <p class="ch-links"><a class="more" href="trng/">자세히 보기</a><a class="more" href="notes/trng-entropy-sources/">엔지니어링 노트</a></p>
-      </div>
-      <dl class="spec reveal">
-        <div><dt>엔트로피원</dt><dd>3종</dd></div>
-        <div><dt>인버터</dt><dd>74HC04</dd></div>
-        <div><dt>후처리</dt><dd>von Neumann · SHA-256</dd></div>
-        <div><dt>검증</dt><dd>NIST SP 800-90B</dd></div>
-        <div><dt>상태</dt><dd>제작 중</dd></div>
-      </dl>
-    </div>
-    <ol class="decomp reveal" aria-label="엔트로피원에서 검증까지의 흐름">
-      <li><span>물리 잡음</span><small>다이오드 · 링 오실레이터</small></li>
-      <li><span>raw 비트</span><small>ADC / 로직</small></li>
-      <li><span>후처리</span><small>XOR 짝 · SHA-256</small></li>
-      <li><span>시리얼</span><small>PC로 전송</small></li>
-      <li><span>검증</span><small>min-entropy</small></li>
-    </ol>
-  </section>
-
-  <!-- L2 시스톨릭 배열 -->
-  <section class="chapter alt" id="systolic" style="--accent: var(--c-arch)" aria-labelledby="systolic-t">
-    <header class="ch-head">
-      <p class="ch-layer reveal">L2 · 컴퓨터 구조</p>
+      <p class="ch-layer reveal">L1 · 컴퓨터 구조</p>
       <h2 class="ch-name reveal" id="systolic-t">폰 노이만 병목과 시스톨릭 배열</h2>
       <p class="ch-display reveal">아두이노 네 대로<br>만든 행렬 곱셈기.</p>
     </header>
@@ -143,6 +108,7 @@
         <div><dt>클럭</dt><dd>16 MHz</dd></div>
         <div><dt>배열</dt><dd>2 × 2, 출력 고정형(OS)</dd></div>
         <div><dt>연결</dt><dd>GPIO 비트뱅잉</dd></div>
+        <div><dt>클럭 반주기</dt><dd>50 µs</dd></div>
         <div><dt>스큐</dt><dd>4,000 µs</dd></div>
         <div><dt>게시</dt><dd>Zenodo, 2026</dd></div>
       </dl>
@@ -189,10 +155,10 @@
     </div>
   </section>
 
-  <!-- L3 KDAA -->
+  <!-- L2 KDAA -->
   <section class="chapter" id="kdaa" style="--accent: var(--c-sec)" aria-labelledby="kdaa-t">
     <header class="ch-head">
-      <p class="ch-layer reveal">L3 · 보안</p>
+      <p class="ch-layer reveal">L2 · 보안</p>
       <h2 class="ch-name reveal" id="kdaa-t">KDAA</h2>
       <p class="ch-display reveal">타건음만 듣고<br>한글을 읽을 수 있을까.</p>
     </header>
@@ -221,10 +187,10 @@
     </ol>
   </section>
 
-  <!-- L4 Hobby OS -->
+  <!-- L3 Hobby OS -->
   <section class="chapter dark" id="os" style="--accent: var(--c-os-on-dark)" aria-labelledby="os-t">
     <header class="ch-head">
-      <p class="ch-layer reveal">L4 · 운영체제</p>
+      <p class="ch-layer reveal">L3 · 운영체제</p>
       <h2 class="ch-name reveal" id="os-t">Hobby OS</h2>
       <p class="ch-display reveal">부트섹터부터<br>VGA 드라이버까지.</p>
     </header>
@@ -252,10 +218,10 @@
     </ol>
   </section>
 
-  <!-- L5 Cotton -->
+  <!-- L4 Cotton -->
   <section class="chapter alt" id="cotton" style="--accent: var(--c-lang)" aria-labelledby="cotton-t">
     <header class="ch-head">
-      <p class="ch-layer reveal">L5 · 언어</p>
+      <p class="ch-layer reveal">L4 · 언어</p>
       <h2 class="ch-name reveal" id="cotton-t">Cotton</h2>
       <p class="ch-display reveal">마음에 드는 것만<br>골라 만드는 언어.</p>
     </header>
@@ -282,10 +248,10 @@
     </ol>
   </section>
 
-  <!-- L6 Percentage -->
+  <!-- L5 Percentage -->
   <section class="chapter" id="percentage" style="--accent: var(--c-app)" aria-labelledby="percentage-t">
     <header class="ch-head">
-      <p class="ch-layer reveal">L6 · 응용</p>
+      <p class="ch-layer reveal">L5 · 응용</p>
       <h2 class="ch-name reveal" id="percentage-t">Percentage</h2>
       <p class="ch-display reveal">쌓으면,<br>보입니다.</p>
     </header>
@@ -312,10 +278,10 @@
     </ol>
   </section>
 
-  <!-- L6 music.player -->
+  <!-- L5 music.player -->
   <section class="chapter alt" id="player" style="--accent: var(--c-app)" aria-labelledby="player-t">
     <header class="ch-head">
-      <p class="ch-layer reveal">L6 · 응용</p>
+      <p class="ch-layer reveal">L5 · 응용</p>
       <h2 class="ch-name reveal" id="player-t">music.player</h2>
       <p class="ch-display reveal">제가 들으려고<br>만드는 플레이어.</p>
     </header>
@@ -341,10 +307,10 @@
     </ol>
   </section>
 
-  <!-- L6 MUXIC.js -->
+  <!-- L5 MUXIC.js -->
   <section class="chapter" id="muxic" style="--accent: var(--c-app)" aria-labelledby="muxic-t">
     <header class="ch-head">
-      <p class="ch-layer reveal">L6 · 응용</p>
+      <p class="ch-layer reveal">L5 · 응용</p>
       <h2 class="ch-name reveal" id="muxic-t">MUXIC.js</h2>
       <p class="ch-display reveal">mp3를 받아 오는<br>라이브러리.</p>
     </header>
@@ -371,17 +337,17 @@
     </ol>
   </section>
 
-  <!-- L6 KSCA -->
+  <!-- L5 KSCA -->
   <section class="chapter alt" id="ksca" style="--accent: var(--c-app)" aria-labelledby="ksca-t">
     <header class="ch-head">
-      <p class="ch-layer reveal">L6 · 응용</p>
+      <p class="ch-layer reveal">L5 · 응용</p>
       <h2 class="ch-name reveal" id="ksca-t">KSCA</h2>
       <p class="ch-display reveal">학생 논문에도<br>영구 주소를.</p>
     </header>
     <div class="stage" data-model="ksca" role="img" aria-label="부채꼴로 펼쳐진 논문 원고"></div>
     <div class="ch-body">
       <div class="ch-text reveal">
-        <p class="ch-lede">전국 청소년 컴퓨터 사이언스 학회용 웹 서비스입니다. Zenodo 같은 논문 아카이브에 <strong>영구 식별자, APA·BibTeX 인용, 버전 관리</strong>를 넣고, 게시판을 붙일 계획입니다.</p>
+        <p class="ch-lede">전국 청소년 컴퓨터 사이언스 학회용 웹 서비스입니다. Zenodo 같은 논문 아카이브에 <strong>영구 식별자, APA·BibTeX 인용, 버전 관리</strong>를 넣고, 게시판을 붙입니다. 지금 구현을 시작했습니다.</p>
         <p class="ch-links"><a class="more" href="ksca/">자세히 보기</a></p>
       </div>
       <dl class="spec reveal">
@@ -389,7 +355,7 @@
         <div><dt>인용</dt><dd>APA · BibTeX</dd></div>
         <div><dt>자동 비공개</dt><dd>신고 3건</dd></div>
         <div><dt>스택</dt><dd>Next.js · Supabase</dd></div>
-        <div><dt>상태</dt><dd>기획 중</dd></div>
+        <div><dt>상태</dt><dd>구현 중</dd></div>
       </dl>
     </div>
     <ol class="decomp reveal" aria-label="업로드부터 인용, 신고까지">
@@ -400,8 +366,74 @@
     </ol>
   </section>
 
+  <!-- 그 밖의 프로젝트 -->
+  <section class="more-work" id="more" aria-labelledby="more-t">
+    <div class="wrap">
+      <p class="eyebrow reveal">더 만든 것들</p>
+      <h2 class="section-title reveal" id="more-t">작게 시작한 것들도<br><span class="dim">전부 스택 위에 있습니다.</span></h2>
+
+      <ul class="tiles">
+        <li class="tile reveal" id="liner-notes" style="--accent: var(--c-app)">
+          <p class="tile-layer">L5 · 응용</p>
+          <h3 class="tile-name">liner-notes</h3>
+          <p class="tile-desc">인디 밴드 가사의 한 구절과 그 해석을 나누는 커뮤니티. 앨범 → 트랙 → 구절 순으로 데이터를 묶고, 가사 전문 검색을 붙였습니다.</p>
+          <dl class="tile-spec">
+            <div><dt>스택</dt><dd>Next.js · Supabase</dd></div>
+            <div><dt>검색</dt><dd>Postgres tsvector</dd></div>
+            <div><dt>데이터</dt><dd>iTunes · lrclib</dd></div>
+          </dl>
+          <a class="more" href="https://github.com/regx64/liner-notes">GitHub</a>
+        </li>
+        <li class="tile reveal" id="gijiguk" style="--accent: var(--c-app)">
+          <p class="tile-layer">L5 · 응용</p>
+          <h3 class="tile-name">기지국</h3>
+          <p class="tile-desc">수능·평가원 국어 기출 지문을 원문 단위로 모아 연도·출처·분야로 찾아보는 아카이브. 지문마다 7자리 ID를 붙이는 체계를 따로 설계했습니다.</p>
+          <dl class="tile-spec">
+            <div><dt>수록</dt><dd>평가원 지문 239개</dd></div>
+            <div><dt>범위</dt><dd>2011–2026</dd></div>
+            <div><dt>ID</dt><dd>26K1111 형식</dd></div>
+          </dl>
+          <a class="more" href="https://github.com/regx64/gijiguk">GitHub</a>
+        </li>
+        <li class="tile reveal" id="boj-cli" style="--accent: var(--c-app)">
+          <p class="tile-layer">L5 · 응용</p>
+          <h3 class="tile-name">boj-cli</h3>
+          <p class="tile-desc">백준 온라인 저지를 터미널에서 쓰는 도구. 문제를 받아 폴더와 템플릿을 만들고, 예제 입력으로 채점까지 돌립니다.</p>
+          <dl class="tile-spec">
+            <div><dt>구현</dt><dd>Rust 1,016줄</dd></div>
+            <div><dt>명령</dt><dd>init · login · add · run · submit</dd></div>
+            <div><dt>템플릿</dt><dd>C · C++ · Java · JS · Python · Rust</dd></div>
+          </dl>
+          <a class="more" href="https://github.com/regx64/boj-cli">GitHub</a>
+        </li>
+        <li class="tile reveal" id="sqimp" style="--accent: var(--c-os)">
+          <p class="tile-layer">L3 · 운영체제</p>
+          <h3 class="tile-name">Sqimp</h3>
+          <p class="tile-desc">QEMU를 명령줄 대신 창에서 다루는 GUI. 여러 시스템 에뮬레이션과 디스크 이미지 생성을 목표로 두 명이 함께 만들고 있고, 아직 릴리스 전입니다.</p>
+          <dl class="tile-spec">
+            <div><dt>스택</dt><dd>Tauri · Next.js · Rust</dd></div>
+            <div><dt>개발</dt><dd>2인, 2024–2025</dd></div>
+            <div><dt>상태</dt><dd>UI 단계</dd></div>
+          </dl>
+          <a class="more" href="https://github.com/regx64/Sqimp">GitHub</a>
+        </li>
+        <li class="tile reveal" id="chespedia" style="--accent: var(--c-app)">
+          <p class="tile-layer">L5 · 응용</p>
+          <h3 class="tile-name">chespedia</h3>
+          <p class="tile-desc">체스 규칙과 지식을 MDX 문서로 쌓는 사이트. 프런트는 Next.js, 서버 함수는 Vercel 위의 Rust로 시작했습니다.</p>
+          <dl class="tile-spec">
+            <div><dt>스택</dt><dd>Next.js · MDX · Rust</dd></div>
+            <div><dt>배포</dt><dd>Vercel</dd></div>
+            <div><dt>상태</dt><dd>초기 단계</dd></div>
+          </dl>
+          <a class="more" href="https://github.com/regx64/chespedia">GitHub</a>
+        </li>
+      </ul>
+    </div>
+  </section>
+
   <!-- 노트 -->
-  <section class="notes-teaser" id="notes" aria-labelledby="notes-t">
+  <section class="notes-teaser alt" id="notes" aria-labelledby="notes-t">
     <div class="wrap">
       <p class="eyebrow reveal">엔지니어링 노트</p>
       <h2 class="section-title reveal" id="notes-t">완성본 말고,<br><span class="dim">그 과정을 기록합니다.</span></h2>
@@ -410,14 +442,14 @@
         <li class="reveal"><a href="notes/05-movement-vs-time-paradox/"><time datetime="2026-08-18">2026.08.18</time><span class="nr-title">이동은 25% 줄였는데 313배 느려졌다: 시스톨릭 배열 실험의 역설</span><span class="nr-tag">결과</span></a></li>
         <li class="reveal"><a href="notes/03-skew-wait-tradeoff/"><time datetime="2026-08-14">2026.08.14</time><span class="nr-title">순서를 보장하려고 넣은 4,000µs 대기가 시간의 절반이 됐다</span><span class="nr-tag">회고</span></a></li>
         <li class="reveal"><a href="notes/von-in-arduino-nano/"><time datetime="2026-08-10">2026.08.10</time><span class="nr-title">아두이노로 폰 노이만 병목을 재현할 수 있을까</span><span class="nr-tag">설계</span></a></li>
-        <li class="reveal"><a href="notes/trng-entropy-sources/"><time datetime="2026-01-18">2026.01.18</time><span class="nr-title">TRNG용 잡음원을 왜 세 가지로 나눠 비교하나</span><span class="nr-tag">진행 중</span></a></li>
+        <li class="reveal"><a href="notes/04-measurement-validity/"><time datetime="2026-08-16">2026.08.16</time><span class="nr-title">서로 다른 두 구조의 시간을 같은 자로 재는 법</span><span class="nr-tag">설계</span></a></li>
       </ul>
       <p class="ch-links reveal"><a class="more" href="notes/">노트 전체 보기</a></p>
     </div>
   </section>
 
   <!-- 소개 -->
-  <section class="about alt" id="about" aria-labelledby="about-t">
+  <section class="about" id="about" aria-labelledby="about-t">
     <div class="wrap about-grid">
       <div>
         <p class="eyebrow reveal">소개</p>

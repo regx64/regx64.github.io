@@ -14,7 +14,6 @@
   --link: #0066CC;
 
   /* 층별 색. 3D 모형(main.js의 C)과 같은 계열이고, 글자로 쓸 때 대비를 맞춘 값 */
-  --c-dev: #237A44;
   --c-arch: #2F5FC4;
   --c-sec: #C23B5A;
   --c-os: #176E6E;
@@ -554,10 +553,43 @@ a { color: inherit; text-underline-offset: 0.22em; }
 .results-note strong { color: var(--ink); font-weight: 600; }
 
 /* ==========================================================================
+   홈: 그 밖의 프로젝트
+   ========================================================================== */
+
+.more-work { position: relative; padding: 9rem 0 8rem; background: var(--bg); }
+.more-work .eyebrow { --accent: var(--muted); }
+
+.tiles {
+  list-style: none;
+  margin: 4rem 0 0;
+  padding: 0;
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 1.25rem;
+}
+.tile {
+  display: flex;
+  flex-direction: column;
+  padding: 2rem 1.75rem 1.75rem;
+  border-radius: 1.5rem;
+  background: var(--bg-alt);
+}
+.tile-layer { margin: 0 0 1rem; font-family: var(--mono); font-size: 0.75rem; color: var(--accent); }
+.tile-name { margin: 0 0 0.75rem; font-size: 1.75rem; font-weight: 700; letter-spacing: -0.04em; line-height: 1.15; }
+.tile-desc { margin: 0 0 1.5rem; font-size: 1rem; line-height: 1.55; color: var(--muted); }
+.tile-spec { margin: auto 0 1.25rem; font-family: var(--mono); font-size: 0.75rem; border-top: 1px solid var(--line); }
+.tile-spec > div { display: grid; grid-template-columns: 4rem minmax(0, 1fr); gap: 0.75rem; padding: 0.55rem 0; border-bottom: 1px solid var(--line); }
+.tile-spec dt { color: var(--muted); }
+.tile-spec dd { margin: 0; }
+.tile .more { font-size: 1rem; }
+.js .tiles .tile:nth-child(3n+2) { transition-delay: 0.06s; }
+.js .tiles .tile:nth-child(3n) { transition-delay: 0.12s; }
+
+/* ==========================================================================
    홈: 노트, 소개
    ========================================================================== */
 
-.notes-teaser { position: relative; padding: 9rem 0 8rem; background: var(--bg); }
+.notes-teaser { position: relative; padding: 9rem 0 8rem; }
 .notes-teaser .eyebrow { --accent: var(--muted); }
 
 .note-rows { list-style: none; margin: 4rem 0 0; padding: 0; border-top: 1px solid var(--line); }
@@ -576,7 +608,7 @@ a { color: inherit; text-underline-offset: 0.22em; }
 .nr-tag { font-family: var(--mono); font-size: 0.75rem; color: var(--muted); }
 .notes-teaser .ch-links { margin-top: 2rem; }
 
-.about { position: relative; padding: 8rem 0; }
+.about { position: relative; padding: 8rem 0; background: var(--bg); }
 .about .eyebrow { --accent: var(--muted); }
 .about-grid { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 2rem 5rem; }
 .about-text { padding-top: 2.5rem; }
@@ -857,6 +889,7 @@ svg .flow { stroke-dasharray: 6 5; animation: flowdash 1.2s linear infinite; }
    ========================================================================== */
 
 @media (max-width: 1068px) {
+  .tiles { grid-template-columns: repeat(2, minmax(0, 1fr)); }
   .figures { grid-template-columns: repeat(2, minmax(0, 1fr)); }
   .figures dt { font-size: clamp(2.5rem, 8vw, 4.5rem); }
   .ch-body { gap: 2.5rem 3rem; }
@@ -905,6 +938,8 @@ svg .flow { stroke-dasharray: 6 5; animation: flowdash 1.2s linear infinite; }
   .bd-legend { grid-template-columns: 1fr; }
   .results-note { margin-top: 3.5rem; }
 
+  .more-work { padding: 6.5rem 0 5.5rem; }
+  .tiles { grid-template-columns: 1fr; margin-top: 3rem; }
   .notes-teaser { padding: 6.5rem 0 5.5rem; }
   .note-rows a { grid-template-columns: minmax(0, 1fr) auto; gap: 0.35rem 1rem; }
   .note-rows time { grid-column: 1 / -1; }
