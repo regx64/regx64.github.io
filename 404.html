@@ -1,0 +1,66 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>페이지를 찾을 수 없습니다 | regx64</title>
+<meta name="robots" content="noindex">
+<meta name="theme-color" content="#FFFFFF">
+<link rel="icon" href="/favicon.ico" sizes="48x48">
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<link rel="apple-touch-icon" href="/apple-touch-icon.png">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css">
+<link rel="stylesheet" href="/style.css">
+<script defer src="/site.js"></script>
+</head>
+<body>
+<a class="skip" href="#main">본문으로 건너뛰기</a>
+
+<header class="nav">
+  <div class="nav-inner">
+    <a class="brand" href="/">regx64</a>
+    <nav class="nav-links" aria-label="주요 메뉴">
+      <a href="/#work">작업</a>
+      <a href="/notes/">노트</a>
+      <a href="/blog/">블로그</a>
+      <a class="nav-icon" href="/search/" aria-label="검색"><svg viewBox="0 0 24 24" width="17" height="17" aria-hidden="true"><circle cx="10.5" cy="10.5" r="6.5" fill="none" stroke="currentColor" stroke-width="2"/><path d="M15.5 15.5 21 21" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg></a>
+      <a class="nav-lang" href="/en/" lang="en" hreflang="en">EN</a>
+    </nav>
+  </div>
+</header>
+
+<main id="main" class="lost">
+  <p class="lost-code">404</p>
+  <h1 class="lost-title">이 주소에는<br>아무것도 없습니다.</h1>
+  <p class="lost-lede">주소가 바뀌었거나 지워진 페이지일 수 있습니다. 찾던 걸 검색해 보세요.</p>
+  <form class="lost-search" action="/search/" method="get" role="search">
+    <label class="skip" for="q">검색어</label>
+    <input id="q" name="q" type="search" placeholder="예: 시스톨릭 배열, KDAA" autocomplete="off">
+    <button type="submit">검색</button>
+  </form>
+  <p class="ch-links"><a class="more" href="/">처음으로</a><a class="more" href="/notes/">엔지니어링 노트</a><a class="more" href="/blog/">블로그</a></p>
+</main>
+
+<footer class="foot">
+  <div class="foot-inner">
+    <p class="foot-tag">트랜지스터부터 컴파일러까지.</p>
+    <nav class="foot-links" aria-label="바닥 메뉴">
+      <a href="/#work">작업</a>
+      <a href="/notes/">노트</a>
+      <a href="/blog/">블로그</a>
+      <a href="/cv/">이력</a>
+      <a href="/en/" lang="en">English</a>
+      <a href="https://github.com/regx64">regx64</a>
+    </nav>
+  </div>
+</footer>
+<script>
+  // 검색창에 지금 주소의 마지막 부분을 넣어 둠 (예: /sytolic/ → sytolic)
+  (() => {
+    const last = decodeURIComponent(location.pathname).split('/').filter(Boolean).pop() || '';
+    const q = document.getElementById('q');
+    if (q && last && !/\.(html?|php)$/.test(last)) q.value = last.replace(/[-_]+/g, ' ');
+  })();
+</script>
+</body>
+</html>

@@ -5,6 +5,20 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>KDAA | regx64</title>
 <meta name="description" content="키보드 소리만으로 입력을 알아내는 음향 사이드채널 공격을 한글 두벌식 자판에 적용하는 팀 연구입니다. 음향 프런트엔드(CNN)가 타건음을 38개 기호로 분류하고, 두벌식 오토마타가 음절 규칙으로 오류를 걸러 한글 문장을 복원합니다.">
+<link rel="canonical" href="https://regx64.github.io/kdaa/">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="regx64">
+<meta property="og:locale" content="ko_KR">
+<meta property="og:title" content="KDAA">
+<meta property="og:description" content="키보드 소리만으로 입력을 알아내는 음향 사이드채널 공격을 한글 두벌식 자판에 적용하는 팀 연구입니다. 음향 프런트엔드(CNN)가 타건음을 38개 기호로 분류하고, 두벌식 오토마타가 음절 규칙으로 오류를 걸러 한글 문장을 복원합니다.">
+<meta property="og:url" content="https://regx64.github.io/kdaa/">
+<meta property="og:image" content="https://regx64.github.io/og/kdaa.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="alternate" type="application/rss+xml" title="regx64 엔지니어링 노트" href="/notes/rss.xml">
+<link rel="alternate" type="application/rss+xml" title="regx64 블로그" href="/blog/rss.xml">
+<meta name="theme-color" content="#FFFFFF">
 <link rel="icon" href="../favicon.ico" sizes="48x48">
 <link rel="icon" href="../favicon.svg" type="image/svg+xml">
 <link rel="apple-touch-icon" href="../apple-touch-icon.png">
@@ -31,14 +45,15 @@
       <a href="../#kdaa">작업</a>
       <a href="../notes/">노트</a>
       <a href="../blog/">블로그</a>
-      <a href="https://github.com/regx64">GitHub</a>
+      <a class="nav-icon" href="../search/" aria-label="검색"><svg viewBox="0 0 24 24" width="17" height="17" aria-hidden="true"><circle cx="10.5" cy="10.5" r="6.5" fill="none" stroke="currentColor" stroke-width="2"/><path d="M15.5 15.5 21 21" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg></a>
+      <a class="nav-lang" href="../en/" lang="en" hreflang="en">EN</a>
     </nav>
   </div>
 </header>
 
 <canvas id="gl" aria-hidden="true"></canvas>
 
-<main id="main" class="detail">
+<main id="main" data-pagefind-body class="detail">
 
   <section class="panel tone-b">
     <div class="copy">
@@ -46,6 +61,7 @@
       <p class="headline">타건음만 듣고<br>한글을 읽을 수 있을까.</p>
       <p class="body">키보드 소리만으로 입력을 알아내는 음향 사이드채널 공격(ASCA)을 한글 두벌식 자판에 적용하는 팀 연구입니다. 영문과 달리 한글은 자모가 음절로 조합되는 규칙이 있어서, 분류기가 틀린 자모도 두벌식 오토마타가 걸러 낼 수 있습니다. 저는 타건음 하나를 38개 기호로 분류하는 음향 프런트엔드(CNN)를 맡았습니다.</p>
       <p class="meta">Korean Dubeolsik Acoustic Attack / 팀 연구, 진행 중 · 담당: 음향 프런트엔드</p>
+      <p class="updated" data-page="/kdaa/" data-repo="regx64/KDAA" hidden></p>
       <div class="actions">
         <a class="btn" href="https://github.com/regx64/KDAA">GitHub에서 보기</a>
         <a href="https://github.com/regx64/classism">음향 프런트엔드 코드 (classism) →</a>
@@ -180,6 +196,8 @@
       <a href="../#work">작업</a>
       <a href="../notes/">노트</a>
       <a href="../blog/">블로그</a>
+      <a href="../cv/">이력</a>
+      <a href="../en/" lang="en">English</a>
       <a href="https://github.com/regx64">regx64</a>
       <a href="https://github.com/twopercenz">twopercenz</a>
     </nav>

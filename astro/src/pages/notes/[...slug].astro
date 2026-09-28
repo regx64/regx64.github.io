@@ -21,7 +21,7 @@ const next = notes[i - 1];
 const seriesMates = note.data.series ? await notesInSeries(note.data.series, notes) : [];
 const seriesIndex = seriesMates.findIndex((n) => n.slug === note.slug);
 ---
-<Layout title={note.data.title} description={note.data.description}>
+<Layout title={note.data.title} description={note.data.description} type="article">
   <h1>{note.data.title}</h1>
   <p class="lede">{note.data.description}</p>
   <p class="notes-meta">

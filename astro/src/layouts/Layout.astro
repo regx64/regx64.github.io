@@ -2,8 +2,16 @@
 interface Props {
   title: string;
   description: string;
+  image?: string;        // 공유 미리보기 이미지. 없으면 섹션 기본 이미지
+  type?: 'website' | 'article';
+  noindex?: boolean;     // 검색(pagefind)과 검색엔진에서 제외
 }
-const { title, description } = Astro.props;
+const { title, description, image, type = 'website', noindex = false } = Astro.props;
+const SITE = 'https://regx64.github.io';
+const path = Astro.url.pathname;
+const section = path.startsWith('/blog/') ? 'blog' : 'notes';
+const ogImage = image ? new URL(image, SITE).href : `${SITE}/og/${section}.png`;
+const canonical = new URL(path, SITE).href;
 ---
 <!doctype html>
 <html lang="ko">
@@ -12,6 +20,19 @@ const { title, description } = Astro.props;
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>{title} | regx64</title>
 <meta name="description" content={description}>
+<meta name="theme-color" content="#FFFFFF">
+{noindex && <meta name="robots" content="noindex">}
+<link rel="canonical" href={canonical}>
+<meta property="og:type" content={type}>
+<meta property="og:site_name" content="regx64">
+<meta property="og:locale" content="ko_KR">
+<meta property="og:title" content={title}>
+<meta property="og:description" content={description}>
+<meta property="og:url" content={canonical}>
+<meta property="og:image" content={ogImage}>
+<meta name="twitter:card" content="summary_large_image">
+<link rel="alternate" type="application/rss+xml" title="regx64 엔지니어링 노트" href="/notes/rss.xml">
+<link rel="alternate" type="application/rss+xml" title="regx64 블로그" href="/blog/rss.xml">
 <link rel="icon" href="/favicon.ico" sizes="48x48">
 <link rel="icon" href="/favicon.svg" type="image/svg+xml">
 <link rel="apple-touch-icon" href="/apple-touch-icon.png">
@@ -42,7 +63,7 @@ const { title, description } = Astro.props;
   .notes-doc article code {
     font-family: var(--mono);
     font-size: 0.875em;
-    background: rgba(0, 0, 0, 0.06);
+    background: var(--hover);
     padding: 0.1em 0.35em;
     border-radius: 0.3em;
   }
@@ -86,7 +107,7 @@ const { title, description } = Astro.props;
     gap: 1.5rem;
     margin-top: 3rem;
     padding-top: 2rem;
-    border-top: 1px solid rgba(0, 0, 0, 0.1);
+    border-top: 1px solid var(--line);
     font-size: 0.9375rem;
   }
   .notes-pager a { text-decoration: none; font-weight: 600; }
@@ -107,8 +128,8 @@ const { title, description } = Astro.props;
     color: var(--ink);
     transition: background-color 0.2s;
   }
-  .chip:hover { background: #E8E8ED; }
-  .chip.is-active { background: var(--ink); color: #FFFFFF; }
+  .chip:hover { background: var(--hover); }
+  .chip.is-active { background: var(--ink); color: var(--on-ink); }
   .post-hero { margin: 0 0 2rem; }
   .post-hero img { display: block; width: 100%; max-height: 32rem; object-fit: cover; border-radius: 1.25rem; }
   .post-audio { margin: 0 0 2rem; padding: 1.1rem 1.25rem; border-radius: 1.25rem; background: var(--bg-alt); }
@@ -119,6 +140,9 @@ const { title, description } = Astro.props;
   .notes-doc article img { max-width: 100%; height: auto; border-radius: 1rem; }
   .notes-doc article audio { margin: 1.25rem 0; }
   .post-tags { margin-top: 2.5rem; }
+  .list-links { display: flex; flex-wrap: wrap; gap: 0.5rem 1.5rem; margin: 1.25rem 0 0; font-size: 0.875rem; }
+  .list-links a { color: var(--link); text-decoration: none; }
+  .list-links a:hover { text-decoration: underline; }
 
   /* 태그 */
   .tag-row { margin: 0 0 1.5rem; display: flex; flex-wrap: wrap; gap: 0.5rem; }
@@ -128,7 +152,7 @@ const { title, description } = Astro.props;
     color: var(--muted);
     text-decoration: none;
     padding: 0.15rem 0.55rem;
-    border: 1px solid rgba(0, 0, 0, 0.15);
+    border: 1px solid var(--line-strong);
     border-radius: 999px;
   }
   .tag:hover { color: var(--ink); border-color: var(--ink); }
@@ -164,7 +188,7 @@ const { title, description } = Astro.props;
     width: max-content;
     max-width: min(20rem, 80vw);
     background: var(--ink);
-    color: #fff;
+    color: var(--on-ink);
     font-size: 0.8125rem;
     line-height: 1.55;
     font-weight: 400;
@@ -223,12 +247,13 @@ const { title, description } = Astro.props;
       <a href="/#work">작업</a>
       <a href="/notes/">노트</a>
       <a href="/blog/">블로그</a>
-      <a href="https://github.com/regx64">GitHub</a>
+      <a class="nav-icon" href="/search/" aria-label="검색"><svg viewBox="0 0 24 24" width="17" height="17" aria-hidden="true"><circle cx="10.5" cy="10.5" r="6.5" fill="none" stroke="currentColor" stroke-width="2"/><path d="M15.5 15.5 21 21" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg></a>
+      <a class="nav-lang" href="/en/" lang="en" hreflang="en">EN</a>
     </nav>
   </div>
 </header>
 
-<main id="main" class="notes-doc">
+<main id="main" class="notes-doc" data-pagefind-body={noindex ? undefined : ''}>
   <slot />
 </main>
 
@@ -239,6 +264,8 @@ const { title, description } = Astro.props;
       <a href="/#work">작업</a>
       <a href="/notes/">노트</a>
       <a href="/blog/">블로그</a>
+      <a href="/cv/">이력</a>
+      <a href="/en/" lang="en">English</a>
       <a href="https://github.com/regx64">regx64</a>
       <a href="https://github.com/twopercenz">twopercenz</a>
     </nav>

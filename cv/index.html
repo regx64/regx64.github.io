@@ -1,0 +1,147 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>이력 | regx64</title>
+<meta name="description" content="방정훈의 연구, 프로젝트, 수상, 기술을 한 페이지에 정리한 이력">
+<link rel="canonical" href="https://regx64.github.io/cv/">
+<meta property="og:type" content="profile">
+<meta property="og:site_name" content="regx64">
+<meta property="og:locale" content="ko_KR">
+<meta property="og:title" content="방정훈 · 이력">
+<meta property="og:description" content="방정훈의 연구, 프로젝트, 수상, 기술을 한 페이지에 정리한 이력">
+<meta property="og:url" content="https://regx64.github.io/cv/">
+<meta property="og:image" content="https://regx64.github.io/og/cv.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="theme-color" content="#FFFFFF">
+<link rel="icon" href="../favicon.ico" sizes="48x48">
+<link rel="icon" href="../favicon.svg" type="image/svg+xml">
+<link rel="apple-touch-icon" href="../apple-touch-icon.png">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css">
+<link rel="stylesheet" href="../style.css">
+<script defer src="../site.js"></script>
+</head>
+<body>
+<a class="skip" href="#main">본문으로 건너뛰기</a>
+
+<header class="nav">
+  <div class="nav-inner">
+    <a class="brand" href="../">regx64</a>
+    <nav class="nav-links" aria-label="주요 메뉴">
+      <a href="../#work">작업</a>
+      <a href="../notes/">노트</a>
+      <a href="../blog/">블로그</a>
+      <a class="nav-icon" href="../search/" aria-label="검색"><svg viewBox="0 0 24 24" width="17" height="17" aria-hidden="true"><circle cx="10.5" cy="10.5" r="6.5" fill="none" stroke="currentColor" stroke-width="2"/><path d="M15.5 15.5 21 21" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg></a>
+      <a class="nav-lang" href="../en/" lang="en" hreflang="en">EN</a>
+    </nav>
+  </div>
+</header>
+
+<main id="main" class="cv" data-pagefind-body>
+
+  <header class="cv-head">
+    <div>
+      <h1 class="cv-name">방정훈 <span lang="en">Jeonghoon Bang</span></h1>
+      <p class="cv-role">컴퓨터공학을 공부하는 학생 · 부산</p>
+      <p class="cv-intro">컴퓨터가 실제로 어떻게 돌아가는지 아래층부터 직접 만들어 보며 배웁니다. CPU 구조, x86-64, 컴파일러, 하드웨어 보안에 관심이 있습니다.</p>
+    </div>
+    <ul class="cv-links">
+      <li><a href="https://regx64.github.io">regx64.github.io</a></li>
+      <li><a href="https://github.com/regx64">github.com/regx64</a></li>
+      <li><a href="https://orcid.org/0009-0009-0896-3833">ORCID 0009-0009-0896-3833</a></li>
+    </ul>
+    <p class="cv-actions no-print"><button type="button" class="btn" onclick="window.print()">PDF로 저장</button></p>
+  </header>
+
+  <section class="cv-sec">
+    <h2>연구</h2>
+    <div>
+      <article class="cv-item">
+        <p class="cv-when">2026</p>
+        <div>
+          <h3><a href="../systolic/">폰 노이만 병목과 시스톨릭 배열</a></h3>
+          <p class="cv-meta"><span lang="en">Von Neumann Bottleneck and Systolic Array Architecture: An Empirical Efficiency Comparison</span> · Zenodo · <a href="https://doi.org/10.5281/zenodo.22038219">doi:10.5281/zenodo.22038219</a> · 과학탐구 프로젝트, 4인 팀</p>
+          <ul>
+            <li>아두이노 나노(ATmega328P) 5대로 2×2 출력 고정형 시스톨릭 배열과 폰 노이만식 순차 처리 대조군을 구현</li>
+            <li>데이터 이동 횟수는 25% 줄었지만 처리 시간은 295~326배 늘어남을 5회 반복 측정으로 확인</li>
+            <li>원인을 이동 1회당 비용(3.23 µs 대 1,346.9 µs, 약 417배)과 스큐 대기(49.5%)로 분해해 분석</li>
+          </ul>
+        </div>
+      </article>
+      <article class="cv-item">
+        <p class="cv-when">2026 · 진행 중</p>
+        <div>
+          <h3><a href="../kdaa/">KDAA: 한글 두벌식 음향 사이드채널 공격</a></h3>
+          <p class="cv-meta"><span lang="en">Korean Dubeolsik Acoustic Attack</span> · 팀 연구 · 담당: 음향 프런트엔드</p>
+          <ul>
+            <li>타건음 log-mel 스펙트로그램을 자모 33개와 특수키 5개, 38개 기호로 분류하는 CNN 설계와 구현</li>
+            <li>LM 서버 팀과 맞춘 출력 형식(kdaa.afe.v1)으로 top-N 후보와 확률을 넘겨, 두벌식 오토마타가 분류 오류를 걸러 내게 함</li>
+            <li>ESP32-S3에 int8로 올려 타건당 30 ms 안에 분류하는 것을 목표로 함</li>
+          </ul>
+        </div>
+      </article>
+    </div>
+  </section>
+
+  <section class="cv-sec">
+    <h2>프로젝트</h2>
+    <div>
+      <ul class="cv-projects">
+        <li><span class="cv-when">2026</span><b><a href="../hobby-os/">Hobby OS</a></b><span>x86-64 어셈블리로 부트섹터부터 보호 모드, 페이징, 롱 모드를 거쳐 C 커널과 VGA 텍스트 드라이버까지</span></li>
+        <li><span class="cv-when">2026</span><b><a href="../cotton/">Cotton</a></b><span>식 중심 프로그래밍 언어. C++17 레퍼런스 인터프리터 4,134줄, 외부 의존성 없음</span></li>
+        <li><span class="cv-when">2026</span><b><a href="../percentage/">Percentage</a></b><span>한국어 개방형 위키. 위키 문법 PerMark 파서 직접 구현, Next.js · Supabase, 테스트 약 200개</span></li>
+        <li><span class="cv-when">2026</span><b><a href="../music-player/">music.player</a></b><span>개인용 뮤직 플레이어. Oracle Cloud 무료 VM 두 대에 상시 비용 $0으로 운영</span></li>
+        <li><span class="cv-when">2026</span><b><a href="../muxic/">MUXIC.js</a></b><span>URL을 받아 mp3 스트림을 여는 TypeScript 라이브러리. resolver와 engine 두 층 구조</span></li>
+        <li><span class="cv-when">2026 · 구현 중</span><b><a href="../ksca/">KSCA</a></b><span>청소년 컴퓨터 사이언스 학회 논문 아카이브. 영구 식별자, APA·BibTeX 인용, 버전 관리</span></li>
+        <li><span class="cv-when">2026</span><b><a href="https://github.com/regx64/liner-notes">liner-notes</a></b><span>가사 구절과 해석을 나누는 커뮤니티. Postgres 전문 검색</span></li>
+        <li><span class="cv-when">2026</span><b><a href="https://github.com/regx64/gijiguk">기지국</a></b><span>평가원 국어 기출 지문 239개 아카이브와 7자리 ID 체계</span></li>
+        <li><span class="cv-when">2025</span><b><a href="https://github.com/regx64/boj-cli">boj-cli</a></b><span>백준 온라인 저지 터미널 도구. Rust</span></li>
+        <li><span class="cv-when">2025</span><b><a href="https://github.com/regx64/chespedia">chespedia</a></b><span>체스 지식 사이트. Next.js · MDX · Rust</span></li>
+        <li><span class="cv-when">2024–2025</span><b><a href="https://github.com/regx64/Sqimp">Sqimp</a></b><span>QEMU GUI. Tauri · Next.js, 2인 공동 개발</span></li>
+      </ul>
+    </div>
+  </section>
+
+  <section class="cv-sec">
+    <h2>수상 · 교육</h2>
+    <div>
+      <ul class="cv-projects">
+        <li><span class="cv-when">2024</span><b>코리아 코드페어</b><span>해커톤 부문 본선 진출</span></li>
+        <li><span class="cv-when">2024</span><b>임베디드SW 경진대회</b><span>세종대학교 총장상</span></li>
+        <li><span class="cv-when">2023–2025</span><b>부산광역시교육청 정보영재교육원</b><span>3년 과정, 학업 우수상</span></li>
+      </ul>
+    </div>
+  </section>
+
+  <section class="cv-sec">
+    <h2>기술</h2>
+    <div>
+      <dl class="cv-skills">
+        <div><dt>언어</dt><dd>x86-64 어셈블리(NASM), C, C++17, Rust, TypeScript, Python</dd></div>
+        <div><dt>웹 · 인프라</dt><dd>Next.js, Supabase(Postgres), Docker, Oracle Cloud, GitHub Actions, Tauri</dd></div>
+        <div><dt>하드웨어 · 시스템</dt><dd>Arduino(ATmega328P), ESP32-S3, QEMU, KiCad</dd></div>
+        <div><dt>머신러닝</dt><dd>PyTorch, 오디오 신호 처리(log-mel)</dd></div>
+      </dl>
+    </div>
+  </section>
+
+</main>
+
+<footer class="foot">
+  <div class="foot-inner">
+    <p class="foot-tag">트랜지스터부터 컴파일러까지.</p>
+    <nav class="foot-links" aria-label="바닥 메뉴">
+      <a href="../#work">작업</a>
+      <a href="../notes/">노트</a>
+      <a href="../blog/">블로그</a>
+      <a href="../cv/">이력</a>
+      <a href="../en/" lang="en">English</a>
+      <a href="https://github.com/regx64">regx64</a>
+    </nav>
+  </div>
+</footer>
+</body>
+</html>
