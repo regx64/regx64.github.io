@@ -4,7 +4,7 @@ import { defineConfig } from 'astro/config';
 // Astro는 /notes/(엔지니어링 노트)와 /blog/(블로그)만 만든다.
 // 배포 때 astro/dist를 사이트 루트에 합친다 (.github/workflows/deploy.yml).
 export default defineConfig({
-  site: 'https://regx64.github.io',
+  site: 'https://regx64.kro.kr',
   outDir: './dist',
   trailingSlash: 'always',
 });

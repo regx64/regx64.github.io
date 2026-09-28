@@ -1,4 +1,4 @@
 User-agent: *
 Disallow: /admin/
 
-Sitemap: https://regx64.github.io/sitemap.xml
+Sitemap: https://regx64.kro.kr/sitemap.xml
