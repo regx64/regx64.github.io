@@ -92,6 +92,34 @@ const { title, description } = Astro.props;
   .notes-pager a { text-decoration: none; font-weight: 600; }
   .notes-pager a:hover { text-decoration: underline; }
 
+  /* 블로그 */
+  .eyebrow-sm { margin: 0 0 0.75rem; font-size: 1.0625rem; font-weight: 600; color: var(--muted); }
+  .eyebrow-sm a { color: inherit; text-decoration: none; }
+  .eyebrow-sm a:hover { color: var(--link); }
+  .notes-doc .lede a { color: var(--link); text-decoration: none; }
+  .chip-row { display: flex; flex-wrap: wrap; gap: 0.5rem; margin: 0 0 0.5rem; }
+  .chip {
+    padding: 0.4rem 0.95rem;
+    border-radius: 999px;
+    background: var(--bg-alt);
+    font-size: 0.875rem;
+    text-decoration: none;
+    color: var(--ink);
+    transition: background-color 0.2s;
+  }
+  .chip:hover { background: #E8E8ED; }
+  .chip.is-active { background: var(--ink); color: #FFFFFF; }
+  .post-hero { margin: 0 0 2rem; }
+  .post-hero img { display: block; width: 100%; max-height: 32rem; object-fit: cover; border-radius: 1.25rem; }
+  .post-audio { margin: 0 0 2rem; padding: 1.1rem 1.25rem; border-radius: 1.25rem; background: var(--bg-alt); }
+  .post-audio figcaption { margin: 0 0 0.6rem; font-size: 0.9375rem; font-weight: 600; color: var(--ink); }
+  .post-audio audio, .notes-doc article audio { display: block; width: 100%; }
+  .post-video, .notes-doc article .video { position: relative; margin: 0 0 2rem; aspect-ratio: 16 / 9; border-radius: 1.25rem; overflow: hidden; background: #000; }
+  .post-video iframe, .notes-doc article .video iframe { position: absolute; inset: 0; width: 100%; height: 100%; border: 0; }
+  .notes-doc article img { max-width: 100%; height: auto; border-radius: 1rem; }
+  .notes-doc article audio { margin: 1.25rem 0; }
+  .post-tags { margin-top: 2.5rem; }
+
   /* 태그 */
   .tag-row { margin: 0 0 1.5rem; display: flex; flex-wrap: wrap; gap: 0.5rem; }
   .tag {
@@ -194,6 +222,7 @@ const { title, description } = Astro.props;
     <nav class="nav-links" aria-label="주요 메뉴">
       <a href="/#work">작업</a>
       <a href="/notes/">노트</a>
+      <a href="/blog/">블로그</a>
       <a href="https://github.com/regx64">GitHub</a>
     </nav>
   </div>
@@ -209,6 +238,7 @@ const { title, description } = Astro.props;
     <nav class="foot-links" aria-label="바닥 메뉴">
       <a href="/#work">작업</a>
       <a href="/notes/">노트</a>
+      <a href="/blog/">블로그</a>
       <a href="https://github.com/regx64">regx64</a>
       <a href="https://github.com/twopercenz">twopercenz</a>
     </nav>

@@ -1,0 +1,31 @@
+---
+import Layout from '../../../layouts/Layout.astro';
+import PostList from '../../../components/PostList.astro';
+import { allPosts, allCategories, categorySlug } from '../../../lib/blog';
+
+export async function getStaticPaths() {
+  const posts = await allPosts();
+  const categories = await allCategories(posts);
+  return categories.map((category) => ({
+    params: { category: categorySlug(category) },
+    props: { category, categories, posts: posts.filter((p) => p.data.category === category) },
+  }));
+}
+
+const { category, categories, posts } = Astro.props;
+---
+<Layout title={`${category} · 블로그`} description={`블로그의 ${category} 글 목록`}>
+  <p class="eyebrow-sm"><a href="/blog/">블로그</a></p>
+  <h1>{category}</h1>
+
+  <nav class="chip-row" aria-label="카테고리">
+    <a class="chip" href="/blog/">전체</a>
+    {categories.map((c) => (
+      c === category
+        ? <a class="chip is-active" href={`/blog/category/${categorySlug(c)}/`} aria-current="page">{c}</a>
+        : <a class="chip" href={`/blog/category/${categorySlug(c)}/`}>{c}</a>
+    ))}
+  </nav>
+
+  <PostList posts={posts} />
+</Layout>
