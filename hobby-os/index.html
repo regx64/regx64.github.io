@@ -5,6 +5,20 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Hobby OS | regx64</title>
 <meta name="description" content="x86-64 어셈블리로 만드는 운영체제입니다. 전원이 들어온 뒤 BIOS가 읽어 오는 512바이트에서 시작해, 보호 모드와 페이징, 64비트 롱 모드를 지나 C로 짠 커널에서 VGA 드라이버가 돌아가는 데까지 왔습니다.">
+<link rel="canonical" href="https://regx64.github.io/hobby-os/">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="regx64">
+<meta property="og:locale" content="ko_KR">
+<meta property="og:title" content="Hobby OS">
+<meta property="og:description" content="x86-64 어셈블리로 만드는 운영체제입니다. 전원이 들어온 뒤 BIOS가 읽어 오는 512바이트에서 시작해, 보호 모드와 페이징, 64비트 롱 모드를 지나 C로 짠 커널에서 VGA 드라이버가 돌아가는 데까지 왔습니다.">
+<meta property="og:url" content="https://regx64.github.io/hobby-os/">
+<meta property="og:image" content="https://regx64.github.io/og/hobby-os.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="alternate" type="application/rss+xml" title="regx64 엔지니어링 노트" href="/notes/rss.xml">
+<link rel="alternate" type="application/rss+xml" title="regx64 블로그" href="/blog/rss.xml">
+<meta name="theme-color" content="#FFFFFF">
 <link rel="icon" href="../favicon.ico" sizes="48x48">
 <link rel="icon" href="../favicon.svg" type="image/svg+xml">
 <link rel="apple-touch-icon" href="../apple-touch-icon.png">
@@ -31,14 +45,15 @@
       <a href="../#os">작업</a>
       <a href="../notes/">노트</a>
       <a href="../blog/">블로그</a>
-      <a href="https://github.com/regx64">GitHub</a>
+      <a class="nav-icon" href="../search/" aria-label="검색"><svg viewBox="0 0 24 24" width="17" height="17" aria-hidden="true"><circle cx="10.5" cy="10.5" r="6.5" fill="none" stroke="currentColor" stroke-width="2"/><path d="M15.5 15.5 21 21" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg></a>
+      <a class="nav-lang" href="../en/" lang="en" hreflang="en">EN</a>
     </nav>
   </div>
 </header>
 
 <canvas id="gl" aria-hidden="true"></canvas>
 
-<main id="main" class="detail">
+<main id="main" data-pagefind-body class="detail">
 
   <section class="panel tone-dark">
     <div class="copy">
@@ -46,6 +61,7 @@
       <p class="headline">부트섹터부터<br>VGA 드라이버까지.</p>
       <p class="body"><span class='nowrap'>x86-64</span> 어셈블리로 만드는 운영체제입니다. 전원이 들어온 뒤 BIOS가 읽어 오는 512바이트에서 시작해, 보호 모드와 페이징, 64비트 롱 모드를 지나 C로 짠 커널에서 VGA 드라이버가 돌아가는 데까지 왔습니다.</p>
       <p class="meta">NASM, C, QEMU</p>
+      <p class="updated" data-page="/hobby-os/" hidden></p>
     </div>
     <div class="stage" data-model="os" role="img" aria-label="C 커널이 VGA 텍스트 버퍼에 찍는 두 줄이 나타나는 모니터"></div>
   </section>
@@ -259,6 +275,8 @@ CR4=00000020           5번 비트 PAE</code></pre>
       <a href="../#work">작업</a>
       <a href="../notes/">노트</a>
       <a href="../blog/">블로그</a>
+      <a href="../cv/">이력</a>
+      <a href="../en/" lang="en">English</a>
       <a href="https://github.com/regx64">regx64</a>
       <a href="https://github.com/twopercenz">twopercenz</a>
     </nav>

@@ -1,0 +1,95 @@
+---
+import Layout from '../../layouts/Layout.astro';
+import { allPosts, formatDate } from '../../lib/blog';
+
+// 블로그 글 중 오디오 파일이나 YouTube 영상이 붙은 것만 모은다
+const posts = await allPosts();
+const tracks = posts.filter((p) => p.data.audio);
+const videos = posts.filter((p) => !p.data.audio && p.data.youtube);
+---
+<Layout title="모아 듣기 · 블로그" description="블로그에 올린 곡과 데모를 한곳에서 이어 듣기">
+  <p class="eyebrow-sm"><a href="/blog/">블로그</a></p>
+  <h1>모아 듣기.</h1>
+  <p class="lede">블로그에 올린 곡과 데모를 최신순으로 이어서 재생합니다. 곡 이름을 누르면 그 글로 갑니다.</p>
+
+  {tracks.length === 0 && videos.length === 0 && (
+    <p class="post-empty">아직 올린 곡이 없습니다. 블로그 글에 오디오 파일을 붙이면 여기에 자동으로 모입니다.</p>
+  )}
+
+  {tracks.length > 0 && (
+    <section class="player" aria-label="재생 목록">
+      <div class="player-now">
+        <p class="player-label">지금 재생</p>
+        <p class="player-title" id="now-title">{tracks[0].data.audioTitle ?? tracks[0].data.title}</p>
+        <audio id="player-audio" controls preload="metadata" src={tracks[0].data.audio}></audio>
+      </div>
+      <ol class="tracklist">
+        {tracks.map((t, i) => (
+          <li class={i === 0 ? 'is-current' : ''}>
+            <button type="button" class="track-play" data-src={t.data.audio} data-title={t.data.audioTitle ?? t.data.title} aria-label={`${t.data.audioTitle ?? t.data.title} 재생`}>
+              <span class="track-no">{String(i + 1).padStart(2, '0')}</span>
+            </button>
+            <a class="track-title" href={`/blog/${t.slug}/`}>{t.data.audioTitle ?? t.data.title}</a>
+            <span class="track-meta">{t.data.category} · {formatDate(t.data.date)}</span>
+          </li>
+        ))}
+      </ol>
+    </section>
+  )}
+
+  {videos.length > 0 && (
+    <section class="video-list">
+      <h2>영상</h2>
+      <ul class="tracklist">
+        {videos.map((v) => (
+          <li>
+            <span class="track-no">▶</span>
+            <a class="track-title" href={`/blog/${v.slug}/`}>{v.data.title}</a>
+            <span class="track-meta">{v.data.category} · {formatDate(v.data.date)}</span>
+          </li>
+        ))}
+      </ul>
+    </section>
+  )}
+</Layout>
+
+<style is:global>
+  .player { margin-top: 2.5rem; }
+  .player-now { padding: 1.5rem; border-radius: 1.25rem; background: var(--bg-alt); }
+  .player-label { margin: 0 0 0.25rem; font-family: var(--mono); font-size: 0.75rem; color: var(--muted); }
+  .player-title { margin: 0 0 1rem; font-size: 1.375rem; font-weight: 700; letter-spacing: -0.03em; }
+  .player-now audio { display: block; width: 100%; }
+  .tracklist { list-style: none; margin: 1.5rem 0 0; padding: 0; border-top: 1px solid var(--line); }
+  .tracklist li { display: grid; grid-template-columns: 2.5rem minmax(0, 1fr) auto; align-items: baseline; gap: 0.75rem; padding: 0.9rem 0; border-bottom: 1px solid var(--line); }
+  .track-play { all: unset; cursor: pointer; }
+  .track-play:focus-visible { outline: 2px solid var(--link); outline-offset: 3px; border-radius: 4px; }
+  .track-no { font-family: var(--mono); font-size: 0.8125rem; color: var(--muted); }
+  .tracklist li.is-current .track-no, .track-play:hover .track-no { color: var(--link); }
+  .track-title { font-weight: 600; text-decoration: none; }
+  .track-title:hover { color: var(--link); }
+  .tracklist li.is-current .track-title { color: var(--link); }
+  .track-meta { font-size: 0.8125rem; color: var(--muted); white-space: nowrap; }
+  .video-list { margin-top: 3rem; }
+  .video-list h2 { font-size: 1.25rem; margin: 0; }
+</style>
+
+<script is:inline>
+  // 목록에서 곡을 고르면 재생하고, 한 곡이 끝나면 다음 곡으로 넘어감
+  (() => {
+    const audio = document.getElementById('player-audio');
+    if (!audio) return;
+    const title = document.getElementById('now-title');
+    const items = [...document.querySelectorAll('.tracklist li')].filter((li) => li.querySelector('.track-play'));
+    let cur = 0;
+    function play(i) {
+      cur = i;
+      const btn = items[i].querySelector('.track-play');
+      items.forEach((li, j) => li.classList.toggle('is-current', j === i));
+      audio.src = btn.dataset.src;
+      title.textContent = btn.dataset.title;
+      audio.play().catch(() => {});
+    }
+    items.forEach((li, i) => li.querySelector('.track-play').addEventListener('click', () => play(i)));
+    audio.addEventListener('ended', () => { if (cur + 1 < items.length) play(cur + 1); });
+  })();
+</script>

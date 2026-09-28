@@ -5,6 +5,21 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>regx64 — 트랜지스터부터 컴파일러까지</title>
 <meta name="description" content="트랜지스터부터 컴파일러까지, 컴퓨터를 아래층부터 만들어 보며 공부하는 학생의 프로젝트와 엔지니어링 노트">
+<link rel="canonical" href="https://regx64.github.io/">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="regx64">
+<meta property="og:locale" content="ko_KR">
+<meta property="og:title" content="방정훈 · regx64">
+<meta property="og:description" content="트랜지스터부터 컴파일러까지, 컴퓨터를 아래층부터 만들어 보며 공부하는 학생의 프로젝트와 엔지니어링 노트">
+<meta property="og:url" content="https://regx64.github.io/">
+<meta property="og:image" content="https://regx64.github.io/og/home.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="alternate" type="application/rss+xml" title="regx64 엔지니어링 노트" href="/notes/rss.xml">
+<link rel="alternate" type="application/rss+xml" title="regx64 블로그" href="/blog/rss.xml">
+<link rel="alternate" hreflang="ko" href="https://regx64.github.io/">
+<link rel="alternate" hreflang="en" href="https://regx64.github.io/en/">
 <meta name="theme-color" content="#FFFFFF">
 <link rel="icon" href="favicon.ico" sizes="48x48">
 <link rel="icon" href="favicon.svg" type="image/svg+xml">
@@ -34,14 +49,15 @@
       <a href="notes/">노트</a>
       <a href="blog/">블로그</a>
       <a href="#about">소개</a>
-      <a href="https://github.com/regx64">GitHub</a>
+      <a class="nav-icon" href="search/" aria-label="검색"><svg viewBox="0 0 24 24" width="17" height="17" aria-hidden="true"><circle cx="10.5" cy="10.5" r="6.5" fill="none" stroke="currentColor" stroke-width="2"/><path d="M15.5 15.5 21 21" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg></a>
+      <a class="nav-lang" href="en/" lang="en" hreflang="en">EN</a>
     </nav>
   </div>
 </header>
 
 <canvas id="gl" aria-hidden="true"></canvas>
 
-<main id="main">
+<main id="main" data-pagefind-body>
 
   <!-- 첫 화면 -->
   <section class="hero" id="top">
@@ -458,7 +474,13 @@
       </div>
       <div class="about-text reveal">
         <p><strong>방정훈</strong>입니다. 컴퓨터공학을 공부하는 학생이고, 컴퓨터가 실제로 어떻게 돌아가는지 아래층부터 하나씩 만들어 보며 배우고 있습니다. CPU 구조, x86-64, 컴파일러, 하드웨어 보안에 관심이 있고, 회로이론과 미적분은 기초부터 따로 공부하는 중입니다.</p>
-        <p class="muted">코드는 <a href="https://github.com/regx64">@regx64</a>에 있습니다. ORCID <a href="https://orcid.org/0009-0009-0896-3833">0009-0009-0896-3833</a></p>
+        <ul class="contact" id="contact" aria-label="연락과 링크">
+          <li><span>이메일</span><a href="mailto:redbean.of@gmail.com">redbean.of@gmail.com</a></li>
+          <li><span>코드</span><a href="https://github.com/regx64">github.com/regx64</a></li>
+          <li><span>ORCID</span><a href="https://orcid.org/0009-0009-0896-3833">0009-0009-0896-3833</a></li>
+          <li><span>이력</span><a href="cv/">한 장으로 보기 · PDF</a></li>
+          <li><span>English</span><a href="en/" lang="en">Summary in English</a></li>
+        </ul>
         <ul class="awards" aria-label="수상과 교육 이력">
           <li><time>2024</time><span>코리아 코드페어 해커톤 부문 본선 진출</span></li>
           <li><time>2024</time><span>임베디드SW 경진대회 세종대학교 총장상</span></li>
@@ -481,6 +503,8 @@
       <a href="#work">작업</a>
       <a href="notes/">노트</a>
       <a href="blog/">블로그</a>
+      <a href="cv/">이력</a>
+      <a href="en/" lang="en">English</a>
       <a href="https://github.com/regx64">regx64</a>
       <a href="https://github.com/twopercenz">twopercenz</a>
     </nav>

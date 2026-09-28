@@ -1,0 +1,37 @@
+---
+import Layout from '../../layouts/Layout.astro';
+// 검색 색인(/pagefind/)은 배포 때 사이트 전체를 다 모은 뒤 만든다 (.github/workflows/deploy.yml)
+---
+<Layout title="검색" description="프로젝트, 엔지니어링 노트, 블로그 글 검색" noindex>
+  <h1>검색</h1>
+  <p class="lede">프로젝트, 엔지니어링 노트, 블로그 글을 한 번에 찾습니다.</p>
+  <link rel="stylesheet" href="/pagefind/pagefind-ui.css">
+  <div id="search"></div>
+  <p class="search-fallback" id="search-fallback" hidden>검색 색인은 배포된 사이트에서만 만들어집니다.</p>
+  <script is:inline src="/pagefind/pagefind-ui.js" onerror="document.getElementById('search-fallback').hidden = false"></script>
+  <script is:inline>
+    window.addEventListener('DOMContentLoaded', () => {
+      if (!window.PagefindUI) return;
+      const q = new URLSearchParams(location.search).get('q');
+      const ui = new PagefindUI({ element: '#search', showSubResults: true, showImages: false, resetStyles: false, autofocus: !q });
+      if (q) ui.triggerSearch(q);
+    });
+  </script>
+</Layout>
+
+<style is:global>
+  #search {
+    margin-top: 2rem;
+    --pagefind-ui-scale: 0.9;
+    --pagefind-ui-primary: var(--link);
+    --pagefind-ui-text: var(--ink);
+    --pagefind-ui-background: var(--bg);
+    --pagefind-ui-border: var(--line-strong);
+    --pagefind-ui-tag: var(--bg-alt);
+    --pagefind-ui-border-width: 1px;
+    --pagefind-ui-border-radius: 12px;
+    --pagefind-ui-font: var(--sans);
+  }
+  #search mark { background: rgba(0, 113, 227, 0.18); color: inherit; }
+  .search-fallback { color: var(--muted); }
+</style>

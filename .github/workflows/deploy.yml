@@ -20,6 +20,8 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v4
+        with:
+          fetch-depth: 0   # 페이지별 마지막 수정일을 git 기록에서 읽음
 
       - name: Setup Node
         uses: actions/setup-node@v4
@@ -43,6 +45,25 @@ jobs:
           cp -r !(_site|astro|.git|.github) _site/
           cp -r astro/dist/. _site/
           touch _site/.nojekyll
+
+      - name: Record page update dates
+        run: |
+          python3 - <<'PY'
+          import glob, json, subprocess
+          out = {}
+          for f in ['index.html'] + sorted(glob.glob('*/index.html')):
+              if f.startswith(('_site/', 'astro/', 'admin/')):
+                  continue
+              d = subprocess.run(['git', 'log', '-1', '--format=%cs', '--', f],
+                                 capture_output=True, text=True).stdout.strip()
+              if d:
+                  out['/' + f[:-len('index.html')]] = d
+          json.dump(out, open('_site/updated.json', 'w'))
+          print(out)
+          PY
+
+      - name: Build search index (Pagefind)
+        run: npx --yes pagefind@1 --site _site
 
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3

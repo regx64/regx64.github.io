@@ -1,0 +1,134 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>regx64 — From transistors to compilers</title>
+<meta name="description" content="Jeonghoon Bang, a computer engineering student in Busan, learning how computers work by building them from the bottom up: systolic arrays, acoustic side channels, a hobby OS and a programming language.">
+<link rel="canonical" href="https://regx64.github.io/en/">
+<link rel="alternate" hreflang="ko" href="https://regx64.github.io/">
+<link rel="alternate" hreflang="en" href="https://regx64.github.io/en/">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="regx64">
+<meta property="og:locale" content="en_US">
+<meta property="og:title" content="Jeonghoon Bang · regx64">
+<meta property="og:description" content="Learning how computers work by building them from the bottom up.">
+<meta property="og:url" content="https://regx64.github.io/en/">
+<meta property="og:image" content="https://regx64.github.io/og/en.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="theme-color" content="#FFFFFF">
+<link rel="icon" href="../favicon.ico" sizes="48x48">
+<link rel="icon" href="../favicon.svg" type="image/svg+xml">
+<link rel="apple-touch-icon" href="../apple-touch-icon.png">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css">
+<link rel="stylesheet" href="../style.css">
+<script defer src="../site.js"></script>
+</head>
+<body class="lang-en">
+<a class="skip" href="#main">Skip to content</a>
+
+<header class="nav">
+  <div class="nav-inner">
+    <a class="brand" href="./">regx64</a>
+    <nav class="nav-links" aria-label="Main">
+      <a href="#research">Research</a>
+      <a href="#projects">Projects</a>
+      <a href="#contact">Contact</a>
+      <a class="nav-lang" href="../" lang="ko" hreflang="ko">한국어</a>
+    </nav>
+  </div>
+</header>
+
+<main id="main" class="cv" data-pagefind-body>
+
+  <header class="en-hero">
+    <p class="eyebrow-en">Jeonghoon Bang · regx64</p>
+    <h1 class="en-title">From transistors<br>to compilers.</h1>
+    <p class="en-lede">I’m a computer engineering student in Busan, South Korea. I learn how computers actually work by building them from the bottom of the stack upward: computer architecture, x86-64, compilers and hardware security.</p>
+    <p class="note">Most project pages and notes on this site are in Korean. Links marked <span class="ko-tag">KO</span> go to Korean pages.</p>
+  </header>
+
+  <section class="cv-sec" id="research">
+    <h2>Research</h2>
+    <div>
+      <article class="cv-item">
+        <p class="cv-when">2026</p>
+        <div>
+          <h3><a href="https://doi.org/10.5281/zenodo.22038219">Von Neumann Bottleneck and Systolic Array Architecture: An Empirical Efficiency Comparison</a></h3>
+          <p class="cv-meta">Zenodo · doi:10.5281/zenodo.22038219 · science inquiry project, team of four · <a href="../systolic/">details <span class="ko-tag">KO</span></a></p>
+          <p>We built a 2×2 output-stationary systolic array from four Arduino Nano boards (ATmega328P, bit-banged GPIO links) and compared it against a sequential von Neumann–style baseline on the same matrix multiplications.</p>
+          <dl class="en-figures">
+            <div><dt>25%</dt><dd>less data movement (6K vs 8K moves)</dd></div>
+            <div><dt>295–326×</dt><dd>slower end to end</dd></div>
+            <div><dt>≈417×</dt><dd>higher cost per move (1,346.9 µs vs 3.23 µs)</dd></div>
+            <div><dt>1.0%</dt><dd>of grid time spent on actual MACs</dd></div>
+          </dl>
+          <p>Data reuse happened exactly as theory predicts, but moving each value between boards cost so much more than an on-chip access that the array lost overall. The result shows, in reverse, why processing elements have to live on the same chip.</p>
+        </div>
+      </article>
+      <article class="cv-item">
+        <p class="cv-when">2026 · ongoing</p>
+        <div>
+          <h3><a href="../kdaa/">KDAA: Korean Dubeolsik Acoustic Attack <span class="ko-tag">KO</span></a></h3>
+          <p class="cv-meta">Team research · my part: the acoustic front end · <a href="https://github.com/regx64/KDAA">GitHub</a></p>
+          <p>Acoustic side-channel attacks on keyboards have been studied almost only on English QWERTY. On the Korean Dubeolsik layout, jamo compose into syllables, so the composition rules act as a nearly deterministic filter on a classifier’s mistakes. I build the CNN that classifies each keystroke’s log-mel spectrogram into 38 symbols (33 jamo and 5 special keys) and emits top-N probabilities to the decoder, targeting int8 inference on an ESP32-S3.</p>
+        </div>
+      </article>
+    </div>
+  </section>
+
+  <section class="cv-sec" id="projects">
+    <h2>Projects</h2>
+    <div>
+      <ul class="cv-projects">
+        <li><span class="cv-when">OS</span><b><a href="../hobby-os/">Hobby OS <span class="ko-tag">KO</span></a></b><span>x86-64 assembly from a 512-byte boot sector through protected mode, paging and long mode to a freestanding C kernel with a VGA text driver.</span></li>
+        <li><span class="cv-when">Language</span><b><a href="../cotton/">Cotton <span class="ko-tag">KO</span></a></b><span>An expression-oriented language mixing ideas from Rust, JavaScript and Python. A 4,134-line C++17 reference interpreter with no external dependencies.</span></li>
+        <li><span class="cv-when">Web</span><b><a href="../percentage/">Percentage <span class="ko-tag">KO</span></a></b><span>A Korean open wiki with its own markup language, PerMark, and a hand-written lexer, parser and renderer. Next.js and Supabase.</span></li>
+        <li><span class="cv-when">Web</span><b><a href="../music-player/">music.player <span class="ko-tag">KO</span></a></b><span>A personal music player running on two Oracle Cloud free-tier VMs at $0 a month.</span></li>
+        <li><span class="cv-when">Library</span><b><a href="../muxic/">MUXIC.js <span class="ko-tag">KO</span></a></b><span>A TypeScript library that turns a URL into an open mp3 stream, split into a pure resolver and a side-effecting engine.</span></li>
+        <li><span class="cv-when">Web</span><b><a href="../ksca/">KSCA <span class="ko-tag">KO</span></a></b><span>An archive for student papers with persistent identifiers, APA/BibTeX citations and versioning. In development.</span></li>
+        <li><span class="cv-when">Tools</span><b><a href="https://github.com/regx64/boj-cli">boj-cli</a></b><span>Baekjoon Online Judge from the terminal, in Rust.</span></li>
+        <li><span class="cv-when">Tools</span><b><a href="https://github.com/regx64/Sqimp">Sqimp</a></b><span>A QEMU GUI built with Tauri and Next.js, co-developed by two people.</span></li>
+      </ul>
+    </div>
+  </section>
+
+  <section class="cv-sec">
+    <h2>Awards</h2>
+    <div>
+      <ul class="cv-projects">
+        <li><span class="cv-when">2024</span><b>Korea Code Fair</b><span>Hackathon Division, Finalist</span></li>
+        <li><span class="cv-when">2024</span><b>Embedded Software Contest</b><span>President’s Award, Sejong University</span></li>
+        <li><span class="cv-when">2023–2025</span><b>Information Gifted Education Center</b><span>Busan Metropolitan Office of Education, 3-year program; Academic Excellence Award</span></li>
+      </ul>
+    </div>
+  </section>
+
+  <section class="cv-sec" id="contact">
+    <h2>Contact</h2>
+    <div>
+      <ul class="cv-links">
+        <li><a href="mailto:redbean.of@gmail.com">redbean.of@gmail.com</a></li>
+        <li><a href="https://github.com/regx64">github.com/regx64</a></li>
+        <li><a href="https://orcid.org/0009-0009-0896-3833">ORCID 0009-0009-0896-3833</a></li>
+        <li><a href="../cv/">CV <span class="ko-tag">KO</span></a></li>
+      </ul>
+    </div>
+  </section>
+
+</main>
+
+<footer class="foot">
+  <div class="foot-inner">
+    <p class="foot-tag">From transistors to compilers.</p>
+    <nav class="foot-links" aria-label="Footer">
+      <a href="../" lang="ko">한국어</a>
+      <a href="../notes/">Notes <span class="ko-tag">KO</span></a>
+      <a href="https://github.com/regx64">regx64</a>
+    </nav>
+  </div>
+</footer>
+</body>
+</html>
