@@ -7,7 +7,7 @@ import { RoomEnvironment } from 'three/addons/environments/RoomEnvironment.js';
 
 const canvas = document.getElementById('gl');
 const REDUCE = matchMedia('(prefers-reduced-motion: reduce)').matches;
-const FONT = '"Pretendard", "Apple SD Gothic Neo", "Malgun Gothic", sans-serif';
+const FONT = '"Pretendard Variable", "Pretendard", "Apple SD Gothic Neo", "Malgun Gothic", sans-serif';
 const MONO = 'ui-monospace, Consolas, "D2Coding", monospace';
 
 const C = {
