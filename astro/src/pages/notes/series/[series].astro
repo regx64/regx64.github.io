@@ -1,7 +1,7 @@
 ---
-import Layout from '../../layouts/Layout.astro';
-import NoteList from '../../components/NoteList.astro';
-import { allNotes, allSeries, notesInSeries, seriesSlug } from '../../lib/notes';
+import Layout from '../../../layouts/Layout.astro';
+import NoteList from '../../../components/NoteList.astro';
+import { allNotes, allSeries, notesInSeries, seriesSlug } from '../../../lib/notes';
 
 export async function getStaticPaths() {
   const notes = await allNotes();

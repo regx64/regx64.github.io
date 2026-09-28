@@ -32,7 +32,7 @@ jobs:
         working-directory: astro
         run: npm ci
 
-      - name: Build blog (outputs into /notes)
+      - name: Build notes and blog (outputs into astro/dist)
         working-directory: astro
         run: npm run build
 
@@ -41,6 +41,7 @@ jobs:
           mkdir -p _site
           shopt -s extglob dotglob
           cp -r !(_site|astro|.git|.github) _site/
+          cp -r astro/dist/. _site/
           touch _site/.nojekyll
 
       - name: Upload artifact

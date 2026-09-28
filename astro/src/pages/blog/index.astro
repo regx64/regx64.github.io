@@ -1,0 +1,25 @@
+---
+import Layout from '../../layouts/Layout.astro';
+import PostList from '../../components/PostList.astro';
+import { allPosts, allCategories, categorySlug } from '../../lib/blog';
+
+const posts = await allPosts();
+const categories = await allCategories(posts);
+---
+<Layout
+  title="블로그"
+  description="코드 밖의 이야기. 음악, 작곡, 취미를 기록하는 블로그."
+>
+  <p class="eyebrow-sm">블로그</p>
+  <h1>코드 밖의 이야기.</h1>
+  <p class="lede">듣는 음악, 만드는 곡, 그 밖의 취미를 적습니다. 실험과 구현 기록은 <a href="/notes/">엔지니어링 노트</a>에 따로 있습니다.</p>
+
+  {categories.length > 0 && (
+    <nav class="chip-row" aria-label="카테고리">
+      <a class="chip is-active" href="/blog/" aria-current="page">전체</a>
+      {categories.map((c) => <a class="chip" href={`/blog/category/${categorySlug(c)}/`}>{c}</a>)}
+    </nav>
+  )}
+
+  <PostList posts={posts} />
+</Layout>

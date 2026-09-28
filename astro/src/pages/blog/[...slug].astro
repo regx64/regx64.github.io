@@ -1,0 +1,66 @@
+---
+import Layout from '../../layouts/Layout.astro';
+import Giscus from '../../components/Giscus.astro';
+import { allPosts, categorySlug, formatDate } from '../../lib/blog';
+
+export async function getStaticPaths() {
+  const posts = await allPosts();
+  return posts.map((post, i) => ({
+    params: { slug: post.slug },
+    props: { post, newer: posts[i - 1], older: posts[i + 1] },
+  }));
+}
+
+const { post, newer, older } = Astro.props;
+const { Content } = await post.render();
+const d = post.data;
+---
+<Layout title={d.title} description={d.description}>
+  <p class="eyebrow-sm"><a href={`/blog/category/${categorySlug(d.category)}/`}>{d.category}</a></p>
+  <h1>{d.title}</h1>
+  <p class="lede">{d.description}</p>
+  <p class="notes-meta">
+    <time datetime={d.date.toISOString()}>{formatDate(d.date)}</time>
+    {d.draft && <span>초안 (배포 안 됨)</span>}
+  </p>
+
+  {d.cover && (
+    <figure class="post-hero">
+      <img src={d.cover} alt={d.coverAlt ?? ''} />
+    </figure>
+  )}
+
+  {d.audio && (
+    <figure class="post-audio">
+      {d.audioTitle && <figcaption>{d.audioTitle}</figcaption>}
+      <audio controls preload="metadata" src={d.audio}></audio>
+    </figure>
+  )}
+
+  {d.youtube && (
+    <div class="post-video">
+      <iframe
+        src={`https://www.youtube-nocookie.com/embed/${d.youtube}`}
+        title={d.title}
+        loading="lazy"
+        allow="accelerometer; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+        allowfullscreen
+      ></iframe>
+    </div>
+  )}
+
+  <article>
+    <Content />
+  </article>
+
+  {d.tags.length > 0 && (
+    <p class="tag-row post-tags">{d.tags.map((t) => <span class="tag">#{t}</span>)}</p>
+  )}
+
+  <nav class="notes-pager" aria-label="다른 글">
+    <a href={older ? `/blog/${older.slug}/` : '/blog/'}>{older ? `← ${older.data.title}` : '← 목록으로'}</a>
+    {newer && <a href={`/blog/${newer.slug}/`}>{newer.data.title} →</a>}
+  </nav>
+
+  <Giscus />
+</Layout>

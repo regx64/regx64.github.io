@@ -1,7 +1,7 @@
 ---
-import Layout from '../layouts/Layout.astro';
-import Giscus from '../components/Giscus.astro';
-import { allNotes, notesInSeries, tagSlug, seriesSlug } from '../lib/notes';
+import Layout from '../../layouts/Layout.astro';
+import Giscus from '../../components/Giscus.astro';
+import { allNotes, notesInSeries, tagSlug, seriesSlug } from '../../lib/notes';
 import { getCollection } from 'astro:content';
 
 export async function getStaticPaths() {
