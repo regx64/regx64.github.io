@@ -22,7 +22,7 @@
   /* ---------- 방문 통계 (GoatCounter, 쿠키 없음) ----------
      goatcounter.com에서 만든 코드 이름을 넣으면 켜짐. 비어 있으면 아무것도 안 함 */
   const GOATCOUNTER = 'redbeanof';
-  if (GOATCOUNTER && location.hostname === 'regx64.github.io') {
+  if (GOATCOUNTER && location.hostname === 'regx64.kro.kr') {
     const gc = document.createElement('script');
     gc.async = true;
     gc.src = 'https://gc.zgo.at/count.js';
