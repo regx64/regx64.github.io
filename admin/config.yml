@@ -1,0 +1,94 @@
+# yaml-language-server: $schema=https://unpkg.com/@sveltia/cms/schema/sveltia-cms.json
+# 웹 글쓰기 설정 (Sveltia CMS)
+# https://regx64.github.io/admin/ 에서 GitHub 토큰으로 로그인하면
+# 저장할 때마다 이 저장소의 main에 커밋되고, 배포 워크플로가 사이트를 다시 만듭니다.
+
+app_title: regx64 글쓰기
+logo_url: /favicon.svg
+site_url: https://regx64.github.io
+
+backend:
+  name: github
+  repo: regx64/regx64.github.io
+  branch: main
+  auth_methods: [token]
+  commit_messages:
+    create: "글 추가: {{collection}} / {{slug}}"
+    update: "글 수정: {{collection}} / {{slug}}"
+    delete: "글 삭제: {{collection}} / {{slug}}"
+    uploadMedia: "파일 올림: {{path}}"
+    deleteMedia: "파일 지움: {{path}}"
+
+# 사진, 음원은 여기에 올라가고 /blog/media/... 주소로 쓰입니다
+media_folder: astro/public/blog/media
+public_folder: /blog/media
+
+slug:
+  encoding: unicode
+  timezone: local
+
+# 비워 둔 선택 항목(대표 이미지, 오디오 등)은 파일에 쓰지 않음
+output:
+  omit_empty_optional_fields: true
+
+collections:
+  - name: blog
+    label: 블로그
+    label_singular: 블로그 글
+    description: 음악, 작곡, 취미 등 코드 밖의 이야기
+    icon: music_note
+    folder: astro/src/content/blog
+    extension: md
+    format: yaml-frontmatter
+    slug:
+      template: "{{year}}-{{month}}-{{day}}-{{title}}"
+      editable: [create]
+      hint: 글 주소가 됩니다 (/blog/주소/). 처음 만들 때만 바꿀 수 있어요. 영문 소문자와 - 를 추천합니다.
+    summary: "{{date}} · {{category}} · {{title}}"
+    sortable_fields: [date, title, category]
+    view_groups:
+      - label: 카테고리
+        field: category
+    preview_path: /blog/{{slug}}/
+    fields:
+      - { name: title, label: 제목, widget: string }
+      - { name: description, label: 소개, widget: text, hint: 목록에 보이는 한두 줄 }
+      - { name: date, label: 날짜, widget: datetime, type: date, format: YYYY-MM-DD, default: "{{now}}" }
+      - { name: category, label: 카테고리, widget: string, default: 음악, hint: "음악, 작곡, 취미 등. 공백 없이 쓰면 같은 이름끼리 자동으로 묶입니다." }
+      - { name: tags, label: 태그, widget: list, required: false, default: [] }
+      - { name: cover, label: 대표 이미지, widget: image, required: false }
+      - { name: coverAlt, label: 대표 이미지 설명, widget: string, required: false }
+      - { name: audio, label: 오디오 파일, widget: file, required: false, hint: "mp3 등. 글 맨 위에 플레이어가 붙습니다. 긴 곡은 SoundCloud·YouTube 링크를 권장" }
+      - { name: audioTitle, label: 오디오 제목, widget: string, required: false }
+      - { name: youtube, label: YouTube 영상 ID, widget: string, required: false, hint: "주소의 v= 뒤 11자리" }
+      - { name: draft, label: 초안 (사이트에 안 올림), widget: boolean, default: false, required: false }
+      - { name: body, label: 본문, widget: markdown }
+
+  - name: notes
+    label: 엔지니어링 노트
+    label_singular: 노트
+    description: 실험, 측정, 구현 결정 기록
+    icon: science
+    folder: astro/src/content/notes
+    extension: md
+    format: yaml-frontmatter
+    slug:
+      template: "{{title}}"
+      editable: [create]
+      hint: 노트 주소가 됩니다 (/notes/주소/). 영문 소문자와 - 를 추천합니다.
+    summary: "{{date}} · {{title}}"
+    sortable_fields: [date, title]
+    preview_path: /notes/{{slug}}/
+    media_folder: /astro/public/notes/media
+    public_folder: /notes/media
+    fields:
+      - { name: title, label: 제목, widget: string }
+      - { name: description, label: 소개, widget: text }
+      - { name: date, label: 날짜, widget: datetime, type: date, format: YYYY-MM-DD, default: "{{now}}" }
+      - { name: project, label: 관련 프로젝트 이름, widget: string, required: false }
+      - { name: projectHref, label: 관련 프로젝트 주소, widget: string, required: false, hint: "예: /systolic/" }
+      - { name: status, label: 단계, widget: string, required: false, hint: "설계, 구현, 결과, 회고 등" }
+      - { name: tags, label: 태그, widget: list, required: false, default: [] }
+      - { name: series, label: 시리즈, widget: string, required: false }
+      - { name: seriesOrder, label: 시리즈 순서, widget: number, value_type: int, required: false }
+      - { name: body, label: 본문, widget: markdown }

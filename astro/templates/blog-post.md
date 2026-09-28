@@ -1,5 +1,5 @@
 ---
-# 이 파일은 복사해서 쓰는 틀입니다. 파일 이름이 _ 로 시작하면 사이트에 올라가지 않습니다.
+# 웹에서 쓰려면 https://regx64.github.io/admin/ 을 쓰세요. 이 파일은 직접 파일로 쓸 때의 틀입니다.
 # 새 글: 이 파일을 복사해 astro/src/content/blog/<영문-주소>.md 로 저장
 #        → 주소는 https://regx64.github.io/blog/<영문-주소>/ 가 됩니다.
 title: "글 제목"

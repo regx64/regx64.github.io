@@ -6,7 +6,7 @@ const notes = defineCollection({
   schema: z.object({
     title: z.string(),
     description: z.string(),
-    date: z.date(),
+    date: z.coerce.date(),   // 웹 글쓰기(CMS)가 문자열로 저장해도 날짜로 읽음
     project: z.string().optional(),
     projectHref: z.string().optional(),
     status: z.string().optional(),
@@ -22,7 +22,7 @@ const blog = defineCollection({
   schema: z.object({
     title: z.string(),
     description: z.string(),
-    date: z.date(),
+    date: z.coerce.date(),   // 웹 글쓰기(CMS)가 문자열로 저장해도 날짜로 읽음
     category: z.string(),                 // 음악, 작곡, 취미 ... 자유롭게
     tags: z.array(z.string()).default([]),
     cover: z.string().optional(),         // 대표 이미지 경로 (/blog/media/...)
