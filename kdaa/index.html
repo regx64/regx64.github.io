@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>KDAA | regx64</title>
-<meta name="description" content="키보드 소리만으로 입력을 알아내는 음향 사이드채널 공격(ASCA)을 한글 두벌식 자판에 적용하는 연구입니다. 지금까지의 공개 연구는 거의 영문 QWERTY만 다뤘습니다. 근접 마이크, 원거리 마이크, 배경소음 세 시나리오에서 CNN 모델의 자모 복원 성능을 비교합니다.">
+<meta name="description" content="키보드 소리만으로 입력을 알아내는 음향 사이드채널 공격을 한글 두벌식 자판에 적용하는 팀 연구입니다. 음향 프런트엔드(CNN)가 타건음을 38개 기호로 분류하고, 두벌식 오토마타가 음절 규칙으로 오류를 걸러 한글 문장을 복원합니다.">
 <link rel="icon" href="../favicon.ico" sizes="48x48">
 <link rel="icon" href="../favicon.svg" type="image/svg+xml">
 <link rel="apple-touch-icon" href="../apple-touch-icon.png">
@@ -30,7 +30,7 @@
     <nav class="nav-links" aria-label="주요 메뉴">
       <a href="../#kdaa">작업</a>
       <a href="../notes/">노트</a>
-      <a href="https://github.com/twopercenz">GitHub</a>
+      <a href="https://github.com/regx64">GitHub</a>
     </nav>
   </div>
 </header>
@@ -43,8 +43,12 @@
     <div class="copy">
       <h1 class="name">KDAA</h1>
       <p class="headline">타건음만 듣고<br>한글을 읽을 수 있을까.</p>
-      <p class="body">키보드 소리만으로 입력을 알아내는 음향 사이드채널 공격(ASCA)을 한글 두벌식 자판에 적용하는 연구입니다. 지금까지의 공개 연구는 거의 영문 QWERTY만 다뤘습니다. 근접 마이크, 원거리 마이크, 배경소음 세 시나리오에서 CNN 모델의 자모 복원 성능을 비교합니다.</p>
-      <p class="meta">Korean Dubeolsik Acoustic Attack / 과학전람회류 대회 출품, 진행 중</p>
+      <p class="body">키보드 소리만으로 입력을 알아내는 음향 사이드채널 공격(ASCA)을 한글 두벌식 자판에 적용하는 팀 연구입니다. 영문과 달리 한글은 자모가 음절로 조합되는 규칙이 있어서, 분류기가 틀린 자모도 두벌식 오토마타가 걸러 낼 수 있습니다. 저는 타건음 하나를 38개 기호로 분류하는 음향 프런트엔드(CNN)를 맡았습니다.</p>
+      <p class="meta">Korean Dubeolsik Acoustic Attack / 팀 연구, 진행 중 · 담당: 음향 프런트엔드</p>
+      <div class="actions">
+        <a class="btn" href="https://github.com/regx64/KDAA">GitHub에서 보기</a>
+        <a href="https://github.com/regx64/classism">음향 프런트엔드 코드 (classism) →</a>
+      </div>
     </div>
     <div class="stage" data-model="kdaa" role="img" aria-label="눌릴 때마다 소리가 퍼지는 ㅎ 키캡"></div>
   </section>
@@ -55,10 +59,10 @@
       <h2>요약</h2>
       <div>
         <dl class="stats">
-          <div><dt>두벌식</dt><dd>공개 연구가 없던 대상. 기존은 영문 QWERTY 중심</dd></div>
-          <div><dt>3종</dt><dd>공격 시나리오. 근접·원거리·배경소음</dd></div>
-          <div><dt>3명</dt><dd>녹음 참가자(본인 포함), 화자독립 평가 가능</dd></div>
-          <div><dt>500,000원</dt><dd>지원받은 예산</dd></div>
+          <div><dt>38개</dt><dd>분류하는 기호. 자모 33개와 스페이스, 백스페이스, Shift, CapsLock, 기타</dd></div>
+          <div><dt>3종</dt><dd>공격 시나리오. 근접, 원거리, 배경소음</dd></div>
+          <div><dt>18세션</dt><dd>최소 녹음 설계. 참가자 3명 × 시나리오 3종 × 2세션</dd></div>
+          <div><dt>30 ms</dt><dd>ESP32-S3에서 타건 하나를 분류하는 목표 시간</dd></div>
         </dl>
       </div>
     </section>
@@ -66,58 +70,82 @@
     <section class="doc-sec">
       <h2>연구 배경</h2>
       <div>
-        <p>키마다 눌리는 소리가 조금씩 달라서, 녹음된 타건음만으로 무엇을 입력했는지 추정하는 공격을 음향 사이드채널 공격(ASCA)이라고 합니다. 조사해 보니 기존 연구는 대부분 영문 QWERTY를 대상으로 했고, 한글 자모 입력을 다룬 공개 논문은 찾지 못했습니다. 그래서 두벌식 자판을 대상으로 삼았습니다.</p><p>공개 데이터셋과 코드부터 조사했습니다. Harrison 등의 데이터셋, KEYAC 데이터셋(2026), acoustic-keylogger 같은 오픈소스 파이프라인, 그리고 2026년 신규 논문까지 확인했습니다.</p>
+        <p>키마다 눌리는 소리가 조금씩 달라서, 녹음된 타건음만으로 무엇을 입력했는지 추정하는 공격을 음향 사이드채널 공격(ASCA)이라고 합니다. 조사해 보니 기존 연구는 대부분 영문 QWERTY를 대상으로 했고, 한글 두벌식 자모 입력을 다룬 공개 연구는 찾지 못했습니다. 그래서 두벌식 자판을 대상으로 삼았습니다.</p>
+        <p>공개 데이터셋과 코드부터 조사했습니다. Harrison 등의 데이터셋, KEYAC 데이터셋(2026), acoustic-keylogger 같은 오픈소스 파이프라인, 그리고 2026년 신규 논문까지 확인했습니다.</p>
+        <h3>두벌식이 다른 점</h3>
+        <p>물리 키는 QWERTY와 같아서 소리를 분류하는 단계 자체는 언어와 상관없습니다. 차이는 그 앞뒤에 있습니다. 영문은 키 하나가 글자 하나지만, 두벌식은 Shift에 따라 한 키가 두 자모(ㄱ/ㄲ 등)를 내고, 초성·중성·종성이 모여 음절 하나가 됩니다.</p>
+        <p>영문 공격은 맞춤법 교정으로 분류 오류를 확률적으로 고치지만, 한글의 자모 조합 규칙은 거의 결정적인 필터로 작동합니다. 음절이 될 수 없는 자모 배열은 통째로 버려지므로, 분류기가 1순위를 틀려도 하위 후보에서 올바른 음절을 되살릴 수 있습니다. 이 오토마타가 얼마나 복원을 돕는지 재는 것이 이 연구의 핵심입니다.</p>
+      </div>
+    </section>
+
+    <section class="doc-sec">
+      <h2>시스템 구조</h2>
+      <div>
+        <figure class="chart">
+          <svg viewBox="0 0 700 292" role="img" aria-label="KDAA 파이프라인. 48 kHz 녹음과 키로거 라벨을 Mel 컴포넌트가 타건 단위 log-mel로 자르고, 음향 프런트엔드 CNN이 38개 기호의 top-N 확률을 내면, LM 서버가 두벌식 오토마타와 빔 탐색으로 한글 문장을 복원. 세 공격 시나리오에서 비교" xmlns="http://www.w3.org/2000/svg" font-family="Pretendard, -apple-system, sans-serif"><defs><marker id="kd1-ah" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#1D1D1D"/></marker></defs><g class="lbl" data-d="0"><rect x="0" y="46" width="122" height="76" rx="10" fill="#FFFFFF" stroke="#9A9A9A" stroke-width="1.5"/><text x="61.0" y="72.0" font-size="13" fill="#1D1D1D" text-anchor="middle" font-weight="600">녹음</text><text x="61.0" y="90.0" font-size="10" fill="#6E6E6E" text-anchor="middle">48 kHz · mono</text><text x="61.0" y="105.0" font-size="10" fill="#6E6E6E" text-anchor="middle">키로거 라벨</text></g>
+<g class="lbl" data-d="150"><line class="flow" x1="124" y1="84.0" x2="141" y2="84.0" stroke="#1D1D1D" stroke-width="1.5" marker-end="url(#kd1-ah)"/></g>
+<g class="lbl" data-d="300"><rect x="144" y="46" width="122" height="76" rx="10" fill="#FFFFFF" stroke="#9A9A9A" stroke-width="1.5"/><text x="205.0" y="72.0" font-size="13" fill="#1D1D1D" text-anchor="middle" font-weight="600">Mel 컴포넌트</text><text x="205.0" y="90.0" font-size="10" fill="#6E6E6E" text-anchor="middle">onset 검출</text><text x="205.0" y="105.0" font-size="10" fill="#6E6E6E" text-anchor="middle">100 ms → log-mel</text></g>
+<g class="lbl" data-d="450"><line class="flow" x1="268" y1="84.0" x2="285" y2="84.0" stroke="#1D1D1D" stroke-width="1.5" marker-end="url(#kd1-ah)"/></g>
+<g class="lbl" data-d="600"><rect x="288" y="46" width="122" height="76" rx="10" fill="#C23B5A" stroke="#C23B5A" stroke-width="1.5"/><text x="349.0" y="72.0" font-size="13" fill="#FFFFFF" text-anchor="middle" font-weight="600">AFE (CNN)</text><text x="349.0" y="90.0" font-size="10" fill="#F7D6DE" text-anchor="middle">38개 기호</text><text x="349.0" y="105.0" font-size="10" fill="#F7D6DE" text-anchor="middle">top-N 확률</text></g>
+<g class="lbl" data-d="750"><line class="flow" x1="412" y1="84.0" x2="429" y2="84.0" stroke="#1D1D1D" stroke-width="1.5" marker-end="url(#kd1-ah)"/></g>
+<g class="lbl" data-d="900"><rect x="432" y="46" width="122" height="76" rx="10" fill="#FFFFFF" stroke="#9A9A9A" stroke-width="1.5"/><text x="493.0" y="72.0" font-size="13" fill="#1D1D1D" text-anchor="middle" font-weight="600">LM 서버</text><text x="493.0" y="90.0" font-size="10" fill="#6E6E6E" text-anchor="middle">두벌식 오토마타</text><text x="493.0" y="105.0" font-size="10" fill="#6E6E6E" text-anchor="middle">빔 탐색 · 재순위</text></g>
+<g class="lbl" data-d="1050"><line class="flow" x1="556" y1="84.0" x2="573" y2="84.0" stroke="#1D1D1D" stroke-width="1.5" marker-end="url(#kd1-ah)"/></g>
+<g class="lbl" data-d="1200"><rect x="576" y="46" width="114" height="76" rx="10" fill="#FFFFFF" stroke="#9A9A9A" stroke-width="1.5"/><text x="633.0" y="80.0" font-size="13" fill="#1D1D1D" text-anchor="middle" font-weight="600">한글 문장</text><text x="633.0" y="98.0" font-size="10" fill="#6E6E6E" text-anchor="middle">복원 결과</text></g>
+<text class="lbl" data-d="600" x="349.0" y="30" font-size="11" fill="#C23B5A" text-anchor="middle" font-weight="600">내가 맡은 부분</text>
+<text class="lbl" data-d="750" x="349.0" y="144" font-size="10" fill="#6E6E6E" text-anchor="middle">kdaa.afe.v1 JSON</text>
+<text class="lbl" data-d="750" x="349.0" y="159" font-size="10" fill="#6E6E6E" text-anchor="middle">배포 목표: ESP32-S3 · int8</text>
+<text class="lbl" data-d="1300" x="0" y="214" font-size="12" fill="#C23B5A" font-weight="600">독립변인 · 공격 시나리오 3종</text>
+<g class="lbl" data-d="1300"><rect x="0" y="232" width="165" height="52" rx="10" fill="#FFFFFF" stroke="#C23B5A" stroke-width="1.5"/><text x="82.5" y="254.0" font-size="13" fill="#1D1D1D" text-anchor="middle" font-weight="600">근접</text><text x="82.5" y="272.0" font-size="10" fill="#6E6E6E" text-anchor="middle">마이크 20–30 cm, 조용한 방</text></g>
+<g class="lbl" data-d="1430"><rect x="180" y="232" width="165" height="52" rx="10" fill="#FFFFFF" stroke="#C23B5A" stroke-width="1.5"/><text x="262.5" y="254.0" font-size="13" fill="#1D1D1D" text-anchor="middle" font-weight="600">원거리</text><text x="262.5" y="272.0" font-size="10" fill="#6E6E6E" text-anchor="middle">마이크 1.5–2 m</text></g>
+<g class="lbl" data-d="1560"><rect x="360" y="232" width="165" height="52" rx="10" fill="#FFFFFF" stroke="#C23B5A" stroke-width="1.5"/><text x="442.5" y="254.0" font-size="13" fill="#1D1D1D" text-anchor="middle" font-weight="600">배경소음</text><text x="442.5" y="272.0" font-size="10" fill="#6E6E6E" text-anchor="middle">근접 + 실제 소음 재생</text></g></svg>
+          <figcaption>녹음부터 한글 복원까지의 흐름</figcaption>
+        </figure>
+        <p>파이프라인을 네 부분으로 나눠 팀이 나눠 맡았습니다. 부분 사이의 약속은 문서로 고정해 두었습니다. 예를 들어 음향 프런트엔드와 LM 서버 사이는 <code>kdaa.afe.v1</code>이라는 JSON 형식으로만 주고받습니다.</p>
+        <div class="table-wrap">
+          <table class="data left">
+            <caption>구성 요소와 역할</caption>
+            <thead><tr><th scope="col">구성 요소</th><th scope="col" style="text-align:left">하는 일</th></tr></thead>
+            <tbody>
+              <tr><th scope="row">녹음</th><td>48 kHz mono로 녹음하면서 키로거가 물리 키 입력 시각과 자모를 함께 기록. 한글 입력기를 해석하지 않아 라벨이 정확함</td></tr>
+              <tr><th scope="row">Mel 컴포넌트</th><td>onset 검출, 타건마다 100 ms 창(누름과 뗌 포함)으로 자르기, log-mel 변환</td></tr>
+              <tr><th scope="row">음향 프런트엔드 (담당)</th><td>log-mel 하나를 CNN으로 38개 기호 중 하나로 분류하고, 상위 N개 후보와 확률을 출력</td></tr>
+              <tr><th scope="row">LM 서버</th><td>두벌식 오토마타로 음절 조합, 빔 탐색, 언어 모델 재순위로 문장 복원</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+    <section class="doc-sec">
+      <h2>음향 프런트엔드</h2>
+      <div>
+        <h3>입력</h3>
+        <p>타건 하나를 1 × 64 × 48 크기의 log-mel 스펙트로그램으로 받습니다. 64개 mel 대역(200 Hz~20 kHz), 48개 시간 프레임이고, 클립마다 z-score로 정규화합니다. 추출 조건은 학습 때와 배포 때가 완전히 같아야 해서 값을 고정하고, 조건을 해시로 만들어 다른 조건으로 만든 입력은 거부합니다.</p>
+        <h3>출력</h3>
+        <p>분류 대상은 자모 33개에 스페이스, 백스페이스, Shift, CapsLock, 기타를 더한 38개 기호입니다. 특수키도 따로 처리하지 않고 똑같은 클래스로 둡니다. Shift를 된소리로 해석하는 일은 LM 서버가 맡습니다. 음향 프런트엔드는 음절을 조합하지 않고 기호와 확률만 넘깁니다.</p>
+        <h3>모델과 배포</h3>
+        <p>배포용은 작은 CNN(SmallCNN)이고, 비교용으로 CoAtNet을 줄인 모델도 둡니다. 확률이 실제 정답률과 맞도록 온도 보정을 하고 ECE로 확인합니다. 학습한 모델은 ONNX를 거쳐 int8 TFLite로 바꿔 ESP32-S3에 올리는 것이 목표입니다.</p>
+        <h3>평가</h3>
+        <p>같은 녹음 세션을 무작위로 나누면 정확도가 부풀려지므로 세션 단위로 학습과 평가를 나눕니다. 참가자 단위로 나눠 처음 보는 사람에게도 통하는지도 봅니다. top-1과 top-N 정확도, 시나리오별 정확도, 혼동 행렬, 키 종류별 정확도, 보정 오차(ECE)를 냅니다.</p>
       </div>
     </section>
 
     <section class="doc-sec">
       <h2>실험 설계</h2>
       <div>
-        <figure class="chart">
-          <svg viewBox="0 0 700 292" role="img" aria-label="KDAA 파이프라인. 타건음 녹음과 키로거 라벨을 세그멘테이션으로 맞추고, 스펙트로그램을 CNN에 넣어 자모를 분류. 세 공격 시나리오에서 성능 비교" xmlns="http://www.w3.org/2000/svg" font-family="Pretendard, -apple-system, sans-serif">
-          <defs><marker id="kd1-ah" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#1D1D1D"/></marker><marker id="kd1-ahm" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#9A9A9A"/></marker></defs>
-          <g class="lbl" data-d="0"><rect x="0" y="40" width="150" height="64" rx="10" fill="#FFFFFF" stroke="#9A9A9A" stroke-width="1.5"/><text x="75.0" y="70.0" font-size="13" fill="#1D1D1D" text-anchor="middle" font-weight="600">타건음 녹음</text><text x="75.0" y="89.0" font-size="10" fill="#6E6E6E" text-anchor="middle" font-weight="400">44.1kHz, 동기화 비프음</text></g>
-          <g class="lbl" data-d="150"><rect x="0" y="120" width="150" height="64" rx="10" fill="#FFFFFF" stroke="#9A9A9A" stroke-width="1.5"/><text x="75.0" y="150.0" font-size="13" fill="#1D1D1D" text-anchor="middle" font-weight="600">키로거 라벨</text><text x="75.0" y="169.0" font-size="10" fill="#6E6E6E" text-anchor="middle" font-weight="400">timestamp, 자모</text></g>
-          <g class="lbl" data-d="300"><path d="M 152 72 H 180 V 108" fill="none" stroke="#1D1D1D" stroke-width="1.5" marker-end="url(#kd1-ah)"/></g>
-          <g class="lbl" data-d="300"><path d="M 152 152 H 180 V 116" fill="none" stroke="#1D1D1D" stroke-width="1.5" marker-end="url(#kd1-ah)"/></g>
-          <g class="lbl" data-d="450"><rect x="200" y="80" width="150" height="64" rx="10" fill="#F7DEE4" stroke="#C23B5A" stroke-width="1.5"/><text x="275.0" y="110.0" font-size="13" fill="#1D1D1D" text-anchor="middle" font-weight="600">세그멘테이션</text><text x="275.0" y="129.0" font-size="10" fill="#6E6E6E" text-anchor="middle" font-weight="400">onset 검출 + 라벨 교차검증</text></g>
-          <g class="lbl" data-d="600"><line class="flow" x1="352" y1="112" x2="387" y2="112" stroke="#1D1D1D" stroke-width="1.5" marker-end="url(#kd1-ah)"/></g>
-          <g class="lbl" data-d="750"><rect x="390" y="80" width="150" height="64" rx="10" fill="#FFFFFF" stroke="#9A9A9A" stroke-width="1.5"/><text x="465.0" y="109.5" font-size="12" fill="#1D1D1D" text-anchor="middle" font-weight="600">log-mel 스펙트로그램</text><text x="465.0" y="128.5" font-size="10" fill="#6E6E6E" text-anchor="middle" font-weight="400">press+release 포함</text></g>
-          <g class="lbl" data-d="900"><line class="flow" x1="542" y1="112" x2="577" y2="112" stroke="#1D1D1D" stroke-width="1.5" marker-end="url(#kd1-ah)"/></g>
-          <g class="lbl" data-d="1050"><rect x="580" y="80" width="120" height="64" rx="10" fill="#C23B5A" stroke="#C23B5A" stroke-width="1.5"/><text x="640.0" y="109.5" font-size="13" fill="#FFFFFF" text-anchor="middle" font-weight="600">CNN</text><text x="640.0" y="129.5" font-size="11" fill="#F7D6DE" text-anchor="middle" font-weight="400">자모 분류</text></g>
-          <text class="lbl" data-d="1200" x="0.0" y="214.0" font-size="12" fill="#C23B5A" text-anchor="start" font-weight="600">독립변인 · 공격 시나리오 3종</text>
-          <g class="lbl" data-d="1200"><rect x="0" y="232" width="165" height="52" rx="10" fill="#FFFFFF" stroke="#C23B5A" stroke-width="1.5"/><text x="82.5" y="255.5" font-size="12" fill="#1D1D1D" text-anchor="middle" font-weight="600">근접 마이크</text><text x="82.5" y="274.5" font-size="10" fill="#6E6E6E" text-anchor="middle" font-weight="400">깨끗한 신호</text></g>
-          <g class="lbl" data-d="1330"><rect x="180" y="232" width="165" height="52" rx="10" fill="#FFFFFF" stroke="#C23B5A" stroke-width="1.5"/><text x="262.5" y="255.5" font-size="12" fill="#1D1D1D" text-anchor="middle" font-weight="600">원거리 마이크</text><text x="262.5" y="274.5" font-size="10" fill="#6E6E6E" text-anchor="middle" font-weight="400">약해진 신호</text></g>
-          <g class="lbl" data-d="1460"><rect x="360" y="232" width="165" height="52" rx="10" fill="#FFFFFF" stroke="#C23B5A" stroke-width="1.5"/><text x="442.5" y="255.5" font-size="12" fill="#1D1D1D" text-anchor="middle" font-weight="600">배경소음</text><text x="442.5" y="274.5" font-size="10" fill="#6E6E6E" text-anchor="middle" font-weight="400">잡음 섞임</text></g>
-          </svg>
-          <figcaption>녹음부터 자모 분류까지의 흐름</figcaption>
-        </figure><div class="table-wrap">
+        <div class="table-wrap">
           <table class="data left">
             <caption>변인</caption>
             <thead><tr><th scope="col">구분</th><th scope="col" style="text-align:left">내용</th></tr></thead>
             <tbody>
-              <tr><th scope="row">독립변인</th><td>공격 시나리오 (근접 마이크 / 원거리 마이크 / 배경소음) — 3수준</td></tr>
-              <tr><th scope="row">종속변인</th><td>자모 top-1 정확도, CER, 화자독립(leave-one-speaker-out) 정확도 하락폭</td></tr>
-              <tr><th scope="row">방법</th><td>CNN 단일 방법론</td></tr>
-              <tr><th scope="row">참가자</th><td>본인 포함 3명, 화자종속·화자독립 모두 평가</td></tr>
+              <tr><th scope="row">독립변인</th><td>공격 시나리오 3수준. 근접(마이크 20~30 cm, 조용한 방), 원거리(1.5~2 m), 배경소음(근접 거리에서 카페 소음·에어컨·대화를 실제로 틀어 놓고 녹음)</td></tr>
+              <tr><th scope="row">종속변인</th><td>자모 분류 정확도(top-1, top-N), 시나리오별 정확도, 오토마타 적용 전후의 음절 복원율</td></tr>
+              <tr><th scope="row">통제변인</th><td>처음부터 끝까지 같은 키보드 한 대, 세션 안에서 고정한 마이크 입력 음량, 같은 입력 문장</td></tr>
+              <tr><th scope="row">참가자</th><td>본인 포함 3명, 시나리오마다 2세션 이상</td></tr>
             </tbody>
           </table>
-        </div><p>처음에는 언어모델 보정 레이어와 Shazam식 랜드마크 해싱 매칭을 함께 넣으려 했지만, 범위를 좁혀 둘 다 후속 과제로 미루고 본실험은 CNN 단일 방법론으로 확정했습니다.</p>
-      </div>
-    </section>
-
-    <section class="doc-sec">
-      <h2>전처리</h2>
-      <div>
-        <h3>녹음 스펙 고정</h3>
-        <p>44.1kHz, 16bit, mono로 녹음합니다. 타건음은 대개 10kHz 이하지만 클릭 트랜지언트에 고주파 성분이 있어서 여유가 있습니다. 세션마다 시작에 동기화 비프음을 한 번 넣어, 녹음 기기와 키로거의 시계 차이로 라벨이 통째로 밀리는 것을 막습니다.</p>
-        <h3>세그멘테이션</h3>
-        <p>파이프라인에서 가장 까다로운 부분입니다. 시나리오마다 배경소음 수준이 달라서 고정 진폭 임계값을 쓸 수 없습니다. 그래서 spectral flux 기반 onset 검출을 쓰고, 키로거 라벨과 교차검증합니다. 타건 하나는 누름(press)과 뗌(release) 두 소리로 이뤄지므로, onset 앞 40ms, 뒤 110ms 창으로 잘라 둘 다 한 세그먼트에 담습니다.</p>
-        <h3>특징</h3>
-        <p>CNN에는 log-mel 스펙트로그램을 이미지처럼 넣습니다. 키보드 클릭음은 말소리보다 고주파 비중이 커서, 선형 주파수축 스펙트로그램과 비교해 어느 쪽이 자모 구분에 유리한지 보는 것 자체가 작은 실험거리입니다. 세그먼트별 z-score 정규화를 하고, 배경소음을 클린 오디오에 합성하는 증강은 학습 데이터에만 쓰고 평가셋에는 넣지 않습니다.</p>
-        <pre class="code"><code>raw_audio/{시나리오}/{화자}/{세션}.wav
-keylog/{시나리오}/{화자}/{세션}.csv
-segmented/{시나리오}/{화자}/{세션}/{인덱스}_{자모}.npy</code></pre>
+        </div>
+        <p>입력 문장은 자모마다 25번 이상 나오도록 자동으로 만들었습니다. 한 번 다 치면 참가자당 약 1,840타입니다. 실제 공격 재현을 막기 위해 미리 정한 문장만 치고, 실제 비밀번호나 개인정보는 모으지 않습니다.</p>
       </div>
     </section>
 
@@ -131,7 +159,8 @@ segmented/{시나리오}/{화자}/{세션}/{인덱스}_{자모}.npy</code></pre>
     <section class="doc-sec">
       <h2>상태</h2>
       <div>
-        <p>주제와 실험 설계, 세그멘테이션 코드까지 마쳤습니다. 참가자 동의 문제는 없습니다. 후속 과제로 언어모델 보정 레이어와 Shazam식 해싱 매칭 비교를 남겨 두었습니다.</p><p class='note'>이 페이지는 연구의 목적과 설계를 소개하기 위한 것으로, 공격을 재현하는 데 필요한 세부 사항은 싣지 않았습니다.</p>
+        <p>음향 프런트엔드의 라벨 체계, 입력 검증, 모델, 학습, 평가, 보정, 내보내기 코드를 명세대로 작성했고, 프레임워크 없이 돌아가는 후처리 테스트는 통과했습니다. 실제 녹음 데이터로 학습하는 것과 ESP32-S3에서 속도를 재는 것은 아직입니다. 저장소에 있는 합성 데이터는 코드가 도는지 확인하는 용도라서, 그 정확도는 결과로 싣지 않습니다. 연구비로 500,000원을 지원받았습니다.</p>
+        <p class="note">이 페이지는 연구의 목적과 설계를 소개하기 위한 것으로, 공격을 재현하는 데 필요한 세부 사항은 싣지 않았습니다.</p>
       </div>
     </section>
 
@@ -149,8 +178,8 @@ segmented/{시나리오}/{화자}/{세션}/{인덱스}_{자모}.npy</code></pre>
     <nav class="foot-links" aria-label="바닥 메뉴">
       <a href="../#work">작업</a>
       <a href="../notes/">노트</a>
-      <a href="https://github.com/twopercenz">twopercenz</a>
       <a href="https://github.com/regx64">regx64</a>
+      <a href="https://github.com/twopercenz">twopercenz</a>
     </nav>
   </div>
 </footer>
