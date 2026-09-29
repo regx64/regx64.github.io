@@ -7,7 +7,7 @@ interface Props {
   noindex?: boolean;     // 검색(pagefind)과 검색엔진에서 제외
 }
 const { title, description, image, type = 'website', noindex = false } = Astro.props;
-const SITE = 'https://regx64.kro.kr';
+const SITE = 'https://regx64.github.io';
 const path = Astro.url.pathname;
 const section = path.startsWith('/blog/') ? 'blog' : 'notes';
 const ogImage = image ? new URL(image, SITE).href : `${SITE}/og/${section}.png`;
