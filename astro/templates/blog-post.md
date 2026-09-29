@@ -1,7 +1,7 @@
 ---
-# 웹에서 쓰려면 https://regx64.kro.kr/admin/ 을 쓰세요. 이 파일은 직접 파일로 쓸 때의 틀입니다.
+# 웹에서 쓰려면 https://regx64.github.io/admin/ 을 쓰세요. 이 파일은 직접 파일로 쓸 때의 틀입니다.
 # 새 글: 이 파일을 복사해 astro/src/content/blog/<영문-주소>.md 로 저장
-#        → 주소는 https://regx64.kro.kr/blog/<영문-주소>/ 가 됩니다.
+#        → 주소는 https://regx64.github.io/blog/<영문-주소>/ 가 됩니다.
 title: "글 제목"
 description: "목록과 검색 결과에 보이는 한두 줄 소개"
 date: 2026-09-28

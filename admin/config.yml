@@ -1,11 +1,11 @@
 # yaml-language-server: $schema=https://unpkg.com/@sveltia/cms/schema/sveltia-cms.json
 # 웹 글쓰기 설정 (Sveltia CMS)
-# https://regx64.kro.kr/admin/ 에서 GitHub 토큰으로 로그인하면
+# https://regx64.github.io/admin/ 에서 GitHub 토큰으로 로그인하면
 # 저장할 때마다 이 저장소의 main에 커밋되고, 배포 워크플로가 사이트를 다시 만듭니다.
 
 app_title: regx64 글쓰기
 logo_url: /favicon.svg
-site_url: https://regx64.kro.kr
+site_url: https://regx64.github.io
 
 backend:
   name: github
